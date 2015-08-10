@@ -21,20 +21,7 @@
       "updateFormElement"
     ]);
 
-    var EntityStore = Reflux.createStore({
-      listenables: [FormActions],
-      updateState: function(newState){
-
-      },
-      onSubmitNodeForm: function(formData){
-        console.log(formData);
-      },
-      onUpdateFormElement: function(obj){
-        this.trigger(obj);
-      }
-    });
-
-    var entities = [
+    var templates = [
       {
         id: 1,
         template_name: "Salt Instance",
@@ -82,9 +69,29 @@
       }
     ];
 
+    var entities = [];
+
+    var EntityStore = Reflux.createStore({
+      listenables: [FormActions],
+      updateState: function(newState){
+
+      },
+      onSubmitNodeForm: function(obj){
+        console.log(obj.form_data);
+        entities.push({
+          entity_name: obj.form_data.name
+        });
+        this.trigger(entities);
+      },
+      onUpdateFormElement: function(obj){
+        this.trigger(obj);
+      }
+    });
+
     var App = React.createClass({
           render: function() {
            return (<div>
+                     <TemplateList />
                      <EntityList />
                      <RouteHandler />
                    </div>);
@@ -98,28 +105,24 @@
         });
       
     var FormElement = React.createClass({
-          
-          // constructor(props) {
-          //   super(props);
-          //   this.state = {};
-          //   this.state[this.props.name] = this.props.value;
-          //   this.handleChange = this.handleChange.bind(this);
-          // }
-          
-          handleChange: function(event){
-            var obj = {form_data: {}};
-            obj.form_data[this.props.name] = event.target.value;
-            var send_obj = _.merge(this.props.parent_state.form_data,obj);
-            FormActions.updateFormElement(send_obj);
-          },
-          
-          render: function(){
-            return <div>
-                <label>{ this.props.label }: </label>
-                <input type='text' name={ this.props.name } onChange={this.handleChange} value={this.props.value}/>
-              </div>;
-          }
-        });
+      contextTypes: {
+          router: React.PropTypes.func
+      },
+
+      handleChange: function(event){
+          var obj = {form_data: {}};
+          obj.form_data[this.props.name] = event.target.value;
+          var send_obj = _.merge(this.props.parent_state.form_data,obj);
+          FormActions.updateFormElement(send_obj);
+      },
+
+      render: function(){
+          return <div>
+              <label>{ this.props.label }: </label>
+              <input type='text' name={ this.props.name } onChange={this.handleChange} value={this.props.value}/>
+          </div>;
+      }
+  });
 
     var TemplateForm = React.createClass({
      mixins: [Reflux.connect(EntityStore,"form_data")],
@@ -133,23 +136,43 @@
       
      createNode: function() {
        FormActions.submitNodeForm(this.state.form_data);
+       this.context.router.transitionTo('/');
      },
       
      render: function() {
        var component = this;
-       var this_entity =  _.find(entities, function(ent) { return ent.id == component.context.router.getCurrentParams().entity_id});
+       var this_template =  _.find(templates, function(template) { return template.id == component.context.router.getCurrentParams().template_id});
        return <div>
-                   { this_entity.node_properties.map(function(property){
-                    return <FormElement label={property.name} name={property.name} parent_state={component.state} value={component.state.form_data[property.name]}/>
+                   { this_template.node_properties.map(function(property){
+                           return <FormElement label={property.name} name={property.name} parent_state={component.state} value={component.state.form_data[property.name]}/>
                    }) }
                    <button onClick={this.createNode}>Submit</button>
               </div>;
      } 
     });
 
-    var EntityList = React.createClass({
+    var TemplateList = React.createClass({
       getInitialState: function() {
-        return {entities: entities}
+        return {templates: templates}
+      },
+
+      render: function() {
+        return <div>
+            <h2>Templates</h2>
+            <ul>
+              {this.state.templates.map(function(template) {
+               return <li><Link to='template_form' params={{template_id: template.id}}>{template.template_name}</Link></li>
+              })}
+            </ul>
+          </div>;
+      }
+    });
+
+    var EntityList = React.createClass({
+     mixins: [Reflux.connect(EntityStore,"form_data")],
+
+     getInitialState: function() {
+         return {entities: entities}
       },
       
       render: function() {
@@ -157,7 +180,7 @@
             <h2>Entities</h2>
             <ul>
               {this.state.entities.map(function(entity) {
-               return <li><Link to='template_form' params={{entity_id: entity.id}}>{entity.template_name}</Link></li>
+               return <li>{entity.entity_name}</li>
               })}
             </ul>
           </div>;
@@ -166,7 +189,7 @@
 
     var routes = (
       <Route name='app' path='/' handler={App}>
-        <Route name='template_form' path='/template_form/:entity_id' handler={TemplateForm} />
+        <Route name='template_form' path='/template_form/:template_id' handler={TemplateForm} />
         <DefaultRoute handler={Empty}/>
       </Route>
     )
