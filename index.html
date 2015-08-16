@@ -77,9 +77,9 @@
 
       },
       onSubmitNodeForm: function(obj){
-        console.log(obj.form_data);
+        console.log(obj);
         entities.push({
-          entity_name: obj.form_data.name
+          entity_name: obj.name
         });
         this.trigger(entities);
       },
@@ -110,10 +110,9 @@
       },
 
       handleChange: function(event){
-          var obj = {form_data: {}};
-          obj.form_data[this.props.name] = event.target.value;
-          var send_obj = _.merge(this.props.parent_state.form_data,obj);
-          FormActions.updateFormElement(send_obj);
+          var obj = {};
+          obj[this.props.name] = event.target.value;
+          FormActions.updateFormElement(obj);
       },
 
       render: function(){
@@ -125,17 +124,17 @@
   });
 
     var TemplateForm = React.createClass({
-     mixins: [Reflux.connect(EntityStore,"form_data")],
+     mixins: [Reflux.connect(EntityStore)],
      contextTypes: {
       router: React.PropTypes.func
      },
 
      getInitialState: function(){
-      return {form_data: {}};
+      return {};
      },
       
      createNode: function() {
-       FormActions.submitNodeForm(this.state.form_data);
+       FormActions.submitNodeForm(this.state);
        this.context.router.transitionTo('/');
      },
       
@@ -144,7 +143,7 @@
        var this_template =  _.find(templates, function(template) { return template.id == component.context.router.getCurrentParams().template_id});
        return <div>
                    { this_template.node_properties.map(function(property){
-                           return <FormElement label={property.name} name={property.name} parent_state={component.state} value={component.state.form_data[property.name]}/>
+                           return <FormElement label={property.name} name={property.name} parent_state={component.state} value={component.state[property.name]}/>
                    }) }
                    <button onClick={this.createNode}>Submit</button>
               </div>;
@@ -169,7 +168,7 @@
     });
 
     var EntityList = React.createClass({
-     mixins: [Reflux.connect(EntityStore,"form_data")],
+     mixins: [Reflux.connect(EntityStore)],
 
      getInitialState: function() {
          return {entities: entities}
