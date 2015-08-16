@@ -6,7 +6,7 @@ var PropertyFormElement = React.createClass({
   handleChange: function(event){
       var obj = {};
       obj[this.props.name] = event.target.value;
-      FormActions.updateFormElement(obj);
+      this.props.updateParentState(obj);
   },
 
   render: function(){
