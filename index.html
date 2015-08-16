@@ -8,18 +8,14 @@
   <script src="bower_components/reflux/dist/reflux.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/3.10.1/lodash.js"></script>
   <!-- // <script type="text/jsx" src="js/components.jsx"></script> -->
-  <script type="text/jsx">
+
+  <script>
     var Router = ReactRouter;
 
     var DefaultRoute = Router.DefaultRoute;
     var Link = Router.Link;
     var Route = Router.Route;
     var RouteHandler = Router.RouteHandler;
-
-    var FormActions = Reflux.createActions([
-      "submitNodeForm",
-      "updateFormElement"
-    ]);
 
     var templates = [
       {
@@ -55,148 +51,32 @@
             type: "text"
           },
           {
-            name: "chemical formula",
+            name: "location",
             type: "text"
           }
         ],
         related_nodes: [
           {
-            template_name: "Material",
+            template_name: "Salt Instance",
             relationship: "child_of",
             required: true
           }
-        ] 
+        ]
       }
     ];
 
     var entities = [];
 
-    var EntityStore = Reflux.createStore({
-      listenables: [FormActions],
-      updateState: function(newState){
-
-      },
-      onSubmitNodeForm: function(obj){
-        console.log(obj);
-        entities.push({
-          entity_name: obj.name
-        });
-        this.trigger(entities);
-      },
-      onUpdateFormElement: function(obj){
-        this.trigger(obj);
-      }
-    });
-
-    var App = React.createClass({
-          render: function() {
-           return (<div>
-                     <TemplateList />
-                     <EntityList />
-                     <RouteHandler />
-                   </div>);
-          }
-        });
-      
-    var Empty = React.createClass({
-          render: function() {
-            return <div></div>;
-          }
-        });
-      
-    var FormElement = React.createClass({
-      contextTypes: {
-          router: React.PropTypes.func
-      },
-
-      handleChange: function(event){
-          var obj = {};
-          obj[this.props.name] = event.target.value;
-          FormActions.updateFormElement(obj);
-      },
-
-      render: function(){
-          return <div>
-              <label>{ this.props.label }: </label>
-              <input type='text' name={ this.props.name } onChange={this.handleChange} value={this.props.value}/>
-          </div>;
-      }
-  });
-
-    var TemplateForm = React.createClass({
-     mixins: [Reflux.connect(EntityStore)],
-     contextTypes: {
-      router: React.PropTypes.func
-     },
-
-     getInitialState: function(){
-      return {};
-     },
-      
-     createNode: function() {
-       FormActions.submitNodeForm(this.state);
-       this.context.router.transitionTo('/');
-     },
-      
-     render: function() {
-       var component = this;
-       var this_template =  _.find(templates, function(template) { return template.id == component.context.router.getCurrentParams().template_id});
-       return <div>
-                   { this_template.node_properties.map(function(property){
-                           return <FormElement label={property.name} name={property.name} parent_state={component.state} value={component.state[property.name]}/>
-                   }) }
-                   <button onClick={this.createNode}>Submit</button>
-              </div>;
-     } 
-    });
-
-    var TemplateList = React.createClass({
-      getInitialState: function() {
-        return {templates: templates}
-      },
-
-      render: function() {
-        return <div>
-            <h2>Templates</h2>
-            <ul>
-              {this.state.templates.map(function(template) {
-               return <li><Link to='template_form' params={{template_id: template.id}}>{template.template_name}</Link></li>
-              })}
-            </ul>
-          </div>;
-      }
-    });
-
-    var EntityList = React.createClass({
-     mixins: [Reflux.connect(EntityStore)],
-
-     getInitialState: function() {
-         return {entities: entities}
-      },
-      
-      render: function() {
-        return <div>
-            <h2>Entities</h2>
-            <ul>
-              {this.state.entities.map(function(entity) {
-               return <li>{entity.entity_name}</li>
-              })}
-            </ul>
-          </div>;
-      }   
-    });
-
-    var routes = (
-      <Route name='app' path='/' handler={App}>
-        <Route name='template_form' path='/template_form/:template_id' handler={TemplateForm} />
-        <DefaultRoute handler={Empty}/>
-      </Route>
-    )
-
-    ReactRouter.run(routes, function(Handler) {
-      React.render(<Handler/>, document.getElementById('main'))
-    });
   </script>
+  <script type="text/jsx" src="js/actions/form_actions.js"></script>
+  <script type="text/jsx" src="js/stores/entity_store.js"></script>
+  <script type="text/jsx" src="js/components/empty.js"></script>
+  <script type="text/jsx" src="js/components/entity_list.js"></script>
+  <script type="text/jsx" src="js/components/template_list.js"></script>
+  <script type="text/jsx" src="js/components/property_form_element.js"></script>
+  <script type="text/jsx" src="js/components/relationship_form_element.js"></script>
+  <script type="text/jsx" src="js/components/template_form.js"></script>
+  <script type="text/jsx" src="js/app.js"></script>
 </head>
 <body>
   <div id="main"></div>
