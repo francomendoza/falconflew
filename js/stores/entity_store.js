@@ -1,15 +1,20 @@
 var EntityStore = Reflux.createStore({
   listenables: [FormActions],
+  getInitialState: function(){
+    return {e: entities}
+  },
+
   updateState: function(newState){
 
   },
   onSubmitNodeForm: function(obj){
     console.log(obj);
     entities.push({
-      entity_name: obj.name,
-      template_name: obj.template_name
+      name: obj.name,
+      template_id: obj.id
     });
     this.trigger(entities);
+    
   },
   onUpdateFormElement: function(obj){
     this.trigger(obj);

@@ -20,17 +20,14 @@ var TemplateForm = React.createClass({
  },
 
  updateState: function(property_value) {
-  this.setState(property_value);
+  this.setState(property_value, function(){
+    console.log(this.state);
+  });
  },
 
  getInitialState: function(){
-   // if(this.props.template_id) {
-   //  console.log(this.props);
-   //  return this.getTemplateName(this.props.template_id);
-   // } else {
-    // return this.getTemplateName();
-    return this.getTemplate(this.props.params.template_id);
-   // }
+    // return this.getTemplate(this.props.params.template_id);
+    return {id: this.props.params.template_id}
  },
 
  getTemplate: function(id){
@@ -42,7 +39,7 @@ var TemplateForm = React.createClass({
  },
 
   componentWillReceiveProps: function(next_props){
-    this.setState(this.getTemplate(next_props.params.template_id),function(){
+    this.setState({id: next_props.params.template_id},function(){
       console.log(this.state);
     });
   },
@@ -53,7 +50,7 @@ var TemplateForm = React.createClass({
   // use response to change state of form
   //check if this is a subform
   // if so change state of relationshipformelement
-   FormActions.submitNodeForm(this.state);
+  FormActions.submitNodeForm(this.state);
 
    // this.context.router.transitionTo('/');
  },
@@ -68,13 +65,7 @@ var TemplateForm = React.createClass({
 
  render: function() {
    var component = this;
-   var template_id;
-   if(component.props.params) {
-     template_id = component.props.params.template_id;
-   } else {
-     template_id = component.props.template_id;
-   }
-   var this_template =  _.find(templates, function(template) { return template.id == template_id});
+   var this_template =  _.find(templates, function(template) { return template.id == component.props.params.template_id});
    return <div>
                { this_template.node_properties.map(function(property){
                        return <PropertyFormElement
