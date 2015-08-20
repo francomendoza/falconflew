@@ -3,17 +3,23 @@ var PropertyFormElement = React.createClass({
       router: React.PropTypes.func
   },
 
+  getInitialState: function(){
+    return this.props.property
+  },
+
   handleChange: function(event){
-      var obj = {};
-      obj[this.props.name] = event.target.value;
-      this.props.updateParentState(obj);
+    this.setState({value: event.target.value},function(){
+      this.props.updateParentState(this.state);
+    });
   },
 
   render: function(){
+    var property = this.props.property;
       return <div>
-          <label>{ this.props.label }: </label>
-          <input type='text'
-          name={ this.props.name }
+          <label>{ property.name }: </label>
+          <input type = { property.type }
+          name = { property.name }
+          value = { property.value }
           onChange={this.handleChange}/>
       </div>;
   }

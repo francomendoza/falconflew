@@ -14,7 +14,13 @@ var TemplateForm = React.createClass({
     };
   },
 
-  updateState: function(property_value) {
+  updateStateFromChild: function(property_value) {
+    //Start here: we need to set the children's values to
+    //the state here... but it's nested
+    //remember - we are passing the index to each child, so
+    //if we somehow pass the type (e.g. property or related node)
+    //and the index, then we can precisely change the
+    //parent state. <3 Robear
     this.setState(property_value, function() {
       console.log(this.state);
     });
@@ -22,7 +28,7 @@ var TemplateForm = React.createClass({
 
   getInitialState: function() {
     return {
-      id: this.props.params.template_id,
+      entity_template: this.getTemplate(this.props.params.template_id),
       submitted: false,
     }
   },
@@ -36,7 +42,7 @@ var TemplateForm = React.createClass({
 
   componentWillReceiveProps: function(next_props) {
     this.setState({
-      id: next_props.params.template_id
+      entity_template: this.getTemplate(next_props.params.template_id)
     }, function() {
       console.log(this.state);
     });
@@ -59,74 +65,35 @@ var TemplateForm = React.createClass({
     }
   },
 
-  getTemplateIdByName: function(template_name) {
-    var component = this;
-    var matching_templates = _.find(templates, function(template) {
-      return template.template_name === template_name
-    });
-    return matching_templates.id
-  },
-
   render: function() {
     var component = this;
-    var this_template = _.find(templates, function(template) {
-      return template.id == component.props.params.template_id
-    });
+    // var this_template = _.find(templates, function(template) {
+    //   return template.id == component.props.params.template_id
+    // });
 
     var properties, related_nodes, submitButton;
 
     if (!this.state.submitted) {
-      properties = this_template.node_properties.map(function(property) {
+      properties = this.state.entity_template.node_properties.map(function(property, index) {
         return <PropertyFormElement
-        key = {
-          property.name
-        }
-        label = {
-          property.name
-        }
-        name = {
-          property.name
-        }
-        parent_state = {
-          component.state
-        }
-        updateParentState = {
-          component.updateState
-        }
-        value = {
-          component.state[property.name]
-        }
-        />
+        key = {index}
+        property = {property}
+        updateParentState = {component.updateStateFromChild}/>
       })
-      related_nodes = this_template.related_nodes.map(function(related_node) {
+      related_nodes = this.state.entity_template.related_nodes.map(function(related_node, index) {
         return <RelationshipFormElement
-        key = {
-          related_node.template_name
-        }
-        template_name = {
-          related_node.template_name
-        }
-        template_id = {
-          component.getTemplateIdByName(related_node.template_name)
-        }
-        />
+        key = {index}
+        updateParentState = {component.updateStateFromChild}
+        related_node = {related_node}/>
       })
-      submitButton = < button onClick = {
-        this.createNode
-      } > Submit < /button>
+      submitButton = <button onClick = {this.createNode}> Submit </button>
     } else {
-      properties = < Empty / >
-        related_nodes = < Empty / >
-        submitButton = < Empty / >
+        properties = <Empty/>
+        related_nodes = <Empty/>
+        submitButton = <Empty/>
     }
 
-    return <div > {
-      properties
-    } {
-      related_nodes
-    } {
-      submitButton
-    } < /div>;
+    return <div > {properties} {related_nodes} {submitButton} </div>;
   }
 
 });

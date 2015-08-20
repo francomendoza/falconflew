@@ -25,18 +25,21 @@
         node_properties: [
           {
             name: "name",
-            type: "text"
+            type: "text",
+            value: null
           },
           {
             name: "chemical formula",
-            type: "text"
+            type: "text",
+            value: null
           }
         ],
         related_nodes: [
           {
-            template_name: "Material",
+            template_id: 3,
             relationship: "child_of",
             required: true,
+            entity_id: null
 
           }
         ]
@@ -48,18 +51,21 @@
         node_properties: [
           {
             name: "name",
-            type: "text"
+            type: "text",
+            value: null
           },
           {
             name: "location",
-            type: "text"
+            type: "text",
+            value: null
           }
         ],
         related_nodes: [
           {
-            template_name: "Salt Instance",
+            template_id: 1,
             relationship: "child_of",
-            required: true
+            required: true,
+            entity_id: null
           }
         ]
       },
@@ -70,7 +76,8 @@
         node_properties: [
           {
             name: "name",
-            type: "text"
+            type: "text",
+            value: null
           }
         ],
         related_nodes: [
