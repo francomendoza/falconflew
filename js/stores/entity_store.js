@@ -13,8 +13,8 @@ var EntityStore = Reflux.createStore({
       name: obj.name,
       template_id: obj.id
     });
+        
     this.trigger(entities);
-    
   },
   onUpdateFormElement: function(obj){
     this.trigger(obj);

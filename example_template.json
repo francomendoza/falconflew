@@ -16,7 +16,6 @@
       template_name: "generic NaCl",
       relationship: "child_of",
       required: true,
-
     },
     {
       template_name: "specific company",

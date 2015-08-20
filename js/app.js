@@ -10,7 +10,7 @@ var App = React.createClass({
 
 var routes = (
   <Route name='app' path='/' handler={App}>
-    <Route name='template_form' path='/template_form/:template_id' handler={TemplateForm} />
+    <Route name='template_form' path='/template_form/:template_id' subform={false} handler={TemplateForm} />
     <DefaultRoute handler={Empty}/>
   </Route>
 )

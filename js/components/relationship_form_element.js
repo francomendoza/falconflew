@@ -17,7 +17,7 @@ var RelationshipFormElement = React.createClass({
       return entity.template_id === that.props.template_id;
     })
     if(this.state.is_creating){
-      template_form = <TemplateForm params={{template_id: this.props.template_id}}/>
+      template_form = <TemplateForm params={{template_id: this.props.template_id}} subform={true}/>
     }
     return (
       <div>

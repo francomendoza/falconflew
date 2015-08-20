@@ -14,8 +14,7 @@ var PropertyFormElement = React.createClass({
           <label>{ this.props.label }: </label>
           <input type='text'
           name={ this.props.name }
-          onChange={this.handleChange}
-          />
+          onChange={this.handleChange}/>
       </div>;
   }
 });
