@@ -14,16 +14,24 @@ var TemplateForm = React.createClass({
     };
   },
 
-  updateStateFromChild: function(property_value) {
+  updateStateFromChild: function(data_obj) {
     //Start here: we need to set the children's values to
     //the state here... but it's nested
     //remember - we are passing the index to each child, so
     //if we somehow pass the type (e.g. property or related node)
     //and the index, then we can precisely change the
     //parent state. <3 Robear
-    this.setState(property_value, function() {
-      console.log(this.state);
-    });
+    if(data_obj.related_node){
+      this.state.entity_template.related_nodes[data_obj.index] = data_obj.data
+      this.setState(data_obj, function() {
+        console.log(this.state.entity_template);
+      });
+    }else if(data_obj.node_properties){
+      this.state.entity_template.node_property[data_obj.index] = data_obj.data
+      this.setState(data_obj, function() {
+        console.log(this.state.entity_template);
+      });
+    }
   },
 
   getInitialState: function() {
@@ -58,7 +66,7 @@ var TemplateForm = React.createClass({
       submitted: true
     }, function() {
       console.log(this.state);
-      FormActions.submitNodeForm(this.state);
+      FormActions.submitNodeForm(this.state.entity_template);
     })
     if (!this.props.subform) {
       this.context.router.transitionTo('/');
@@ -77,14 +85,16 @@ var TemplateForm = React.createClass({
       properties = this.state.entity_template.node_properties.map(function(property, index) {
         return <PropertyFormElement
         key = {index}
-        property = {property}
+        index = {index}
+        property = {{data: property}}
         updateParentState = {component.updateStateFromChild}/>
       })
       related_nodes = this.state.entity_template.related_nodes.map(function(related_node, index) {
         return <RelationshipFormElement
         key = {index}
+        index = {index}
         updateParentState = {component.updateStateFromChild}
-        related_node = {related_node}/>
+        related_node = {{data: related_node}}/>
       })
       submitButton = <button onClick = {this.createNode}> Submit </button>
     } else {

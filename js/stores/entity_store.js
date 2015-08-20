@@ -11,7 +11,7 @@ var EntityStore = Reflux.createStore({
   onSubmitNodeForm: function(obj){
     console.log(obj);
     new_obj = obj;
-    new_obj[id] = getNextId();
+    // new_obj[id] = getNextId();
     entities.push({
       new_obj
     });

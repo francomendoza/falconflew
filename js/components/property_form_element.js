@@ -8,13 +8,17 @@ var PropertyFormElement = React.createClass({
   },
 
   handleChange: function(event){
-    this.setState({value: event.target.value},function(){
-      this.props.updateParentState(this.state);
-    });
+    var obj = this.props.property;
+    obj.data.value = event.target.value;
+    obj.index = this.props.index;
+    obj.node_property = true;
+    // this.setState({value: event.target.value},function(){
+      this.props.updateParentState(obj);
+    // });
   },
 
   render: function(){
-    var property = this.props.property;
+    var property = this.props.property.data;
       return <div>
           <label>{ property.name }: </label>
           <input type = { property.type }
