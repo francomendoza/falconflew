@@ -1,5 +1,4 @@
 var TemplateForm = React.createClass({
-  // mixins: [Reflux.connect(EntityStore)],
   contextTypes: {
     router: React.PropTypes.func
   },
@@ -15,12 +14,7 @@ var TemplateForm = React.createClass({
   },
 
   updateStateFromChild: function(data_obj) {
-    //Start here: we need to set the children's values to
-    //the state here... but it's nested
-    //remember - we are passing the index to each child, so
-    //if we somehow pass the type (e.g. property or related node)
-    //and the index, then we can precisely change the
-    //parent state. <3 Robear
+
     if(data_obj.related_node){
       this.state.entity_template.related_nodes[data_obj.index] = data_obj.data
       this.setState(data_obj, function() {
@@ -38,6 +32,7 @@ var TemplateForm = React.createClass({
     return {
       entity_template: this.getTemplate(this.props.params.template_id),
       submitted: false,
+      active: true,
     }
   },
 
@@ -65,7 +60,6 @@ var TemplateForm = React.createClass({
     this.setState({
       submitted: true
     }, function() {
-      console.log(this.state);
       FormActions.submitNodeForm(this.state.entity_template);
     })
     if (!this.props.subform) {
@@ -73,37 +67,46 @@ var TemplateForm = React.createClass({
     }
   },
 
+  updateParentBackground: function(){
+    this.setState({active: false});
+  },
+
   render: function() {
     var component = this;
-    // var this_template = _.find(templates, function(template) {
-    //   return template.id == component.props.params.template_id
-    // });
 
-    var properties, related_nodes, submitButton;
+    var header, properties, related_nodes, submitButton, template;
 
-    if (!this.state.submitted) {
-      properties = this.state.entity_template.node_properties.map(function(property, index) {
-        return <PropertyFormElement
-        key = {index}
-        index = {index}
-        property = {{data: property}}
-        updateParentState = {component.updateStateFromChild}/>
-      })
-      related_nodes = this.state.entity_template.related_nodes.map(function(related_node, index) {
-        return <RelationshipFormElement
-        key = {index}
-        index = {index}
-        updateParentState = {component.updateStateFromChild}
-        related_node = {{data: related_node}}/>
-      })
-      submitButton = <button onClick = {this.createNode}> Submit </button>
-    } else {
-        properties = <Empty/>
-        related_nodes = <Empty/>
-        submitButton = <Empty/>
+    var background_color = "#cfd4d8"
+    if(this.state.active){
+      background_color = "white"
     }
 
-    return <div > {properties} {related_nodes} {submitButton} </div>;
+    header = <h3 style={{padding: "10px", margin: "0"}}>New {this.state.entity_template.template_name}</h3>
+    properties = this.state.entity_template.node_properties.map(function(property, index) {
+      return <PropertyFormElement
+      key = {index}
+      index = {index}
+      property = {{data: property}}
+      updateParentState = {component.updateStateFromChild}/>
+    })
+    related_nodes = this.state.entity_template.related_nodes.map(function(related_node, index) {
+      return <RelationshipFormElement
+      key = {index}
+      index = {index}
+      updateParentState = {component.updateStateFromChild}
+      related_node = {{data: related_node}}
+      updateParentBackground = {component.updateParentBackground}/>
+    })
+    submitButton = <div style={{padding: "10px"}}><button onClick = {this.createNode}> Submit </button></div>
+
+    if (!this.state.submitted) {
+      template = <div style={{outline: "black solid 1px", backgroundColor: background_color}}> {header} {properties} {related_nodes} {submitButton} </div>
+    } else {
+      template = <Empty/>
+    }
+
+
+    return <div> {template} </div>;
   }
 
 });
