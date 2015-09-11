@@ -19,7 +19,7 @@ var PropertyFormElement = React.createClass({
 
   render: function(){
     var property = this.props.property.data;
-      return <div>
+      return <div className="property_element">
           <label>{ property.name }: </label>
           <input type = { property.type }
           name = { property.name }

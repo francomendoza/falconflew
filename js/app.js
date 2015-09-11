@@ -3,7 +3,7 @@ var App = React.createClass({
    return (<div>
              <TemplateList />
              <EntityList />
-             <RouteHandler />
+             <div className="template_form"><RouteHandler /></div>
            </div>);
   }
 });

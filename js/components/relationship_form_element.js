@@ -15,7 +15,8 @@ var RelationshipFormElement = React.createClass({
   },
 
   newEntityForm() {
-    this.setState({is_creating: true})
+    this.setState({is_creating: true});
+    this.props.updateParentBackground();
   },
 
   render: function(){
@@ -28,13 +29,16 @@ var RelationshipFormElement = React.createClass({
       template_form = <TemplateForm params={{template_id: this.props.related_node.data.template_id}} subform={true}/>
     }
     return (
-      <div>
-        <select onChange={this.handleChange}>
-          {entities_for_template.map(function(entity, index){
-            return <option value={entity.id} key={index}>{entity.name}</option>;
-          })}
-        </select>
-        <button onClick={this.newEntityForm}>Create New</button>
+      <div className="relationship_element">
+        <div style={{padding: "10px"}}>
+          <label>{this.props.related_node.data.template_id}: </label>
+          <select onChange={this.handleChange}>
+            {entities_for_template.map(function(entity, index){
+              return <option value={entity.id} key={index}>{entity.name}</option>;
+            })}
+          </select>
+          <button onClick={this.newEntityForm}>Create New</button>
+        </div>
         {template_form}
       </div>
     );
