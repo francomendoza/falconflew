@@ -1,6 +1,6 @@
 window.db = [
     {
-        id: 1,
+        template_id: 1,
         node_label: "Container",
         node_properties: [
         {
@@ -12,7 +12,7 @@ window.db = [
         related_nodes: []
     },
     {
-        id: 2,
+        template_id: 2,
         node_label: "Flask",
         node_properties: [
         {
@@ -42,7 +42,7 @@ window.db = [
         ]
     },
     {
-        id: 3,
+        template_id: 3,
         node_label: "PartNumber",
         node_properties: [
         {
@@ -61,7 +61,7 @@ window.db = [
         ]
     },
     {
-        id: 4,
+        template_id: 4,
         node_label: "Company",
         node_properties: [
         {
@@ -80,7 +80,7 @@ window.db = [
         ]
     },
     {
-        id: 5,
+        template_id: 5,
         node_label: "Location",
         node_properties: [
         {
@@ -97,7 +97,7 @@ window.db = [
             related_nodes: []
     },
     {
-        id: 6,
+        template_id: 6,
         node_label: "Plate",
         node_properties: [
         {
@@ -132,7 +132,7 @@ window.db = [
         ]
     },
     {
-        id: 7,
+        template_id: 7,
         node_label: "Box",
         node_properties: [
         {
@@ -162,7 +162,7 @@ window.db = [
         ]
     },
     {
-        id: 8,
+        template_id: 8,
         node_label: "Refrigerator",
         node_properties: [
         {
@@ -203,7 +203,7 @@ window.db = [
         ]
     },
     {
-        id: 9,
+        template_id: 9,
         node_label: "Equipment",
         node_properties: [
         {
@@ -215,7 +215,7 @@ window.db = [
             related_nodes: []
     },
     {
-        id: 10,
+        template_id: 10,
         node_label: "Freezer",
         node_properties: [
         {
@@ -256,7 +256,7 @@ window.db = [
         ]
     },
     {
-        id: 11,
+        template_id: 11,
         node_label: "Vial",
         node_properties: [
         {
@@ -286,7 +286,7 @@ window.db = [
         ]
     },
     {
-        id: 12,
+        template_id: 12,
         node_label: "Bottle",
         node_properties: [
         {
@@ -316,7 +316,7 @@ window.db = [
         ]
     },
     {
-        id: 13,
+        template_id: 13,
         node_label: "Bag",
         node_properties: [
         {
@@ -346,7 +346,7 @@ window.db = [
         ]
     },
     {
-        id: 14,
+        template_id: 14,
         node_label: "Compound",
         node_properties: [
         {
@@ -358,7 +358,7 @@ window.db = [
             related_nodes: []
     },
     {
-        id: 15,
+        template_id: 15,
         node_label: "Salt",
         node_properties: [
         {
@@ -388,7 +388,7 @@ window.db = [
         ]
     },
     {
-        id: 15,
+        template_id: 15,
         node_label: "Solution",
         node_properties: [
         {
@@ -407,7 +407,7 @@ window.db = [
         ]
     },
     {
-        id: 16,
+        template_id: 16,
         node_label: "Person",
         node_properties: [
         {
@@ -429,7 +429,7 @@ window.db = [
             related_nodes: []
     },
     {
-        id: 17,
+        template_id: 17,
         node_label: "Year",
         node_properties: [
         {
@@ -441,7 +441,7 @@ window.db = [
             related_nodes: []
     },
     {
-        id: 18,
+        template_id: 18,
         node_label: "Month",
         node_properties: [
         {
@@ -460,7 +460,7 @@ window.db = [
         ]
     },
     {
-        id: 19,
+        template_id: 19,
         node_label: "Day",
         node_properties: [
         {
@@ -479,7 +479,7 @@ window.db = [
         ]
     },
     {
-        id: 20,
+        template_id: 20,
         node_label: "Time",
         node_properties: [
         {

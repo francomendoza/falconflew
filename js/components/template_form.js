@@ -6,7 +6,7 @@ var TemplateForm = React.createClass({
   getTemplateName: function(template_id) {
     var component = this;
     var this_template = _.find(templates, function(template) {
-      return template.id == component.props.params.template_id
+      return template.template_id == component.props.params.template_id
     });
     return {
       template_name: this_template.template_name
@@ -38,7 +38,7 @@ var TemplateForm = React.createClass({
 
   getTemplate: function(id) {
     var this_template = _.find(templates, function(template) {
-      return template.id == id
+      return template.template_id == id
     });
     return this_template
   },

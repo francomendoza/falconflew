@@ -7,12 +7,16 @@ var EntityStore = Reflux.createStore({
   updateState: function(newState){
 
   },
-  
+
+  next_index: function(){
+    return entities.length + 1;
+  },
+
   onSubmitNodeForm: function(obj){
     console.log(obj);
     // new_obj = obj.entity_template;
     // new_obj[id] = getNextId();
-    entities.push(obj);
+    entities.push(_.merge(obj, {entity_id: this.next_index()} ));
 
     this.trigger(entities);
   },
