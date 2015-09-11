@@ -81,7 +81,7 @@ var TemplateForm = React.createClass({
       background_color = "white"
     }
 
-    header = <h3 style={{padding: "10px", margin: "0"}}>New {this.state.entity_template.template_name}</h3>
+    header = <h3 style={{padding: "10px", margin: "0"}}>New {this.state.entity_template.node_label}</h3>
     properties = this.state.entity_template.node_properties.map(function(property, index) {
       return <PropertyFormElement
       key = {index}

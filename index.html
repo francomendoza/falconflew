@@ -3,6 +3,7 @@
   <meta charset="UTF-8">
   <title>form</title>
   <link href="css/template.css" rel="stylesheet" type="text/css">
+  <script src="example_template.js"></script>
   <script src="bower_components/react/react-with-addons.js"></script>
   <script src="bower_components/react-router/build/umd/reactrouter.js"></script>
   <script src="bower_components/react/JSXTransformer.js"></script>
@@ -17,85 +18,8 @@
     var Route = Router.Route;
     var RouteHandler = Router.RouteHandler;
 
-    var templates = [
-      {
-        id: 1,
-        template_name: "Salt Instance",
-        template_category: "entity",
-        node_properties: [
-          {
-            name: "name",
-            type: "text",
-            value: null
-          },
-          {
-            name: "chemical formula",
-            type: "text",
-            value: null
-          }
-        ],
-        related_nodes: [
-          {
-            template_id: 3,
-            relationship: "child_of",
-            required: true,
-            entity_id: null
-
-          }
-        ]
-      },
-      {
-        id: 2,
-        template_name: "Company Instance",
-        template_category: "entity",
-        node_properties: [
-          {
-            name: "name",
-            type: "text",
-            value: null
-          },
-          {
-            name: "location",
-            type: "text",
-            value: null
-          }
-        ],
-        related_nodes: [
-          {
-            template_id: 1,
-            relationship: "child_of",
-            required: true,
-            entity_id: null
-          }
-        ]
-      },
-      {
-        id: 3,
-        template_name: "Material",
-        template_category: "entity",
-        node_properties: [
-          {
-            name: "name",
-            type: "text",
-            value: null
-          }
-        ],
-        related_nodes: [
-        ]
-      }
-    ];
-
-    var entities = [{
-      id: 1,
-      template_id: 1,
-      name: "Cool"
-    },
-    {
-      id: 2,
-      template_id: 1,
-      name: "Cool2"
-    }];
-
+    var templates = window.db;
+    var entities = [];
   </script>
   <script type="text/jsx" src="js/actions/form_actions.js"></script>
   <script type="text/jsx" src="js/stores/entity_store.js"></script>
