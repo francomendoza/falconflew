@@ -1,3 +1,7 @@
+var EntityStore = require('./../stores/entity_store');
+var Autocomplete = require('./autocomplete');
+var TemplateForm = require('./template_form');
+
 var RelationshipFormElement = React.createClass({
 
   mixins: [Reflux.listenTo(EntityStore, 'onEntityAdded')],
@@ -44,6 +48,11 @@ var RelationshipFormElement = React.createClass({
     this.setState({value: _.last(new_entities).entity_id});
     this.triggerUpdateForParent();
   },
+          //<select value={this.state.value} onChange={this.handleChange}>
+            //{entities_for_template.map(function(entity, index){
+              //return <option value={entity.entity_id} key={index}>{entity.node_properties[0].value}</option>;
+            //})}
+          //</select>
 
   render: function(){
     var that = this;
@@ -56,11 +65,7 @@ var RelationshipFormElement = React.createClass({
       <div className="relationship_element">
         <div style={{padding: "10px"}}>
           <label>{this.getTemplateById(this.props.related_node.data.template_id).node_label}: </label>
-          <select value={this.state.value} onChange={this.handleChange}>
-            {entities_for_template.map(function(entity, index){
-              return <option value={entity.entity_id} key={index}>{entity.node_properties[0].value}</option>;
-            })}
-          </select>
+          <Autocomplete options={[{value: 1, label: 'Test'}]} />
           <button onClick={this.newEntityForm}>Create New</button>
         </div>
         {template_form}
@@ -68,3 +73,5 @@ var RelationshipFormElement = React.createClass({
     );
   }
 });
+
+module.exports = RelationshipFormElement;

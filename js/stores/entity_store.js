@@ -1,3 +1,5 @@
+var FormActions = require('./../actions/form_actions');
+
 var EntityStore = Reflux.createStore({
   listenables: [FormActions],
   getInitialState: function(){
@@ -24,3 +26,5 @@ var EntityStore = Reflux.createStore({
     this.trigger(obj);
   }
 });
+
+module.exports = EntityStore;

@@ -1,3 +1,7 @@
+var Empty = require('./empty');
+var PropertyFormElement = require('./property_form_element');
+var RelationshipFormElement = require('./relationship_form_element');
+
 var TemplateForm = React.createClass({
   contextTypes: {
     router: React.PropTypes.func
@@ -110,3 +114,5 @@ var TemplateForm = React.createClass({
   }
 
 });
+
+module.exports = TemplateForm;

@@ -14,3 +14,5 @@ var TemplateList = React.createClass({
       </div>;
   }
 });
+
+module.exports = TemplateList;

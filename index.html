@@ -6,9 +6,9 @@
   <script src="example_template.js"></script>
   <script src="bower_components/react/react-with-addons.js"></script>
   <script src="bower_components/react-router/build/umd/reactrouter.js"></script>
-  <script src="bower_components/react/JSXTransformer.js"></script>
   <script src="bower_components/reflux/dist/reflux.js"></script>
   <script src="bower_components/lodash/lodash.js"></script>
+  <script src="deps/react-typeahead.js"></script>
 
   <script>
     var Router = ReactRouter;
@@ -21,17 +21,9 @@
     var templates = window.db;
     var entities = [];
   </script>
-  <script type="text/jsx" src="js/actions/form_actions.js"></script>
-  <script type="text/jsx" src="js/stores/entity_store.js"></script>
-  <script type="text/jsx" src="js/components/empty.js"></script>
-  <script type="text/jsx" src="js/components/entity_list.js"></script>
-  <script type="text/jsx" src="js/components/template_list.js"></script>
-  <script type="text/jsx" src="js/components/property_form_element.js"></script>
-  <script type="text/jsx" src="js/components/relationship_form_element.js"></script>
-  <script type="text/jsx" src="js/components/template_form.js"></script>
-  <script type="text/jsx" src="js/app.js"></script>
 </head>
 <body>
   <div id="main"></div>
+  <script src="bundle.js"></script>
 </body>
 </html>

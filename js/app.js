@@ -1,3 +1,10 @@
+var EntityStore = require('./stores/entity_store');
+var Empty = require('./components/empty');
+var EntityList = require('./components/entity_list');
+var TemplateList = require('./components/template_list');
+var TemplateForm = require('./components/template_form');
+
+
 var App = React.createClass({
   render: function() {
    return (<div>

@@ -28,3 +28,5 @@ var PropertyFormElement = React.createClass({
       </div>;
   }
 });
+
+module.exports = PropertyFormElement;

@@ -1,3 +1,5 @@
+var EntityStore = require('./../stores/entity_store');
+
 var EntityList = React.createClass({
  mixins: [Reflux.connect(EntityStore)],
 
@@ -16,3 +18,5 @@ var EntityList = React.createClass({
       </div>;
   }
 });
+
+module.exports = EntityList;

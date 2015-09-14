@@ -3,3 +3,5 @@ var Empty = React.createClass({
     return <div></div>;
   }
 });
+
+module.exports = Empty;
