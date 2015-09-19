@@ -240,6 +240,96 @@
 	var Empty = __webpack_require__(3);
 	var PropertyFormElement = __webpack_require__(7);
 	var RelationshipFormElement = __webpack_require__(8);
+	var EntityStore = __webpack_require__(1);
+	var Autocomplete = __webpack_require__(9);
+
+	var RelationshipFormElement = React.createClass({
+	  displayName: 'RelationshipFormElement',
+
+	  mixins: [Reflux.listenTo(EntityStore, 'onEntityAdded')],
+
+	  getInitialState: function getInitialState() {
+	    var matching_entities = this.getEntitiesForTemplate(entities);
+	    var entity_id = null;
+	    if (matching_entities.length > 0) {
+	      entity_id = matching_entities[0].entity_id;
+	    }
+	    return { is_creating: false, value: entity_id };
+	  },
+
+	  handleChange: function handleChange(event) {
+	    this.setState({ value: event.target.value });
+	    this.triggerUpdateForParent();
+	  },
+
+	  triggerUpdateForParent: function triggerUpdateForParent() {
+	    var obj = this.props.related_node;
+	    obj.data.entity_id = this.state.value;
+	    obj.index = this.props.index;
+	    obj.related_node = true;
+	    this.props.updateParentState(obj);
+	  },
+
+	  newEntityForm: function newEntityForm() {
+	    this.setState({ is_creating: true });
+	    this.props.updateParentBackground();
+	  },
+	  getTemplateById: function getTemplateById(id) {
+	    return _.find(templates, function (template) {
+	      return template.template_id === id;
+	    }) || { node_label: '' };
+	  },
+
+	  getEntitiesForTemplate: function getEntitiesForTemplate(these_entities) {
+	    var that = this;
+	    return _.filter(these_entities, function (entity) {
+	      return entity.template_id === that.props.related_node.data.template_id;
+	    });
+	  },
+
+	  onEntityAdded: function onEntityAdded(updated_entities) {
+	    new_entities = this.getEntitiesForTemplate(updated_entities);
+	    this.setState({ value: _.last(new_entities).entity_id });
+	    this.triggerUpdateForParent();
+	  },
+	  //<select value={this.state.value} onChange={this.handleChange}>
+	  //{entities_for_template.map(function(entity, index){
+	  //return <option value={entity.entity_id} key={index}>{entity.node_properties[0].value}</option>;
+	  //})}
+	  //</select>
+
+	  render: function render() {
+	    var that = this;
+	    var template_form;
+	    var entities_for_template = this.getEntitiesForTemplate(entities);
+	    if (this.state.is_creating) {
+	      template_form = React.createElement(TemplateForm, { params: { template_id: this.props.related_node.data.template_id }, subform: true });
+	    }
+	    return React.createElement(
+	      'div',
+	      { className: 'relationship_element' },
+	      React.createElement(
+	        'div',
+	        { style: { padding: "10px" } },
+	        React.createElement(
+	          'label',
+	          null,
+	          this.getTemplateById(this.props.related_node.data.template_id).node_label,
+	          ': '
+	        ),
+	        React.createElement(Autocomplete, { options: [{ value: 1, label: 'Test' }] }),
+	        React.createElement(
+	          'button',
+	          { onClick: this.newEntityForm },
+	          'Create New'
+	        )
+	      ),
+	      template_form
+	    );
+	  }
+	});
+
+	module.exports = RelationshipFormElement;
 
 	var TemplateForm = React.createClass({
 	  displayName: 'TemplateForm',
@@ -559,10 +649,10 @@
 	  },
 
 	  handleTextInput: function handleTextInput(e) {
-	    if (this.target.value.replace(/^\s+|\s+$/g, '') === '') {
+	    if (e.target.value.replace(/^\s+|\s+$/g, '') === '') {
 	      this.setState({ has_text: false });
 	    }
-	    this.setState({ current_text: this.target.value });
+	    this.setState({ current_text: e.target.value });
 	  },
 
 	  render: function render() {

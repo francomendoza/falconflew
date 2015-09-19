@@ -16,10 +16,10 @@ var Autocomplete = React.createClass({
     },
 
     handleTextInput: function(e){
-      if(this.target.value.replace(/^\s+|\s+$/g, '') === ''){
+      if(e.target.value.replace(/^\s+|\s+$/g, '') === ''){
         this.setState({has_text: false});
       }
-      this.setState({current_text: this.target.value})
+      this.setState({current_text: e.target.value})
     },
 
     render: function() {
