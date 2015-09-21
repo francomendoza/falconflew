@@ -1,3 +1,12 @@
+var React = require('react');
+
+var ReactRouter = require('react-router');
+var Router = ReactRouter.Router;
+var DefaultRoute = ReactRouter.DefaultRoute;
+var Link = ReactRouter.Link;
+var Route = ReactRouter.Route;
+var RouteHandler = ReactRouter.RouteHandler;
+
 var EntityStore = require('./stores/entity_store');
 var Empty = require('./components/empty');
 var EntityList = require('./components/entity_list');
@@ -21,7 +30,6 @@ var routes = (
     <DefaultRoute handler={Empty}/>
   </Route>
 )
-
 ReactRouter.run(routes, function(Handler) {
   React.render(<Handler/>, document.getElementById('main'))
 });

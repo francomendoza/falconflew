@@ -1,6 +1,11 @@
+var React = require('react');
+var Router = require('react-router');
+var Link = Router.Link;
+
 var TemplateList = React.createClass({
   getInitialState: function() {
-    return {templates: templates}
+    var templates = JSON.parse(localStorage.getItem('templates'));
+    return {templates: templates};
   },
 
   render: function() {

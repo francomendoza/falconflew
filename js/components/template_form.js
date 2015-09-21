@@ -1,8 +1,10 @@
-var Empty = require('./empty');
+var React = require('react');
+var Reflux = require('reflux');
+var _ = require('lodash');
+
 var PropertyFormElement = require('./property_form_element');
-var RelationshipFormElement = require('./relationship_form_element');
+var Autosuggest = require('react-autosuggest');
 var EntityStore = require('./../stores/entity_store');
-var Autocomplete = require('./autocomplete');
 
 var RelationshipFormElement = React.createClass({
 
@@ -55,6 +57,11 @@ var RelationshipFormElement = React.createClass({
               //return <option value={entity.entity_id} key={index}>{entity.node_properties[0].value}</option>;
             //})}
           //</select>
+  getSuggestions: function(input, callback) {
+    var regex = new RegExp('^' + input, 'i');
+    var suggestions = _.filter(['Test', 'Team', 'Testicles', 'Teeth', 'Touch'], function(option){ return regex.test(option); });
+    setTimeout(function(){ callback(null, suggestions);}, 300);
+  },
 
   render: function(){
     var that = this;
@@ -67,7 +74,7 @@ var RelationshipFormElement = React.createClass({
       <div className="relationship_element">
         <div style={{padding: "10px"}}>
           <label>{this.getTemplateById(this.props.related_node.data.template_id).node_label}: </label>
-          <Autocomplete options={[{value: 1, label: 'Test'}]} />
+          <Autosuggest suggestions={this.getSuggestions} />
           <button onClick={this.newEntityForm}>Create New</button>
         </div>
         {template_form}
@@ -79,6 +86,7 @@ var RelationshipFormElement = React.createClass({
 module.exports = RelationshipFormElement;
 
 var TemplateForm = React.createClass({
+  mixins: [Reflux.listenTo(TemplateStore, )]
   contextTypes: {
     router: React.PropTypes.func
   },
@@ -113,11 +121,16 @@ var TemplateForm = React.createClass({
       entity_template: this.getTemplate(this.props.params.template_id),
       submitted: false,
       active: true,
+      templates: []
     }
   },
 
+  handleTemplateLoad: function(templates){
+    this.setState({templates: templates});
+  },
+
   getTemplate: function(id) {
-    var this_template = _.find(templates, function(template) {
+    var this_template = _.find(this.state.templates, function(template) {
       return template.template_id == id
     });
     return this_template

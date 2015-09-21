@@ -1,3 +1,5 @@
+var React = require('react');
+
 var PropertyFormElement = React.createClass({
   contextTypes: {
       router: React.PropTypes.func
