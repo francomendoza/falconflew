@@ -1,9 +1,9 @@
 var React = require('react');
-var Reflux = require('reflux');
-var EntityStore = require('./../stores/entity_store');
+// var Reflux = require('reflux');
+// var EntityStore = require('./../stores/entity_store');
 
 var EntityList = React.createClass({
-  mixins: [Reflux.connect(EntityStore)],
+  // mixins: [Reflux.connect(EntityStore)],
 
   getInitialState: function() {
     return {entities: []}

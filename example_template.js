@@ -1,4 +1,4 @@
-window.db = [
+var db = [
     {
         template_id: 1,
         node_label: "Container",
@@ -497,4 +497,6 @@ window.db = [
             }
         ]
     }
-]
+];
+
+module.exports= db;

@@ -1,14 +1,16 @@
 var React = require('react');
-var Reflux = require('reflux');
+// var Reflux = require('reflux');
 var _ = require('lodash');
+var templates = require('../../example_template')
+var entities = [];
 
 var PropertyFormElement = require('./property_form_element');
 var Autosuggest = require('react-autosuggest');
-var EntityStore = require('./../stores/entity_store');
+// var EntityStore = require('./../stores/entity_store');
 
 var RelationshipFormElement = React.createClass({
 
-  mixins: [Reflux.listenTo(EntityStore, 'onEntityAdded')],
+  // mixins: [Reflux.listenTo(EntityStore, 'onEntityAdded')],
 
   getInitialState: function(){
     var matching_entities = this.getEntitiesForTemplate(entities);
@@ -86,7 +88,7 @@ var RelationshipFormElement = React.createClass({
 module.exports = RelationshipFormElement;
 
 var TemplateForm = React.createClass({
-  mixins: [Reflux.listenTo(TemplateStore, )]
+  // mixins: [Reflux.listenTo(TemplateStore, )]
   contextTypes: {
     router: React.PropTypes.func
   },
@@ -130,7 +132,7 @@ var TemplateForm = React.createClass({
   },
 
   getTemplate: function(id) {
-    var this_template = _.find(this.state.templates, function(template) {
+    var this_template = _.find(templates, function(template) {
       return template.template_id == id
     });
     return this_template
