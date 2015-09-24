@@ -1,12 +1,17 @@
 import React from 'react';
-import {Router, Route, IndexRoute, Link } from 'react-router';
-import ReactDOM from 'react-dom'
+import { Router, Route, IndexRoute, Link } from 'react-router';
+import ReactDOM from 'react-dom';
+import { createStore } from 'redux';
+import nodeApp from './reducers/reducers';
+import { Provider } from 'react-redux';
 
 // var EntityStore = require('./stores/entity_store');
 var Empty = require('./components/empty');
 var EntityList = require('./components/entity_list');
 var TemplateList = require('./components/template_list');
 var TemplateForm = require('./components/template_form');
+
+let store = createStore(nodeApp);
 
 var App = React.createClass({
   render: function() {
@@ -18,9 +23,17 @@ var App = React.createClass({
   }
 });
 
+class ReduxApp extends React.Component{
+  render(){
+    return <Provider store = {store}>
+    <App {...this.props} />
+    </Provider>
+  }
+}
+
 var route = (
   <Router>
-    <Route path="/" component={App}>
+    <Route path="/" component={ReduxApp}>
       <Route path="template_form/:template_id" component={TemplateForm}/>
     </Route>
   </Router>    

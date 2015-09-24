@@ -1,0 +1,4 @@
+// import { createStore } from 'redux';
+// import app from '/reducers';
+
+// let store = createStore(app);

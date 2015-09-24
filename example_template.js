@@ -388,7 +388,7 @@ var db = [
         ]
     },
     {
-        template_id: 15,
+        template_id: 16,
         node_label: "Solution",
         node_properties: [
         {
@@ -407,7 +407,7 @@ var db = [
         ]
     },
     {
-        template_id: 16,
+        template_id: 17,
         node_label: "Person",
         node_properties: [
         {
@@ -429,7 +429,7 @@ var db = [
             related_nodes: []
     },
     {
-        template_id: 17,
+        template_id: 18,
         node_label: "Year",
         node_properties: [
         {
@@ -441,7 +441,7 @@ var db = [
             related_nodes: []
     },
     {
-        template_id: 18,
+        template_id: 19,
         node_label: "Month",
         node_properties: [
         {
@@ -452,7 +452,7 @@ var db = [
         ],
             related_nodes: [
             {
-                template_id: 17,
+                template_id: 18,
                 relationship: 'of_year',
                 required: true,
                 entity_id: null
@@ -460,7 +460,7 @@ var db = [
         ]
     },
     {
-        template_id: 19,
+        template_id: 20,
         node_label: "Day",
         node_properties: [
         {
@@ -471,7 +471,7 @@ var db = [
         ],
             related_nodes: [
             {
-                template_id: 18,
+                template_id: 19,
                 relationship: 'of_month',
                 required: true,
                 entity_id: null
@@ -479,7 +479,7 @@ var db = [
         ]
     },
     {
-        template_id: 20,
+        template_id: 21,
         node_label: "Time",
         node_properties: [
         {
@@ -490,7 +490,7 @@ var db = [
         ],
             related_nodes: [
             {
-                template_id: 19,
+                template_id: 20,
                 relationship: 'of_day',
                 required: true,
                 entity_id: null
