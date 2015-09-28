@@ -14,7 +14,9 @@ var TemplateList = React.createClass({
         <h2>Templates</h2>
         <ul>
           {this.state.templates.map(function(template) {
-           return <li key={template.template_id}><Link to={`/template_form/${template.template_id}`}>{template.node_label}</Link></li>
+           return (<li key={template.template_id}>
+             <Link to={`/template_form/${template.template_id}`}>{template.node_label}</Link>
+           </li>);
           })}
         </ul>
       </div>;

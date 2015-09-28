@@ -1,16 +1,14 @@
 var React = require('react');
-// var Reflux = require('reflux');
 var _ = require('lodash');
 var templates = require('../../example_template')
 var entities = [];
-
+var Empty = require('./empty');
 var PropertyFormElement = require('./property_form_element');
 var Autosuggest = require('react-autosuggest');
-// var EntityStore = require('./../stores/entity_store');
+import { submitForm } from '../actions/actions';
+import { connect } from 'react-redux';
 
 var RelationshipFormElement = React.createClass({
-
-  // mixins: [Reflux.listenTo(EntityStore, 'onEntityAdded')],
 
   getInitialState: function(){
     var matching_entities = this.getEntitiesForTemplate(entities);
@@ -38,6 +36,7 @@ var RelationshipFormElement = React.createClass({
     this.setState({is_creating: true});
     this.props.updateParentBackground();
   },
+  
   getTemplateById: function(id) {
     return _.find(templates, function(template) { return template.template_id === id; }) || {node_label: ''};
   },
@@ -54,11 +53,7 @@ var RelationshipFormElement = React.createClass({
     this.setState({value: _.last(new_entities).entity_id});
     this.triggerUpdateForParent();
   },
-          //<select value={this.state.value} onChange={this.handleChange}>
-            //{entities_for_template.map(function(entity, index){
-              //return <option value={entity.entity_id} key={index}>{entity.node_properties[0].value}</option>;
-            //})}
-          //</select>
+        
   getSuggestions: function(input, callback) {
     var regex = new RegExp('^' + input, 'i');
     var suggestions = _.filter(['Test', 'Team', 'Testicles', 'Teeth', 'Touch'], function(option){ return regex.test(option); });
@@ -88,7 +83,6 @@ var RelationshipFormElement = React.createClass({
 module.exports = RelationshipFormElement;
 
 var TemplateForm = React.createClass({
-  // mixins: [Reflux.listenTo(TemplateStore, )]
   contextTypes: {
     router: React.PropTypes.func
   },
@@ -155,10 +149,13 @@ var TemplateForm = React.createClass({
     this.setState({
       submitted: true
     }, function() {
-      FormActions.submitNodeForm(this.state.entity_template);
+      // FormActions.submitNodeForm(this.state.entity_template);
+      // console.log(this.props);
+      const { dispatch } = this.props;  
+      dispatch(submitForm(this.state.entity_template));
     })
     if (!this.props.subform) {
-      this.context.router.transitionTo('/');
+      // this.context.router.transitionTo('/');
     }
   },
 
@@ -167,6 +164,8 @@ var TemplateForm = React.createClass({
   },
 
   render: function() {
+    const { dispatch, entities } = this.props;
+    console.log(this.props);
     var component = this;
 
     var header, properties, related_nodes, submitButton, template;
@@ -200,10 +199,16 @@ var TemplateForm = React.createClass({
       template = <Empty/>
     }
 
-
     return <div> {template} </div>;
   }
 
 });
 
-module.exports = TemplateForm;
+function mapStateToProps(state){
+  return {
+    entities: state.entities
+  }
+}
+
+export default connect(mapStateToProps)(TemplateForm);
+// module.exports = TemplateForm;
