@@ -36,7 +36,7 @@ var RelationshipFormElement = React.createClass({
     this.setState({is_creating: true});
     this.props.updateParentBackground();
   },
-  
+
   getTemplateById: function(id) {
     return _.find(templates, function(template) { return template.template_id === id; }) || {node_label: ''};
   },
@@ -141,16 +141,9 @@ var TemplateForm = React.createClass({
   },
 
   createNode: function() {
-    // submit ajax request to create new node
-    // ajax response will have ID/info for that node
-    // use response to change state of form
-    //check if this is a subform
-    // if so change state of relationshipformelement
     this.setState({
       submitted: true
     }, function() {
-      // FormActions.submitNodeForm(this.state.entity_template);
-      // console.log(this.props);
       const { dispatch } = this.props;  
       dispatch(submitForm(this.state.entity_template));
     })
@@ -187,6 +180,7 @@ var TemplateForm = React.createClass({
       return <RelationshipFormElement
       key = {index}
       index = {index}
+
       updateParentState = {component.updateStateFromChild}
       related_node = {{data: related_node}}
       updateParentBackground = {component.updateParentBackground}/>

@@ -20730,20 +20730,24 @@
 
 	'use strict';
 
-	var React = __webpack_require__(1);
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	var _reactRedux = __webpack_require__(166);
+
 	// var Reflux = require('reflux');
 	// var EntityStore = require('./../stores/entity_store');
 
+	var React = __webpack_require__(1);
 	var EntityList = React.createClass({
 	  displayName: 'EntityList',
 
 	  // mixins: [Reflux.connect(EntityStore)],
 
-	  getInitialState: function getInitialState() {
-	    return { entities: [] };
-	  },
-
 	  render: function render() {
+	    console.log('I love weenis');
+	    console.log(this.props);
 	    return React.createElement(
 	      'div',
 	      null,
@@ -20755,7 +20759,7 @@
 	      React.createElement(
 	        'ul',
 	        null,
-	        this.state.entities.map(function (entity) {
+	        this.props.entities.map(function (entity) {
 	          return React.createElement(
 	            'li',
 	            { key: entity.node_label },
@@ -20770,7 +20774,15 @@
 	  }
 	});
 
-	module.exports = EntityList;
+	function mapStateToProps(state) {
+	  return {
+	    entities: state.entities
+	  };
+	}
+
+	// module.exports = EntityList;
+	exports['default'] = (0, _reactRedux.connect)(mapStateToProps)(EntityList);
+	module.exports = exports['default'];
 
 /***/ },
 /* 178 */
@@ -25212,16 +25224,9 @@
 	  },
 
 	  createNode: function createNode() {
-	    // submit ajax request to create new node
-	    // ajax response will have ID/info for that node
-	    // use response to change state of form
-	    //check if this is a subform
-	    // if so change state of relationshipformelement
 	    this.setState({
 	      submitted: true
 	    }, function () {
-	      // FormActions.submitNodeForm(this.state.entity_template);
-	      // console.log(this.props);
 	      var dispatch = this.props.dispatch;
 
 	      dispatch((0, _actionsActions.submitForm)(this.state.entity_template));
@@ -25267,6 +25272,7 @@
 	      return React.createElement(RelationshipFormElement, {
 	        key: index,
 	        index: index,
+
 	        updateParentState: component.updateStateFromChild,
 	        related_node: { data: related_node },
 	        updateParentBackground: component.updateParentBackground });
@@ -38743,24 +38749,25 @@
 
 	var _actionsActions = __webpack_require__(223);
 
-	var initialState = { entities: [], active_template: null };
+	var initialState = [];
 
 	function entities(state, action) {
 	  if (state === undefined) state = initialState;
 
 	  switch (action.type) {
 	    case 'SUBMIT_FORM':
-	      return [].concat(_toConsumableArray(state.entities), [action.node_obj]);
+	      console.log('hello from line 9!');
+	      return [].concat(_toConsumableArray(state), [action.node_obj]);
 	    default:
 	      return state;
 	  }
 	}
 
-	var nodeApp = (0, _redux.combineReducers)({
+	var reducers = (0, _redux.combineReducers)({
 	  entities: entities
 	});
 
-	exports['default'] = nodeApp;
+	exports['default'] = reducers;
 	module.exports = exports['default'];
 
 /***/ }
