@@ -98,13 +98,15 @@ var TemplateForm = React.createClass({
   },
 
   updateStateFromChild: function(data_obj) {
-
+    let {dispatch} = this.props;
     if(data_obj.related_node){
+      dispatch(currentlyEditingTemplateRelatedNodeUpdated(data_obj.data))
       this.state.entity_template.related_nodes[data_obj.index] = data_obj.data
       this.setState(data_obj, function() {
         console.log(this.state.entity_template);
       });
     }else if(data_obj.node_properties){
+      dispatch(currentlyEditingTemplatePropertyUpdated(data_obj.data))
       this.state.entity_template.node_property[data_obj.index] = data_obj.data
       this.setState(data_obj, function() {
         console.log(this.state.entity_template);
@@ -112,14 +114,14 @@ var TemplateForm = React.createClass({
     }
   },
 
-  getInitialState: function() {
-    return {
-      entity_template: this.getTemplate(this.props.params.template_id),
-      submitted: false,
-      active: true,
-      templates: []
-    }
-  },
+  // getInitialState: function() {
+  //   return {
+  //     entity_template: this.getTemplate(this.props.params.template_id),
+  //     submitted: false,
+  //     active: true,
+  //     templates: []
+  //   }
+  // },
 
   handleTemplateLoad: function(templates){
     this.setState({templates: templates});
@@ -141,15 +143,21 @@ var TemplateForm = React.createClass({
   },
 
   createNode: function() {
-    this.setState({
-      submitted: true
-    }, function() {
-      const { dispatch } = this.props;  
-      dispatch(submitForm(this.state.entity_template));
-    })
-    if (!this.props.subform) {
+    // this.setState({
+    //   submitted: true
+    // }, function() {
+    const { dispatch } = this.props;
+    let node_properties = this.props.templatesById[this.props.params.currentTemplateId].node_properties.map((node_property) => {
+
+      return 
+
+    });
+
+      dispatch(submitForm());
+    // })
+    // if (!this.props.subform) {
       // this.context.router.transitionTo('/');
-    }
+    // }
   },
 
   updateParentBackground: function(){
@@ -158,36 +166,34 @@ var TemplateForm = React.createClass({
 
   render: function() {
     const { dispatch, entities } = this.props;
-    console.log(this.props);
     var component = this;
 
     var header, properties, related_nodes, submitButton, template;
 
     var background_color = "#cfd4d8"
-    if(this.state.active){
-      background_color = "white"
-    }
+    // if(this.state.active){
+    //   background_color = "white"
+    // }
 
-    header = <h3 style={{padding: "10px", margin: "0"}}>New {this.state.entity_template.node_label}</h3>
-    properties = this.state.entity_template.node_properties.map(function(property, index) {
+    header = <h3 style={{padding: "10px", margin: "0"}}>New {this.props.templatesById[this.props.params.currentTemplateId].node_label}</h3>
+    properties = this.props.templatesById[this.props.params.currentTemplateId].node_properties.map(function(property, index) {
       return <PropertyFormElement
       key = {index}
       index = {index}
-      property = {{data: property}}
-      updateParentState = {component.updateStateFromChild}/>
+      property = {{data: property}} />
     })
-    related_nodes = this.state.entity_template.related_nodes.map(function(related_node, index) {
+    related_nodes = this.props.templatesById[this.props.params.currentTemplateId].related_nodes.map(function(related_node, index) {
       return <RelationshipFormElement
       key = {index}
       index = {index}
 
-      updateParentState = {component.updateStateFromChild}
+      updateParentState = {() => dispatch(enterPropData())}
       related_node = {{data: related_node}}
       updateParentBackground = {component.updateParentBackground}/>
     })
     submitButton = <div style={{padding: "10px"}}><button onClick = {this.createNode}> Submit </button></div>
 
-    if (!this.state.submitted) {
+    if (this.props.params.currentTemplateId) {
       template = <div style={{outline: "black solid 1px", backgroundColor: background_color}}> {header} {properties} {related_nodes} {submitButton} </div>
     } else {
       template = <Empty/>
@@ -200,7 +206,8 @@ var TemplateForm = React.createClass({
 
 function mapStateToProps(state){
   return {
-    entities: state.entities
+    entities: state.entities,
+    templatesById: state.templates.templatesById
   }
 }
 

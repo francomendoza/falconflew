@@ -11,6 +11,8 @@ let store = createStore(reducers);
 
 class ReduxApp extends React.Component{
   render(){
+    console.log('this should be all props:');
+    console.log(this.props);
     return <Provider store = {store}>
     <App {...this.props} />
     </Provider>
@@ -20,7 +22,7 @@ class ReduxApp extends React.Component{
 var route = (
   <Router>
     <Route path="/" component={ReduxApp}>
-      <Route path="template_form/:template_id" component={TemplateForm}/>
+      <Route path="template_form/:currentTemplateId" component={TemplateForm}/>
     </Route>
   </Router>
 )

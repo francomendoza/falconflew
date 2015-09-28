@@ -1,5 +1,5 @@
 {
-  currentTemplateId: 3,
+  currentTemplateId: 3, //from route
   subTemplates: [
     {
       id: 4,
@@ -7,7 +7,7 @@
       submitted: true
     }
   ],
-  activeTemplate: 2,
+  focusTemplate: 2,  //for styling
   templates: [
     {
       template_id: 3,

@@ -1,7 +1,12 @@
 import { combineReducers } from 'redux';
 import { submitForm } from '../actions/actions';
+import db from '../../example_template';
 
 const initialState =  [];
+const initialTemplates = db;
+let templatesById = {};
+db.forEach((el) => { templatesById[el.template_id] = el });
+const initialTemplateState = { templatesById, initialTemplates };
 
 function entities(state = initialState, action){
   switch (action.type){
@@ -13,8 +18,18 @@ function entities(state = initialState, action){
   }
 }
 
+function templates(state = initialTemplateState, action) {
+  switch (action.type){
+    case 'SUBMIT_FORM':
+      console.log('boom');
+    default:
+     return state;
+   }
+}
+
 const reducers = combineReducers({
-  entities
+  entities,
+  templates
 })
 
 export default reducers;

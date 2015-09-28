@@ -8,8 +8,6 @@ var TemplateForm = require('./components/template_form');
 
 var App = React.createClass({
   render: function() {
-    // const { dispatch } = this.props;
-    // console.log(this.props);
    return (<div>
              <TemplateList />
              <EntityList />

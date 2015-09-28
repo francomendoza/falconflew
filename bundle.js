@@ -94,6 +94,8 @@
 	  _createClass(ReduxApp, [{
 	    key: 'render',
 	    value: function render() {
+	      console.log('this should be all props:');
+	      console.log(this.props);
 	      return _react2['default'].createElement(
 	        _reactRedux.Provider,
 	        { store: store },
@@ -111,7 +113,7 @@
 	  _react2['default'].createElement(
 	    _reactRouter.Route,
 	    { path: '/', component: ReduxApp },
-	    _react2['default'].createElement(_reactRouter.Route, { path: 'template_form/:template_id', component: TemplateForm })
+	    _react2['default'].createElement(_reactRouter.Route, { path: 'template_form/:currentTemplateId', component: TemplateForm })
 	  )
 	);
 
@@ -20692,8 +20694,6 @@
 	  displayName: 'App',
 
 	  render: function render() {
-	    // const { dispatch } = this.props;
-	    // console.log(this.props);
 	    return _react2['default'].createElement(
 	      'div',
 	      null,
@@ -25181,13 +25181,16 @@
 	  },
 
 	  updateStateFromChild: function updateStateFromChild(data_obj) {
+	    var dispatch = this.props.dispatch;
 
 	    if (data_obj.related_node) {
+	      dispatch(currentlyEditingTemplateRelatedNodeUpdated(data_obj.data));
 	      this.state.entity_template.related_nodes[data_obj.index] = data_obj.data;
 	      this.setState(data_obj, function () {
 	        console.log(this.state.entity_template);
 	      });
 	    } else if (data_obj.node_properties) {
+	      dispatch(currentlyEditingTemplatePropertyUpdated(data_obj.data));
 	      this.state.entity_template.node_property[data_obj.index] = data_obj.data;
 	      this.setState(data_obj, function () {
 	        console.log(this.state.entity_template);
@@ -25195,14 +25198,14 @@
 	    }
 	  },
 
-	  getInitialState: function getInitialState() {
-	    return {
-	      entity_template: this.getTemplate(this.props.params.template_id),
-	      submitted: false,
-	      active: true,
-	      templates: []
-	    };
-	  },
+	  // getInitialState: function() {
+	  //   return {
+	  //     entity_template: this.getTemplate(this.props.params.template_id),
+	  //     submitted: false,
+	  //     active: true,
+	  //     templates: []
+	  //   }
+	  // },
 
 	  handleTemplateLoad: function handleTemplateLoad(templates) {
 	    this.setState({ templates: templates });
@@ -25224,16 +25227,21 @@
 	  },
 
 	  createNode: function createNode() {
-	    this.setState({
-	      submitted: true
-	    }, function () {
-	      var dispatch = this.props.dispatch;
+	    // this.setState({
+	    //   submitted: true
+	    // }, function() {
+	    var dispatch = this.props.dispatch;
 
-	      dispatch((0, _actionsActions.submitForm)(this.state.entity_template));
+	    var node_properties = this.props.templatesById[this.props.params.currentTemplateId].node_properties.map(function (node_property) {
+
+	      return;
 	    });
-	    if (!this.props.subform) {
-	      // this.context.router.transitionTo('/');
-	    }
+
+	    dispatch((0, _actionsActions.submitForm)());
+	    // })
+	    // if (!this.props.subform) {
+	    // this.context.router.transitionTo('/');
+	    // }
 	  },
 
 	  updateParentBackground: function updateParentBackground() {
@@ -25245,35 +25253,35 @@
 	    var dispatch = _props.dispatch;
 	    var entities = _props.entities;
 
-	    console.log(this.props);
 	    var component = this;
 
 	    var header, properties, related_nodes, submitButton, template;
 
 	    var background_color = "#cfd4d8";
-	    if (this.state.active) {
-	      background_color = "white";
-	    }
+	    // if(this.state.active){
+	    //   background_color = "white"
+	    // }
 
 	    header = React.createElement(
 	      'h3',
 	      { style: { padding: "10px", margin: "0" } },
 	      'New ',
-	      this.state.entity_template.node_label
+	      this.props.templatesById[this.props.params.currentTemplateId].node_label
 	    );
-	    properties = this.state.entity_template.node_properties.map(function (property, index) {
+	    properties = this.props.templatesById[this.props.params.currentTemplateId].node_properties.map(function (property, index) {
 	      return React.createElement(PropertyFormElement, {
 	        key: index,
 	        index: index,
-	        property: { data: property },
-	        updateParentState: component.updateStateFromChild });
+	        property: { data: property } });
 	    });
-	    related_nodes = this.state.entity_template.related_nodes.map(function (related_node, index) {
+	    related_nodes = this.props.templatesById[this.props.params.currentTemplateId].related_nodes.map(function (related_node, index) {
 	      return React.createElement(RelationshipFormElement, {
 	        key: index,
 	        index: index,
 
-	        updateParentState: component.updateStateFromChild,
+	        updateParentState: function () {
+	          return dispatch(enterPropData());
+	        },
 	        related_node: { data: related_node },
 	        updateParentBackground: component.updateParentBackground });
 	    });
@@ -25287,7 +25295,7 @@
 	      )
 	    );
 
-	    if (!this.state.submitted) {
+	    if (this.props.params.currentTemplateId) {
 	      template = React.createElement(
 	        'div',
 	        { style: { outline: "black solid 1px", backgroundColor: background_color } },
@@ -25318,7 +25326,8 @@
 
 	function mapStateToProps(state) {
 	  return {
-	    entities: state.entities
+	    entities: state.entities,
+	    templatesById: state.templates.templatesById
 	  };
 	}
 
@@ -38743,13 +38752,25 @@
 	  value: true
 	});
 
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
 	var _redux = __webpack_require__(157);
 
 	var _actionsActions = __webpack_require__(223);
 
+	var _example_template = __webpack_require__(179);
+
+	var _example_template2 = _interopRequireDefault(_example_template);
+
 	var initialState = [];
+	var initialTemplates = _example_template2['default'];
+	var templatesById = {};
+	_example_template2['default'].forEach(function (el) {
+	  templatesById[el.template_id] = el;
+	});
+	var initialTemplateState = { templatesById: templatesById, initialTemplates: initialTemplates };
 
 	function entities(state, action) {
 	  if (state === undefined) state = initialState;
@@ -38763,8 +38784,20 @@
 	  }
 	}
 
+	function templates(state, action) {
+	  if (state === undefined) state = initialTemplateState;
+
+	  switch (action.type) {
+	    case 'SUBMIT_FORM':
+	      console.log('boom');
+	    default:
+	      return state;
+	  }
+	}
+
 	var reducers = (0, _redux.combineReducers)({
-	  entities: entities
+	  entities: entities,
+	  templates: templates
 	});
 
 	exports['default'] = reducers;
