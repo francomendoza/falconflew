@@ -11,7 +11,7 @@ const initialTemplateState = { templatesById, initialTemplates };
 function entities(state = initialState, action){
   switch (action.type){
     case 'SUBMIT_FORM':
-      console.log('hello from line 9!');
+      // console.log('hello from line 9!');
       return [...state, action.node_obj];
     default:
       return state;
@@ -20,8 +20,11 @@ function entities(state = initialState, action){
 
 function templates(state = initialTemplateState, action) {
   switch (action.type){
-    case 'SUBMIT_FORM':
+    case "UPDATE_PROPERTY_VALUE":
       console.log('boom');
+      var templatesById = initialTemplateState.templatesById;
+      var currentTemplate = templatesById[action.property_section.currentTemplateId];
+      
     default:
      return state;
    }

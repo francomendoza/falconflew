@@ -68,13 +68,13 @@
 
 	var _app2 = _interopRequireDefault(_app);
 
-	var _reducersReducers = __webpack_require__(234);
+	var _reducersReducers = __webpack_require__(223);
 
 	var _reducersReducers2 = _interopRequireDefault(_reducersReducers);
 
 	var _reactRouter = __webpack_require__(180);
 
-	var _reactDom = __webpack_require__(228);
+	var _reactDom = __webpack_require__(225);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
@@ -25059,17 +25059,17 @@
 	  value: true
 	});
 
-	var _actionsActions = __webpack_require__(223);
+	var _actionsActions = __webpack_require__(224);
 
 	var _reactRedux = __webpack_require__(166);
 
 	var React = __webpack_require__(1);
-	var _ = __webpack_require__(224);
+	var _ = __webpack_require__(226);
 	var templates = __webpack_require__(179);
 	var entities = [];
 	var Empty = __webpack_require__(176);
-	var PropertyFormElement = __webpack_require__(226);
-	var Autosuggest = __webpack_require__(227);
+	var PropertyFormElement = __webpack_require__(228);
+	var Autosuggest = __webpack_require__(229);
 
 	var RelationshipFormElement = React.createClass({
 	  displayName: 'RelationshipFormElement',
@@ -25135,7 +25135,7 @@
 	    var template_form;
 	    var entities_for_template = this.getEntitiesForTemplate(entities);
 	    if (this.state.is_creating) {
-	      template_form = React.createElement(TemplateForm, { params: { template_id: this.props.related_node.data.template_id }, subform: true });
+	      template_form = React.createElement(TemplateForm, { params: { currentTemplateId: this.props.related_node.template_id }, subform: true });
 	    }
 	    return React.createElement(
 	      'div',
@@ -25146,7 +25146,7 @@
 	        React.createElement(
 	          'label',
 	          null,
-	          this.getTemplateById(this.props.related_node.data.template_id).node_label,
+	          this.getTemplateById(this.props.related_node.template_id).node_label,
 	          ': '
 	        ),
 	        React.createElement(Autosuggest, { suggestions: this.getSuggestions }),
@@ -25180,22 +25180,25 @@
 	    };
 	  },
 
-	  updateStateFromChild: function updateStateFromChild(data_obj) {
-	    var dispatch = this.props.dispatch;
+	  // updateStateFromChild: function(data_obj) {
+	  //   let {dispatch} = this.props;
+	  //   if(data_obj.related_node){
+	  //     dispatch(currentlyEditingTemplateRelatedNodeUpdated(data_obj.data))
+	  //     this.state.entity_template.related_nodes[data_obj.index] = data_obj.data
+	  //     this.setState(data_obj, function() {
+	  //       console.log(this.state.entity_template);
+	  //     });
+	  //   }else if(data_obj.node_properties){
+	  //     dispatch(currentlyEditingTemplatePropertyUpdated(data_obj.data))
+	  //     this.state.entity_template.node_property[data_obj.index] = data_obj.data
+	  //     this.setState(data_obj, function() {
+	  //       console.log(this.state.entity_template);
+	  //     });
+	  //   }
+	  // },
 
-	    if (data_obj.related_node) {
-	      dispatch(currentlyEditingTemplateRelatedNodeUpdated(data_obj.data));
-	      this.state.entity_template.related_nodes[data_obj.index] = data_obj.data;
-	      this.setState(data_obj, function () {
-	        console.log(this.state.entity_template);
-	      });
-	    } else if (data_obj.node_properties) {
-	      dispatch(currentlyEditingTemplatePropertyUpdated(data_obj.data));
-	      this.state.entity_template.node_property[data_obj.index] = data_obj.data;
-	      this.setState(data_obj, function () {
-	        console.log(this.state.entity_template);
-	      });
-	    }
+	  handleChange: function handleChange(modified_obj) {
+	    this.props.dispatch((0, _actionsActions.updatePropertyValue)(modified_obj));
 	  },
 
 	  // getInitialState: function() {
@@ -25207,9 +25210,9 @@
 	  //   }
 	  // },
 
-	  handleTemplateLoad: function handleTemplateLoad(templates) {
-	    this.setState({ templates: templates });
-	  },
+	  // handleTemplateLoad: function(templates){
+	  //   this.setState({templates: templates});
+	  // },
 
 	  getTemplate: function getTemplate(id) {
 	    var this_template = _.find(templates, function (template) {
@@ -25219,11 +25222,13 @@
 	  },
 
 	  componentWillReceiveProps: function componentWillReceiveProps(next_props) {
-	    this.setState({
-	      entity_template: this.getTemplate(next_props.params.template_id)
-	    }, function () {
-	      console.log(this.state);
-	    });
+	    // could update global state with an action to set current template?
+
+	    // this.setState({
+	    //   entity_template: this.getTemplate(next_props.params.template_id)
+	    // }, function() {
+	    //   console.log(this.state);
+	    // });
 	  },
 
 	  createNode: function createNode() {
@@ -25253,7 +25258,7 @@
 	    var dispatch = _props.dispatch;
 	    var entities = _props.entities;
 
-	    var component = this;
+	    var that = this;
 
 	    var header, properties, related_nodes, submitButton, template;
 
@@ -25268,23 +25273,24 @@
 	      'New ',
 	      this.props.templatesById[this.props.params.currentTemplateId].node_label
 	    );
+
 	    properties = this.props.templatesById[this.props.params.currentTemplateId].node_properties.map(function (property, index) {
 	      return React.createElement(PropertyFormElement, {
 	        key: index,
 	        index: index,
-	        property: { data: property } });
+	        currentTemplateId: that.props.params.currentTemplateId,
+	        property: property,
+	        handleChange: that.handleChange });
 	    });
+
 	    related_nodes = this.props.templatesById[this.props.params.currentTemplateId].related_nodes.map(function (related_node, index) {
 	      return React.createElement(RelationshipFormElement, {
 	        key: index,
 	        index: index,
-
-	        updateParentState: function () {
-	          return dispatch(enterPropData());
-	        },
-	        related_node: { data: related_node },
-	        updateParentBackground: component.updateParentBackground });
+	        related_node: related_node,
+	        updateParentBackground: that.updateParentBackground });
 	    });
+
 	    submitButton = React.createElement(
 	      'div',
 	      { style: { padding: "10px" } },
@@ -25338,6 +25344,70 @@
 
 /***/ },
 /* 223 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
+	var _redux = __webpack_require__(157);
+
+	var _actionsActions = __webpack_require__(224);
+
+	var _example_template = __webpack_require__(179);
+
+	var _example_template2 = _interopRequireDefault(_example_template);
+
+	var initialState = [];
+	var initialTemplates = _example_template2['default'];
+	var templatesById = {};
+	_example_template2['default'].forEach(function (el) {
+	  templatesById[el.template_id] = el;
+	});
+	var initialTemplateState = { templatesById: templatesById, initialTemplates: initialTemplates };
+
+	function entities(state, action) {
+	  if (state === undefined) state = initialState;
+
+	  switch (action.type) {
+	    case 'SUBMIT_FORM':
+	      // console.log('hello from line 9!');
+	      return [].concat(_toConsumableArray(state), [action.node_obj]);
+	    default:
+	      return state;
+	  }
+	}
+
+	function templates(state, action) {
+	  if (state === undefined) state = initialTemplateState;
+
+	  switch (action.type) {
+	    case "UPDATE_PROPERTY_VALUE":
+	      console.log('boom');
+	      var templatesById = initialTemplateState.templatesById;
+	      var currentTemplate = templatesById[action.property_section.currentTemplateId];
+
+	    default:
+	      return state;
+	  }
+	}
+
+	var reducers = (0, _redux.combineReducers)({
+	  entities: entities,
+	  templates: templates
+	});
+
+	exports['default'] = reducers;
+	module.exports = exports['default'];
+
+/***/ },
+/* 224 */
 /***/ function(module, exports) {
 
 	// var Reflux = require('reflux');
@@ -25355,13 +25425,27 @@
 	  value: true
 	});
 	exports.submitForm = submitForm;
+	exports.updatePropertyValue = updatePropertyValue;
 
 	function submitForm(node_obj) {
 	  return { type: "SUBMIT_FORM", node_obj: node_obj };
 	}
 
+	function updatePropertyValue(property_section) {
+	  return { type: "UPDATE_PROPERTY_VALUE", property_section: property_section };
+	}
+
 /***/ },
-/* 224 */
+/* 225 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(3);
+
+
+/***/ },
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -37716,10 +37800,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(225)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(227)(module), (function() { return this; }())))
 
 /***/ },
-/* 225 */
+/* 227 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -37735,7 +37819,7 @@
 
 
 /***/ },
-/* 226 */
+/* 228 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -37750,15 +37834,17 @@
 	  },
 
 	  handleChange: function handleChange(event) {
-	    var obj = this.props.property;
-	    obj.data.value = event.target.value;
+	    // create an object that reducer can easily use to determine where value should go in global state
+	    var obj = {};
+	    obj.property = this.props.property; // entire property not necessary? only value
+	    obj.property.value = event.target.value;
 	    obj.index = this.props.index;
-	    obj.node_property = true;
-	    this.props.updateParentState(obj);
+	    obj.currentTemplateId = this.props.currentTemplateId; //probably not even necessary if global state knows which template is "active"
+	    this.props.handleChange(obj);
 	  },
 
 	  render: function render() {
-	    var property = this.props.property.data;
+	    var property = this.props.property;
 	    return React.createElement(
 	      "div",
 	      { className: "property_element" },
@@ -37779,7 +37865,7 @@
 	module.exports = PropertyFormElement;
 
 /***/ },
-/* 227 */
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37806,17 +37892,17 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(228);
+	var _reactDom = __webpack_require__(225);
 
-	var _debounce = __webpack_require__(229);
+	var _debounce = __webpack_require__(230);
 
 	var _debounce2 = _interopRequireDefault(_debounce);
 
-	var _reactThemeable = __webpack_require__(231);
+	var _reactThemeable = __webpack_require__(232);
 
 	var _reactThemeable2 = _interopRequireDefault(_reactThemeable);
 
-	var _sectionIterator = __webpack_require__(233);
+	var _sectionIterator = __webpack_require__(234);
 
 	var _sectionIterator2 = _interopRequireDefault(_sectionIterator);
 
@@ -38459,16 +38545,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 228 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	module.exports = __webpack_require__(3);
-
-
-/***/ },
-/* 229 */
+/* 230 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -38476,7 +38553,7 @@
 	 * Module dependencies.
 	 */
 
-	var now = __webpack_require__(230);
+	var now = __webpack_require__(231);
 
 	/**
 	 * Returns a function, that, as long as it continues to be invoked, will not
@@ -38527,7 +38604,7 @@
 
 
 /***/ },
-/* 230 */
+/* 231 */
 /***/ function(module, exports) {
 
 	module.exports = Date.now || now
@@ -38538,7 +38615,7 @@
 
 
 /***/ },
-/* 231 */
+/* 232 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38551,7 +38628,7 @@
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
-	var _objectAssign = __webpack_require__(232);
+	var _objectAssign = __webpack_require__(233);
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
@@ -38576,7 +38653,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 232 */
+/* 233 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38621,7 +38698,7 @@
 
 
 /***/ },
-/* 233 */
+/* 234 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38740,67 +38817,6 @@
 	  prev: prev,
 	  isLast: isLast
 	};
-	module.exports = exports['default'];
-
-/***/ },
-/* 234 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
-	var _redux = __webpack_require__(157);
-
-	var _actionsActions = __webpack_require__(223);
-
-	var _example_template = __webpack_require__(179);
-
-	var _example_template2 = _interopRequireDefault(_example_template);
-
-	var initialState = [];
-	var initialTemplates = _example_template2['default'];
-	var templatesById = {};
-	_example_template2['default'].forEach(function (el) {
-	  templatesById[el.template_id] = el;
-	});
-	var initialTemplateState = { templatesById: templatesById, initialTemplates: initialTemplates };
-
-	function entities(state, action) {
-	  if (state === undefined) state = initialState;
-
-	  switch (action.type) {
-	    case 'SUBMIT_FORM':
-	      console.log('hello from line 9!');
-	      return [].concat(_toConsumableArray(state), [action.node_obj]);
-	    default:
-	      return state;
-	  }
-	}
-
-	function templates(state, action) {
-	  if (state === undefined) state = initialTemplateState;
-
-	  switch (action.type) {
-	    case 'SUBMIT_FORM':
-	      console.log('boom');
-	    default:
-	      return state;
-	  }
-	}
-
-	var reducers = (0, _redux.combineReducers)({
-	  entities: entities,
-	  templates: templates
-	});
-
-	exports['default'] = reducers;
 	module.exports = exports['default'];
 
 /***/ }

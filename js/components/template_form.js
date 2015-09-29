@@ -5,7 +5,7 @@ var entities = [];
 var Empty = require('./empty');
 var PropertyFormElement = require('./property_form_element');
 var Autosuggest = require('react-autosuggest');
-import { submitForm } from '../actions/actions';
+import { submitForm, updatePropertyValue } from '../actions/actions';
 import { connect } from 'react-redux';
 
 var RelationshipFormElement = React.createClass({
@@ -65,12 +65,12 @@ var RelationshipFormElement = React.createClass({
     var template_form;
     var entities_for_template = this.getEntitiesForTemplate(entities);
     if(this.state.is_creating){
-      template_form = <TemplateForm params={{template_id: this.props.related_node.data.template_id}} subform={true}/>
+      template_form = <TemplateForm params={{currentTemplateId: this.props.related_node.template_id}} subform={true}/>
     }
     return (
       <div className="relationship_element">
         <div style={{padding: "10px"}}>
-          <label>{this.getTemplateById(this.props.related_node.data.template_id).node_label}: </label>
+          <label>{this.getTemplateById(this.props.related_node.template_id).node_label}: </label>
           <Autosuggest suggestions={this.getSuggestions} />
           <button onClick={this.newEntityForm}>Create New</button>
         </div>
@@ -97,21 +97,25 @@ var TemplateForm = React.createClass({
     };
   },
 
-  updateStateFromChild: function(data_obj) {
-    let {dispatch} = this.props;
-    if(data_obj.related_node){
-      dispatch(currentlyEditingTemplateRelatedNodeUpdated(data_obj.data))
-      this.state.entity_template.related_nodes[data_obj.index] = data_obj.data
-      this.setState(data_obj, function() {
-        console.log(this.state.entity_template);
-      });
-    }else if(data_obj.node_properties){
-      dispatch(currentlyEditingTemplatePropertyUpdated(data_obj.data))
-      this.state.entity_template.node_property[data_obj.index] = data_obj.data
-      this.setState(data_obj, function() {
-        console.log(this.state.entity_template);
-      });
-    }
+  // updateStateFromChild: function(data_obj) {
+  //   let {dispatch} = this.props;
+  //   if(data_obj.related_node){
+  //     dispatch(currentlyEditingTemplateRelatedNodeUpdated(data_obj.data))
+  //     this.state.entity_template.related_nodes[data_obj.index] = data_obj.data
+  //     this.setState(data_obj, function() {
+  //       console.log(this.state.entity_template);
+  //     });
+  //   }else if(data_obj.node_properties){
+  //     dispatch(currentlyEditingTemplatePropertyUpdated(data_obj.data))
+  //     this.state.entity_template.node_property[data_obj.index] = data_obj.data
+  //     this.setState(data_obj, function() {
+  //       console.log(this.state.entity_template);
+  //     });
+  //   }
+  // },
+
+  handleChange: function(modified_obj){
+    this.props.dispatch(updatePropertyValue(modified_obj));
   },
 
   // getInitialState: function() {
@@ -123,9 +127,9 @@ var TemplateForm = React.createClass({
   //   }
   // },
 
-  handleTemplateLoad: function(templates){
-    this.setState({templates: templates});
-  },
+  // handleTemplateLoad: function(templates){
+  //   this.setState({templates: templates});
+  // },
 
   getTemplate: function(id) {
     var this_template = _.find(templates, function(template) {
@@ -135,11 +139,13 @@ var TemplateForm = React.createClass({
   },
 
   componentWillReceiveProps: function(next_props) {
-    this.setState({
-      entity_template: this.getTemplate(next_props.params.template_id)
-    }, function() {
-      console.log(this.state);
-    });
+    // could update global state with an action to set current template? 
+
+    // this.setState({
+    //   entity_template: this.getTemplate(next_props.params.template_id)
+    // }, function() {
+    //   console.log(this.state);
+    // });
   },
 
   createNode: function() {
@@ -166,7 +172,7 @@ var TemplateForm = React.createClass({
 
   render: function() {
     const { dispatch, entities } = this.props;
-    var component = this;
+    var that = this;
 
     var header, properties, related_nodes, submitButton, template;
 
@@ -176,21 +182,24 @@ var TemplateForm = React.createClass({
     // }
 
     header = <h3 style={{padding: "10px", margin: "0"}}>New {this.props.templatesById[this.props.params.currentTemplateId].node_label}</h3>
+
     properties = this.props.templatesById[this.props.params.currentTemplateId].node_properties.map(function(property, index) {
       return <PropertyFormElement
       key = {index}
       index = {index}
-      property = {{data: property}} />
-    })
+      currentTemplateId = {that.props.params.currentTemplateId}
+      property = {property} 
+      handleChange = {that.handleChange} />
+    });
+
     related_nodes = this.props.templatesById[this.props.params.currentTemplateId].related_nodes.map(function(related_node, index) {
       return <RelationshipFormElement
       key = {index}
       index = {index}
+      related_node = {related_node}
+      updateParentBackground = {that.updateParentBackground}/>
+    });
 
-      updateParentState = {() => dispatch(enterPropData())}
-      related_node = {{data: related_node}}
-      updateParentBackground = {component.updateParentBackground}/>
-    })
     submitButton = <div style={{padding: "10px"}}><button onClick = {this.createNode}> Submit </button></div>
 
     if (this.props.params.currentTemplateId) {
