@@ -5,7 +5,7 @@ var PropertyFormElement = React.createClass({
       router: React.PropTypes.func
   },
 
-  handleChange: function(event){
+  handlePropertyChange: function(event){
     // create an object that reducer can easily use to determine where value should go in global state
     var obj = {};
     obj.property = this.props.property; // entire property not necessary? only value
@@ -22,7 +22,7 @@ var PropertyFormElement = React.createClass({
           <input type = { property.type }
           name = { property.name }
           value = { property.value }
-          onChange={this.handleChange}/>
+          onChange={this.handlePropertyChange}/>
       </div>;
   }
 });

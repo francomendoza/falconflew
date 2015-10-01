@@ -25074,32 +25074,32 @@
 	var RelationshipFormElement = React.createClass({
 	  displayName: 'RelationshipFormElement',
 
-	  getInitialState: function getInitialState() {
-	    var matching_entities = this.getEntitiesForTemplate(entities);
-	    var entity_id = null;
-	    if (matching_entities.length > 0) {
-	      entity_id = matching_entities[0].entity_id;
-	    }
-	    return { is_creating: false, value: entity_id };
-	  },
+	  // getInitialState: function(){
+	  //   var matching_entities = this.getEntitiesForTemplate(entities);
+	  //   var entity_id = null;
+	  //   if(matching_entities.length > 0) {
+	  //       entity_id = matching_entities[0].entity_id;
+	  //   }
+	  //   return {is_creating: false, value: entity_id}
+	  // },
 
-	  handleChange: function handleChange(event) {
-	    this.setState({ value: event.target.value });
-	    this.triggerUpdateForParent();
-	  },
+	  // handleChange: function(event){
+	  //   this.setState({value: event.target.value});
+	  //   this.triggerUpdateForParent();
+	  // },
 
-	  triggerUpdateForParent: function triggerUpdateForParent() {
-	    var obj = this.props.related_node;
-	    obj.data.entity_id = this.state.value;
+	  handleRelationshipChange: function handleRelationshipChange(event) {
+	    var obj = {};
+	    obj.related_node = this.props.related_node;
+	    obj.related_node.entity_id = event.target.value;
 	    obj.index = this.props.index;
-	    obj.related_node = true;
-	    this.props.updateParentState(obj);
+	    this.props.handleChange(obj);
 	  },
 
-	  newEntityForm: function newEntityForm() {
-	    this.setState({ is_creating: true });
-	    this.props.updateParentBackground();
-	  },
+	  // newEntityForm: function() {
+	  //   this.setState({is_creating: true});
+	  //   this.props.updateParentBackground();
+	  // },
 
 	  getTemplateById: function getTemplateById(id) {
 	    return _.find(templates, function (template) {
@@ -25107,35 +25107,25 @@
 	    }) || { node_label: '' };
 	  },
 
-	  getEntitiesForTemplate: function getEntitiesForTemplate(these_entities) {
-	    var that = this;
-	    return _.filter(these_entities, function (entity) {
-	      return entity.template_id === that.props.related_node.data.template_id;
-	    });
-	  },
+	  // getEntitiesForTemplate: function(these_entities) {
+	  //   var that = this;
+	  //   return _.filter(these_entities, function(entity){
+	  //     return entity.template_id === that.props.related_node.data.template_id;
+	  //   });
+	  // },
 
 	  onEntityAdded: function onEntityAdded(updated_entities) {
 	    new_entities = this.getEntitiesForTemplate(updated_entities);
 	    this.setState({ value: _.last(new_entities).entity_id });
-	    this.triggerUpdateForParent();
-	  },
-
-	  getSuggestions: function getSuggestions(input, callback) {
-	    var regex = new RegExp('^' + input, 'i');
-	    var suggestions = _.filter(['Test', 'Team', 'Testicles', 'Teeth', 'Touch'], function (option) {
-	      return regex.test(option);
-	    });
-	    setTimeout(function () {
-	      callback(null, suggestions);
-	    }, 300);
+	    this.handleRelationshipChange();
 	  },
 
 	  render: function render() {
-	    var that = this;
+	    // var that = this;
 	    var template_form;
-	    var entities_for_template = this.getEntitiesForTemplate(entities);
-	    if (this.state.is_creating) {
-	      template_form = React.createElement(TemplateForm, { params: { currentTemplateId: this.props.related_node.template_id }, subform: true });
+	    // var entities_for_template = this.getEntitiesForTemplate(entities);
+	    if (this.prop.is_creating) {
+	      template_form = React.createElement(TemplateForm, { templatesById: this.props.templatesById, params: { currentTemplateId: this.props.related_node.template_id }, subform: true });
 	    }
 	    return React.createElement(
 	      'div',
@@ -25146,13 +25136,13 @@
 	        React.createElement(
 	          'label',
 	          null,
-	          this.getTemplateById(this.props.related_node.template_id).node_label,
+	          this.props.templatesById[this.props.related_node.template_id].node_label,
 	          ': '
 	        ),
-	        React.createElement(Autosuggest, { suggestions: this.getSuggestions }),
+	        React.createElement(Autosuggest, { suggestions: this.props.getSuggestions }),
 	        React.createElement(
 	          'button',
-	          { onClick: this.newEntityForm },
+	          { onClick: this.props.showEntityForm(this.props.related_node.template_id) },
 	          'Create New'
 	        )
 	      ),
@@ -25180,6 +25170,19 @@
 	    };
 	  },
 
+	  getSuggestions: function getSuggestions(input, callback) {
+	    var regex = new RegExp('^' + input, 'i');
+	    var suggestions = _.filter(['Test', 'Team', 'Testicles', 'Teeth', 'Touch'], function (option) {
+	      return regex.test(option);
+	    });
+	    setTimeout(function () {
+	      callback(null, suggestions);
+	    }, 300);
+	  },
+
+	  showEntityForm: function showEntityForm() {
+	    //change subtemplates state to show
+	  },
 	  // updateStateFromChild: function(data_obj) {
 	  //   let {dispatch} = this.props;
 	  //   if(data_obj.related_node){
@@ -25253,6 +25256,18 @@
 	    this.setState({ active: false });
 	  },
 
+	  toggleTemplateFormVisibility: function toggleTemplateFormVisibility(template_id) {
+	    return function () {
+	      this.props.dispatch(toggleFormVisibility(this.props.currentTemplateId, template_id));
+	    };
+	  },
+
+	  handleRelationshipChange: function handleRelationshipChange(template_id) {
+	    return function (value) {
+	      this.props.dispatch(updateRelationshipEntityId(this.props.currentTemplateId, template_id, value));
+	    };
+	  },
+
 	  render: function render() {
 	    var _props = this.props;
 	    var dispatch = _props.dispatch;
@@ -25288,7 +25303,10 @@
 	        key: index,
 	        index: index,
 	        related_node: related_node,
-	        updateParentBackground: that.updateParentBackground });
+	        updateParentBackground: that.updateParentBackground,
+	        templatesById: that.props.templatesById,
+	        getSuggestions: that.getSuggestions,
+	        toggleShow: that.toggleTemplateFormVisibility(related_node.template_id) });
 	    });
 
 	    submitButton = React.createElement(
@@ -25333,7 +25351,8 @@
 	function mapStateToProps(state) {
 	  return {
 	    entities: state.entities,
-	    templatesById: state.templates.templatesById
+	    templatesById: state.templates.templatesById,
+	    currentTemplateId: state.templates.currentTemplateId
 	  };
 	}
 
@@ -25365,14 +25384,15 @@
 	var _example_template2 = _interopRequireDefault(_example_template);
 
 	var initialState = [];
-	var initialTemplates = _example_template2['default'];
+	var currentTemplateId = 1;
 	var templatesById = {};
 	_example_template2['default'].forEach(function (el) {
 	  templatesById[el.template_id] = el;
 	});
-	var initialTemplateState = { templatesById: templatesById, initialTemplates: initialTemplates };
+	var initialTemplateState = { templatesById: templatesById, currentTemplateId: currentTemplateId };
+	var templateMap = [{}];
 
-	function entities(state, action) {
+	function updateEntities(state, action) {
 	  if (state === undefined) state = initialState;
 
 	  switch (action.type) {
@@ -25383,6 +25403,8 @@
 	      return state;
 	  }
 	}
+
+	function updateCurrentTemplate() {}
 
 	function templates(state, action) {
 	  if (state === undefined) state = initialTemplateState;
@@ -37833,7 +37855,7 @@
 	    router: React.PropTypes.func
 	  },
 
-	  handleChange: function handleChange(event) {
+	  handlePropertyChange: function handlePropertyChange(event) {
 	    // create an object that reducer can easily use to determine where value should go in global state
 	    var obj = {};
 	    obj.property = this.props.property; // entire property not necessary? only value
@@ -37857,7 +37879,7 @@
 	      React.createElement("input", { type: property.type,
 	        name: property.name,
 	        value: property.value,
-	        onChange: this.handleChange })
+	        onChange: this.handlePropertyChange })
 	    );
 	  }
 	});

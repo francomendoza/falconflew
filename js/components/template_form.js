@@ -10,69 +10,63 @@ import { connect } from 'react-redux';
 
 var RelationshipFormElement = React.createClass({
 
-  getInitialState: function(){
-    var matching_entities = this.getEntitiesForTemplate(entities);
-    var entity_id = null;
-    if(matching_entities.length > 0) {
-        entity_id = matching_entities[0].entity_id;
-    }
-    return {is_creating: false, value: entity_id}
-  },
+  // getInitialState: function(){
+  //   var matching_entities = this.getEntitiesForTemplate(entities);
+  //   var entity_id = null;
+  //   if(matching_entities.length > 0) {
+  //       entity_id = matching_entities[0].entity_id;
+  //   }
+  //   return {is_creating: false, value: entity_id}
+  // },
 
-  handleChange: function(event){
-    this.setState({value: event.target.value});
-    this.triggerUpdateForParent();
-  },
+  // handleChange: function(event){
+  //   this.setState({value: event.target.value});
+  //   this.triggerUpdateForParent();
+  // },
 
-  triggerUpdateForParent: function() {
-    var obj = this.props.related_node;
-    obj.data.entity_id = this.state.value;
+  handleRelationshipChange: function(event) {
+    var obj = {};
+    obj.related_node = this.props.related_node;
+    obj.related_node.entity_id = event.target.value;
     obj.index = this.props.index;
-    obj.related_node = true;
-    this.props.updateParentState(obj);
+    this.props.handleChange(obj);
   },
 
-  newEntityForm: function() {
-    this.setState({is_creating: true});
-    this.props.updateParentBackground();
-  },
+  // newEntityForm: function() {
+  //   this.setState({is_creating: true});
+  //   this.props.updateParentBackground();
+  // },
 
   getTemplateById: function(id) {
     return _.find(templates, function(template) { return template.template_id === id; }) || {node_label: ''};
   },
 
-  getEntitiesForTemplate: function(these_entities) {
-    var that = this;
-    return _.filter(these_entities, function(entity){
-      return entity.template_id === that.props.related_node.data.template_id;
-    });
-  },
+  // getEntitiesForTemplate: function(these_entities) {
+  //   var that = this;
+  //   return _.filter(these_entities, function(entity){
+  //     return entity.template_id === that.props.related_node.data.template_id;
+  //   });
+  // },
 
   onEntityAdded: function(updated_entities) {
     new_entities = this.getEntitiesForTemplate(updated_entities);
     this.setState({value: _.last(new_entities).entity_id});
-    this.triggerUpdateForParent();
-  },
-        
-  getSuggestions: function(input, callback) {
-    var regex = new RegExp('^' + input, 'i');
-    var suggestions = _.filter(['Test', 'Team', 'Testicles', 'Teeth', 'Touch'], function(option){ return regex.test(option); });
-    setTimeout(function(){ callback(null, suggestions);}, 300);
+    this.handleRelationshipChange();
   },
 
   render: function(){
-    var that = this;
+    // var that = this;
     var template_form;
-    var entities_for_template = this.getEntitiesForTemplate(entities);
-    if(this.state.is_creating){
-      template_form = <TemplateForm params={{currentTemplateId: this.props.related_node.template_id}} subform={true}/>
+    // var entities_for_template = this.getEntitiesForTemplate(entities);
+    if(this.prop.is_creating){
+      template_form = <TemplateForm templatesById= {this.props.templatesById} params={{currentTemplateId: this.props.related_node.template_id}} subform={true}/>
     }
     return (
       <div className="relationship_element">
         <div style={{padding: "10px"}}>
-          <label>{this.getTemplateById(this.props.related_node.template_id).node_label}: </label>
-          <Autosuggest suggestions={this.getSuggestions} />
-          <button onClick={this.newEntityForm}>Create New</button>
+          <label>{this.props.templatesById[this.props.related_node.template_id].node_label}: </label>
+          <Autosuggest suggestions={this.props.getSuggestions} />
+          <button onClick={this.props.showEntityForm(this.props.related_node.template_id)}>Create New</button>
         </div>
         {template_form}
       </div>
@@ -97,6 +91,15 @@ var TemplateForm = React.createClass({
     };
   },
 
+  getSuggestions: function(input, callback) {
+    var regex = new RegExp('^' + input, 'i');
+    var suggestions = _.filter(['Test', 'Team', 'Testicles', 'Teeth', 'Touch'], function(option){ return regex.test(option); });
+    setTimeout(function(){ callback(null, suggestions);}, 300);
+  },
+
+  showEntityForm: function(){
+    //change subtemplates state to show
+  },
   // updateStateFromChild: function(data_obj) {
   //   let {dispatch} = this.props;
   //   if(data_obj.related_node){
@@ -170,6 +173,18 @@ var TemplateForm = React.createClass({
     this.setState({active: false});
   },
 
+  toggleTemplateFormVisibility: function(template_id){
+    return function() {
+      this.props.dispatch(toggleFormVisibility(this.props.currentTemplateId, template_id))
+    }
+  },
+
+  handleRelationshipChange: function(template_id) {
+    return function(value) {
+      this.props.dispatch(updateRelationshipEntityId(this.props.currentTemplateId, template_id, value))
+    }
+  },
+
   render: function() {
     const { dispatch, entities } = this.props;
     var that = this;
@@ -197,7 +212,10 @@ var TemplateForm = React.createClass({
       key = {index}
       index = {index}
       related_node = {related_node}
-      updateParentBackground = {that.updateParentBackground}/>
+      updateParentBackground = {that.updateParentBackground}
+      templatesById= {that.props.templatesById}
+      getSuggestions= {that.getSuggestions}
+      toggleShow = { that.toggleTemplateFormVisibility(related_node.template_id) }/>
     });
 
     submitButton = <div style={{padding: "10px"}}><button onClick = {this.createNode}> Submit </button></div>
@@ -216,7 +234,8 @@ var TemplateForm = React.createClass({
 function mapStateToProps(state){
   return {
     entities: state.entities,
-    templatesById: state.templates.templatesById
+    templatesById: state.templates.templatesById,
+    currentTemplateId: state.templates.currentTemplateId
   }
 }
 
