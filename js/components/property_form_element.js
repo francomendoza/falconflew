@@ -12,7 +12,7 @@ var PropertyFormElement = React.createClass({
     obj.property.value = event.target.value;
     obj.index = this.props.index;
     obj.currentTemplateId = this.props.currentTemplateId; //probably not even necessary if global state knows which template is "active"
-    this.props.handleChange(obj);
+    this.props.handlePropertyChange(obj);
   },
 
   render: function(){

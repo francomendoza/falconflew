@@ -22,7 +22,7 @@ var EntityList = React.createClass({
 
 function mapStateToProps(state){
   return {
-    entities: state.entities
+    entities: state.updateEntities
   }
 }
 

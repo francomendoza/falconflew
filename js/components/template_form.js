@@ -5,8 +5,9 @@ var entities = [];
 var Empty = require('./empty');
 var PropertyFormElement = require('./property_form_element');
 var Autosuggest = require('react-autosuggest');
-import { submitForm, updatePropertyValue } from '../actions/actions';
+import { submitForm, updatePropertyValue, toggleFormVisibility } from '../actions/actions';
 import { connect } from 'react-redux';
+import { pushState } from 'redux-router';
 
 var RelationshipFormElement = React.createClass({
 
@@ -58,7 +59,7 @@ var RelationshipFormElement = React.createClass({
     // var that = this;
     var template_form;
     // var entities_for_template = this.getEntitiesForTemplate(entities);
-    if(this.prop.is_creating){
+    if(true){ //this.prop.is_creating
       template_form = <TemplateForm templatesById= {this.props.templatesById} params={{currentTemplateId: this.props.related_node.template_id}} subform={true}/>
     }
     return (
@@ -66,7 +67,7 @@ var RelationshipFormElement = React.createClass({
         <div style={{padding: "10px"}}>
           <label>{this.props.templatesById[this.props.related_node.template_id].node_label}: </label>
           <Autosuggest suggestions={this.props.getSuggestions} />
-          <button onClick={this.props.showEntityForm(this.props.related_node.template_id)}>Create New</button>
+          <button onClick={this.props.toggleShow(this.props.related_node.template_id)}>Create New</button>
         </div>
         {template_form}
       </div>
@@ -74,12 +75,12 @@ var RelationshipFormElement = React.createClass({
   }
 });
 
-module.exports = RelationshipFormElement;
+// module.exports = RelationshipFormElement;
 
 var TemplateForm = React.createClass({
-  contextTypes: {
-    router: React.PropTypes.func
-  },
+  // contextTypes: {
+  //   router: React.PropTypes.func
+  // },
 
   getTemplateName: function(template_id) {
     var component = this;
@@ -117,7 +118,7 @@ var TemplateForm = React.createClass({
   //   }
   // },
 
-  handleChange: function(modified_obj){
+  handlePropertyChange: function(modified_obj){
     this.props.dispatch(updatePropertyValue(modified_obj));
   },
 
@@ -174,14 +175,16 @@ var TemplateForm = React.createClass({
   },
 
   toggleTemplateFormVisibility: function(template_id){
+    var that = this;
     return function() {
-      this.props.dispatch(toggleFormVisibility(this.props.currentTemplateId, template_id))
+      // that.props.dispatch(toggleFormVisibility(that.props.currentTemplateId, template_id));
     }
   },
 
   handleRelationshipChange: function(template_id) {
+    var that = this;
     return function(value) {
-      this.props.dispatch(updateRelationshipEntityId(this.props.currentTemplateId, template_id, value))
+      that.props.dispatch(updateRelationshipEntityId(that.props.currentTemplateId, template_id, value));
     }
   },
 
@@ -200,22 +203,23 @@ var TemplateForm = React.createClass({
 
     properties = this.props.templatesById[this.props.params.currentTemplateId].node_properties.map(function(property, index) {
       return <PropertyFormElement
-      key = {index}
-      index = {index}
-      currentTemplateId = {that.props.params.currentTemplateId}
-      property = {property} 
-      handleChange = {that.handleChange} />
+      key = { index }
+      index = { index }
+      currentTemplateId = { that.props.params.currentTemplateId }
+      property = { property } 
+      handleChange = { that.handlePropertyChange } />
     });
 
     related_nodes = this.props.templatesById[this.props.params.currentTemplateId].related_nodes.map(function(related_node, index) {
       return <RelationshipFormElement
-      key = {index}
-      index = {index}
-      related_node = {related_node}
-      updateParentBackground = {that.updateParentBackground}
-      templatesById= {that.props.templatesById}
-      getSuggestions= {that.getSuggestions}
-      toggleShow = { that.toggleTemplateFormVisibility(related_node.template_id) }/>
+      key = { index }
+      index = { index }
+      related_node = { related_node }
+      updateParentBackground = { that.updateParentBackground }
+      templatesById = { that.props.templatesById }
+      getSuggestions = { that.getSuggestions }
+      templateMap = { that.props.templateMap }
+      toggleShow = { that.toggleTemplateFormVisibility(related_node.template_id) } />
     });
 
     submitButton = <div style={{padding: "10px"}}><button onClick = {this.createNode}> Submit </button></div>
@@ -235,9 +239,11 @@ function mapStateToProps(state){
   return {
     entities: state.entities,
     templatesById: state.templates.templatesById,
-    currentTemplateId: state.templates.currentTemplateId
+    currentTemplateId: state.templates.currentTemplateId,
+    templateMap: state.templateMap,
+    router: state.router
   }
 }
 
-export default connect(mapStateToProps)(TemplateForm);
+export default connect(mapStateToProps,{ pushState })(TemplateForm);
 // module.exports = TemplateForm;

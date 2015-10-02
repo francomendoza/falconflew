@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import { submitForm } from '../actions/actions';
 import db from '../../example_template';
+import { routerStateReducer } from 'redux-router';
 
 const initialState =  [];
 const currentTemplateId = 1;
@@ -20,7 +21,7 @@ function updateEntities(state = initialState, action){
 }
 
 function updateCurrentTemplate(){
-  
+
 }
 
 function templates(state = initialTemplateState, action) {
@@ -36,8 +37,9 @@ function templates(state = initialTemplateState, action) {
 }
 
 const reducers = combineReducers({
-  entities,
-  templates
+  updateEntities,
+  templates,
+  router: routerStateReducer
 })
 
 export default reducers;

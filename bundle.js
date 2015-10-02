@@ -68,19 +68,21 @@
 
 	var _app2 = _interopRequireDefault(_app);
 
-	var _reducersReducers = __webpack_require__(223);
+	var _reducersReducers = __webpack_require__(234);
 
 	var _reducersReducers2 = _interopRequireDefault(_reducersReducers);
 
 	var _reactRouter = __webpack_require__(180);
 
-	var _reactDom = __webpack_require__(225);
+	var _reactDom = __webpack_require__(228);
 
 	var _reactDom2 = _interopRequireDefault(_reactDom);
 
+	var _reduxRouter = __webpack_require__(235);
+
 	var TemplateForm = __webpack_require__(222);
 
-	var store = (0, _redux.createStore)(_reducersReducers2['default']);
+	var store = (0, _redux.compose)((0, _reduxRouter.reduxReactRouter)({ routes: routes, createHistory: createHistory }))(_redux.createStore)(_reducersReducers2['default']);
 
 	var ReduxApp = (function (_React$Component) {
 	  _inherits(ReduxApp, _React$Component);
@@ -107,13 +109,17 @@
 	  return ReduxApp;
 	})(_react2['default'].Component);
 
+	var entering = function entering() {
+	  console.log("JK LOLZ");
+	};
+
 	var route = _react2['default'].createElement(
 	  _reactRouter.Router,
 	  null,
 	  _react2['default'].createElement(
 	    _reactRouter.Route,
 	    { path: '/', component: ReduxApp },
-	    _react2['default'].createElement(_reactRouter.Route, { path: 'template_form/:currentTemplateId', component: TemplateForm })
+	    _react2['default'].createElement(_reactRouter.Route, { path: 'template_form/:currentTemplateId', component: TemplateForm, onEnter: entering })
 	  )
 	);
 
@@ -20776,7 +20782,7 @@
 
 	function mapStateToProps(state) {
 	  return {
-	    entities: state.entities
+	    entities: state.updateEntities
 	  };
 	}
 
@@ -25059,17 +25065,19 @@
 	  value: true
 	});
 
-	var _actionsActions = __webpack_require__(224);
+	var _actionsActions = __webpack_require__(223);
 
 	var _reactRedux = __webpack_require__(166);
 
+	var _reduxRouter = __webpack_require__(235);
+
 	var React = __webpack_require__(1);
-	var _ = __webpack_require__(226);
+	var _ = __webpack_require__(224);
 	var templates = __webpack_require__(179);
 	var entities = [];
 	var Empty = __webpack_require__(176);
-	var PropertyFormElement = __webpack_require__(228);
-	var Autosuggest = __webpack_require__(229);
+	var PropertyFormElement = __webpack_require__(226);
+	var Autosuggest = __webpack_require__(227);
 
 	var RelationshipFormElement = React.createClass({
 	  displayName: 'RelationshipFormElement',
@@ -25124,7 +25132,8 @@
 	    // var that = this;
 	    var template_form;
 	    // var entities_for_template = this.getEntitiesForTemplate(entities);
-	    if (this.prop.is_creating) {
+	    if (true) {
+	      //this.prop.is_creating
 	      template_form = React.createElement(TemplateForm, { templatesById: this.props.templatesById, params: { currentTemplateId: this.props.related_node.template_id }, subform: true });
 	    }
 	    return React.createElement(
@@ -25142,7 +25151,7 @@
 	        React.createElement(Autosuggest, { suggestions: this.props.getSuggestions }),
 	        React.createElement(
 	          'button',
-	          { onClick: this.props.showEntityForm(this.props.related_node.template_id) },
+	          { onClick: this.props.toggleShow(this.props.related_node.template_id) },
 	          'Create New'
 	        )
 	      ),
@@ -25151,14 +25160,14 @@
 	  }
 	});
 
-	module.exports = RelationshipFormElement;
+	// module.exports = RelationshipFormElement;
 
 	var TemplateForm = React.createClass({
 	  displayName: 'TemplateForm',
 
-	  contextTypes: {
-	    router: React.PropTypes.func
-	  },
+	  // contextTypes: {
+	  //   router: React.PropTypes.func
+	  // },
 
 	  getTemplateName: function getTemplateName(template_id) {
 	    var component = this;
@@ -25200,7 +25209,7 @@
 	  //   }
 	  // },
 
-	  handleChange: function handleChange(modified_obj) {
+	  handlePropertyChange: function handlePropertyChange(modified_obj) {
 	    this.props.dispatch((0, _actionsActions.updatePropertyValue)(modified_obj));
 	  },
 
@@ -25257,14 +25266,16 @@
 	  },
 
 	  toggleTemplateFormVisibility: function toggleTemplateFormVisibility(template_id) {
+	    var that = this;
 	    return function () {
-	      this.props.dispatch(toggleFormVisibility(this.props.currentTemplateId, template_id));
+	      // that.props.dispatch(toggleFormVisibility(that.props.currentTemplateId, template_id));
 	    };
 	  },
 
 	  handleRelationshipChange: function handleRelationshipChange(template_id) {
+	    var that = this;
 	    return function (value) {
-	      this.props.dispatch(updateRelationshipEntityId(this.props.currentTemplateId, template_id, value));
+	      that.props.dispatch(updateRelationshipEntityId(that.props.currentTemplateId, template_id, value));
 	    };
 	  },
 
@@ -25295,7 +25306,7 @@
 	        index: index,
 	        currentTemplateId: that.props.params.currentTemplateId,
 	        property: property,
-	        handleChange: that.handleChange });
+	        handleChange: that.handlePropertyChange });
 	    });
 
 	    related_nodes = this.props.templatesById[this.props.params.currentTemplateId].related_nodes.map(function (related_node, index) {
@@ -25306,6 +25317,7 @@
 	        updateParentBackground: that.updateParentBackground,
 	        templatesById: that.props.templatesById,
 	        getSuggestions: that.getSuggestions,
+	        templateMap: that.props.templateMap,
 	        toggleShow: that.toggleTemplateFormVisibility(related_node.template_id) });
 	    });
 
@@ -25352,84 +25364,19 @@
 	  return {
 	    entities: state.entities,
 	    templatesById: state.templates.templatesById,
-	    currentTemplateId: state.templates.currentTemplateId
+	    currentTemplateId: state.templates.currentTemplateId,
+	    templateMap: state.templateMap,
+	    router: state.router
 	  };
 	}
 
-	exports['default'] = (0, _reactRedux.connect)(mapStateToProps)(TemplateForm);
+	exports['default'] = (0, _reactRedux.connect)(mapStateToProps, { pushState: _reduxRouter.pushState })(TemplateForm);
 
 	// module.exports = TemplateForm;
 	module.exports = exports['default'];
 
 /***/ },
 /* 223 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	Object.defineProperty(exports, '__esModule', {
-	  value: true
-	});
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
-
-	var _redux = __webpack_require__(157);
-
-	var _actionsActions = __webpack_require__(224);
-
-	var _example_template = __webpack_require__(179);
-
-	var _example_template2 = _interopRequireDefault(_example_template);
-
-	var initialState = [];
-	var currentTemplateId = 1;
-	var templatesById = {};
-	_example_template2['default'].forEach(function (el) {
-	  templatesById[el.template_id] = el;
-	});
-	var initialTemplateState = { templatesById: templatesById, currentTemplateId: currentTemplateId };
-	var templateMap = [{}];
-
-	function updateEntities(state, action) {
-	  if (state === undefined) state = initialState;
-
-	  switch (action.type) {
-	    case 'SUBMIT_FORM':
-	      // console.log('hello from line 9!');
-	      return [].concat(_toConsumableArray(state), [action.node_obj]);
-	    default:
-	      return state;
-	  }
-	}
-
-	function updateCurrentTemplate() {}
-
-	function templates(state, action) {
-	  if (state === undefined) state = initialTemplateState;
-
-	  switch (action.type) {
-	    case "UPDATE_PROPERTY_VALUE":
-	      console.log('boom');
-	      var templatesById = initialTemplateState.templatesById;
-	      var currentTemplate = templatesById[action.property_section.currentTemplateId];
-
-	    default:
-	      return state;
-	  }
-	}
-
-	var reducers = (0, _redux.combineReducers)({
-	  entities: entities,
-	  templates: templates
-	});
-
-	exports['default'] = reducers;
-	module.exports = exports['default'];
-
-/***/ },
-/* 224 */
 /***/ function(module, exports) {
 
 	// var Reflux = require('reflux');
@@ -25448,6 +25395,7 @@
 	});
 	exports.submitForm = submitForm;
 	exports.updatePropertyValue = updatePropertyValue;
+	exports.toggleFormVisibility = toggleFormVisibility;
 
 	function submitForm(node_obj) {
 	  return { type: "SUBMIT_FORM", node_obj: node_obj };
@@ -25457,17 +25405,12 @@
 	  return { type: "UPDATE_PROPERTY_VALUE", property_section: property_section };
 	}
 
-/***/ },
-/* 225 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	module.exports = __webpack_require__(3);
-
+	function toggleFormVisibility(var1) {
+	  return { type: "TOGGLE_FORM_VISIBILITY", var1: var1 };
+	}
 
 /***/ },
-/* 226 */
+/* 224 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -37822,10 +37765,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(227)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(225)(module), (function() { return this; }())))
 
 /***/ },
-/* 227 */
+/* 225 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -37841,7 +37784,7 @@
 
 
 /***/ },
-/* 228 */
+/* 226 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -37862,7 +37805,7 @@
 	    obj.property.value = event.target.value;
 	    obj.index = this.props.index;
 	    obj.currentTemplateId = this.props.currentTemplateId; //probably not even necessary if global state knows which template is "active"
-	    this.props.handleChange(obj);
+	    this.props.handlePropertyChange(obj);
 	  },
 
 	  render: function render() {
@@ -37887,7 +37830,7 @@
 	module.exports = PropertyFormElement;
 
 /***/ },
-/* 229 */
+/* 227 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -37914,17 +37857,17 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactDom = __webpack_require__(225);
+	var _reactDom = __webpack_require__(228);
 
-	var _debounce = __webpack_require__(230);
+	var _debounce = __webpack_require__(229);
 
 	var _debounce2 = _interopRequireDefault(_debounce);
 
-	var _reactThemeable = __webpack_require__(232);
+	var _reactThemeable = __webpack_require__(231);
 
 	var _reactThemeable2 = _interopRequireDefault(_reactThemeable);
 
-	var _sectionIterator = __webpack_require__(234);
+	var _sectionIterator = __webpack_require__(233);
 
 	var _sectionIterator2 = _interopRequireDefault(_sectionIterator);
 
@@ -38567,7 +38510,16 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 230 */
+/* 228 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(3);
+
+
+/***/ },
+/* 229 */
 /***/ function(module, exports, __webpack_require__) {
 
 	
@@ -38575,7 +38527,7 @@
 	 * Module dependencies.
 	 */
 
-	var now = __webpack_require__(231);
+	var now = __webpack_require__(230);
 
 	/**
 	 * Returns a function, that, as long as it continues to be invoked, will not
@@ -38626,7 +38578,7 @@
 
 
 /***/ },
-/* 231 */
+/* 230 */
 /***/ function(module, exports) {
 
 	module.exports = Date.now || now
@@ -38637,7 +38589,7 @@
 
 
 /***/ },
-/* 232 */
+/* 231 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -38650,7 +38602,7 @@
 
 	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
 
-	var _objectAssign = __webpack_require__(233);
+	var _objectAssign = __webpack_require__(232);
 
 	var _objectAssign2 = _interopRequireDefault(_objectAssign);
 
@@ -38675,7 +38627,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 233 */
+/* 232 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38720,7 +38672,7 @@
 
 
 /***/ },
-/* 234 */
+/* 233 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -38839,6 +38791,940 @@
 	  prev: prev,
 	  isLast: isLast
 	};
+	module.exports = exports['default'];
+
+/***/ },
+/* 234 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
+	var _redux = __webpack_require__(157);
+
+	var _actionsActions = __webpack_require__(223);
+
+	var _example_template = __webpack_require__(179);
+
+	var _example_template2 = _interopRequireDefault(_example_template);
+
+	var _reduxRouter = __webpack_require__(235);
+
+	var initialState = [];
+	var currentTemplateId = 1;
+	var templatesById = {};
+	_example_template2['default'].forEach(function (el) {
+	  templatesById[el.template_id] = el;
+	});
+	var initialTemplateState = { templatesById: templatesById, currentTemplateId: currentTemplateId };
+	var templateMap = [{}];
+
+	function updateEntities(state, action) {
+	  if (state === undefined) state = initialState;
+
+	  switch (action.type) {
+	    case 'SUBMIT_FORM':
+	      // console.log('hello from line 9!');
+	      return [].concat(_toConsumableArray(state), [action.node_obj]);
+	    default:
+	      return state;
+	  }
+	}
+
+	function updateCurrentTemplate() {}
+
+	function templates(state, action) {
+	  if (state === undefined) state = initialTemplateState;
+
+	  switch (action.type) {
+	    case "UPDATE_PROPERTY_VALUE":
+	      console.log('boom');
+	      var templatesById = initialTemplateState.templatesById;
+	      var currentTemplate = templatesById[action.property_section.currentTemplateId];
+
+	    default:
+	      return state;
+	  }
+	}
+
+	var reducers = (0, _redux.combineReducers)({
+	  updateEntities: updateEntities,
+	  templates: templates,
+	  router: _reduxRouter.routerStateReducer
+	});
+
+	exports['default'] = reducers;
+	module.exports = exports['default'];
+
+/***/ },
+/* 235 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _routerStateReducer2 = __webpack_require__(236);
+
+	var _routerStateReducer3 = _interopRequireDefault(_routerStateReducer2);
+
+	exports.routerStateReducer = _routerStateReducer3['default'];
+
+	var _ReduxRouter2 = __webpack_require__(238);
+
+	var _ReduxRouter3 = _interopRequireDefault(_ReduxRouter2);
+
+	exports.ReduxRouter = _ReduxRouter3['default'];
+
+	var _client = __webpack_require__(244);
+
+	var _client2 = _interopRequireDefault(_client);
+
+	exports.reduxReactRouter = _client2['default'];
+
+	var _isActive2 = __webpack_require__(250);
+
+	var _isActive3 = _interopRequireDefault(_isActive2);
+
+	exports.isActive = _isActive3['default'];
+
+	var _actionCreators = __webpack_require__(243);
+
+	exports.historyAPI = _actionCreators.historyAPI;
+	exports.pushState = _actionCreators.pushState;
+	exports.replaceState = _actionCreators.replaceState;
+	exports.setState = _actionCreators.setState;
+	exports.go = _actionCreators.go;
+	exports.goBack = _actionCreators.goBack;
+	exports.goForward = _actionCreators.goForward;
+
+/***/ },
+/* 236 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports['default'] = routerStateReducer;
+
+	var _constants = __webpack_require__(237);
+
+	/**
+	 * Reducer of ROUTER_DID_CHANGE actions. Returns a state object
+	 * with { pathname, query, params, navigationType }
+	 * @param  {Object} state - Previous state
+	 * @param  {Object} action - Action
+	 * @return {Object} New state
+	 */
+
+	function routerStateReducer(state, action) {
+	  if (state === undefined) state = null;
+
+	  var _extends2;
+
+	  switch (action.type) {
+	    case _constants.ROUTER_DID_CHANGE:
+	      return action.payload;
+	    case _constants.REPLACE_ROUTES:
+	      if (!state) return state;
+	      return _extends({}, state, (_extends2 = {}, _extends2[_constants.DOES_NEED_REFRESH] = true, _extends2));
+	    default:
+	      return state;
+	  }
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 237 */
+/***/ function(module, exports) {
+
+	// Signals that the router's state has changed. It should
+	// never be called by the application, only as an implementation detail of
+	// redux-react-router.
+	'use strict';
+
+	exports.__esModule = true;
+	var ROUTER_DID_CHANGE = '@@reduxReactRouter/routerDidChange';
+
+	exports.ROUTER_DID_CHANGE = ROUTER_DID_CHANGE;
+	var HISTORY_API = '@@reduxReactRouter/historyAPI';
+	exports.HISTORY_API = HISTORY_API;
+	var MATCH = '@@reduxReactRouter/match';
+	exports.MATCH = MATCH;
+	var REPLACE_ROUTES = '@@reduxReactRouter/replaceRoutes';
+
+	exports.REPLACE_ROUTES = REPLACE_ROUTES;
+	var ROUTER_STATE_SELECTOR = '@@reduxReactRouter/routerStateSelector';
+
+	exports.ROUTER_STATE_SELECTOR = ROUTER_STATE_SELECTOR;
+	var DOES_NEED_REFRESH = '@@reduxReactRouter/doesNeedRefresh';
+	exports.DOES_NEED_REFRESH = DOES_NEED_REFRESH;
+
+/***/ },
+/* 238 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
+
+	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(166);
+
+	var _reactRouter = __webpack_require__(180);
+
+	var _routerStateEquals = __webpack_require__(239);
+
+	var _routerStateEquals2 = _interopRequireDefault(_routerStateEquals);
+
+	var _constants = __webpack_require__(237);
+
+	var _actionCreators = __webpack_require__(243);
+
+	function memoizeRouterStateSelector(selector) {
+	  var previousRouterState = null;
+
+	  return function (state) {
+	    var nextRouterState = selector(state);
+	    if (_routerStateEquals2['default'](previousRouterState, nextRouterState)) {
+	      return previousRouterState;
+	    }
+	    previousRouterState = nextRouterState;
+	    return nextRouterState;
+	  };
+	}
+
+	function getRoutesFromProps(props) {
+	  return props.routes || props.children;
+	}
+
+	var ReduxRouter = (function (_Component) {
+	  _inherits(ReduxRouter, _Component);
+
+	  _createClass(ReduxRouter, null, [{
+	    key: 'propTypes',
+	    value: {
+	      children: _react.PropTypes.node
+	    },
+	    enumerable: true
+	  }, {
+	    key: 'contextTypes',
+	    value: {
+	      store: _react.PropTypes.object
+	    },
+	    enumerable: true
+	  }]);
+
+	  function ReduxRouter(props, context) {
+	    _classCallCheck(this, ReduxRouter);
+
+	    _Component.call(this, props, context);
+	    this.receiveRoutes(getRoutesFromProps(props));
+	  }
+
+	  ReduxRouter.prototype.componentWillReceiveProps = function componentWillReceiveProps(nextProps) {
+	    this.receiveRoutes(getRoutesFromProps(nextProps));
+	  };
+
+	  ReduxRouter.prototype.receiveRoutes = function receiveRoutes(routes) {
+	    if (!routes) return;
+
+	    var store = this.context.store;
+
+	    store.dispatch(_actionCreators.replaceRoutes(routes));
+	  };
+
+	  ReduxRouter.prototype.render = function render() {
+	    var store = this.context.store;
+
+	    if (!store) {
+	      throw new Error('Redux store missing from context of <ReduxRouter>. Make sure you\'re ' + 'using a <Provider>');
+	    }
+
+	    var history = store.history;
+	    var routerStateSelector = store[_constants.ROUTER_STATE_SELECTOR];
+
+	    if (!history || !routerStateSelector) {
+	      throw new Error('Redux store not configured properly for <ReduxRouter>. Make sure ' + 'you\'re using the reduxReactRouter() store enhancer.');
+	    }
+
+	    return _react2['default'].createElement(ReduxRouterContext, _extends({
+	      history: history,
+	      routerStateSelector: memoizeRouterStateSelector(routerStateSelector)
+	    }, this.props));
+	  };
+
+	  return ReduxRouter;
+	})(_react.Component);
+
+	var ReduxRouterContext = (function (_Component2) {
+	  _inherits(ReduxRouterContext, _Component2);
+
+	  function ReduxRouterContext() {
+	    _classCallCheck(this, _ReduxRouterContext);
+
+	    _Component2.apply(this, arguments);
+	  }
+
+	  ReduxRouterContext.prototype.render = function render() {
+	    return _react2['default'].createElement(_reactRouter.RoutingContext, this.props);
+	  };
+
+	  var _ReduxRouterContext = ReduxRouterContext;
+	  ReduxRouterContext = _reactRedux.connect(function (state, _ref) {
+	    var routerStateSelector = _ref.routerStateSelector;
+	    return routerStateSelector(state) || {};
+	  })(ReduxRouterContext) || ReduxRouterContext;
+	  return ReduxRouterContext;
+	})(_react.Component);
+
+	exports['default'] = ReduxRouter;
+	module.exports = exports['default'];
+
+/***/ },
+/* 239 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports['default'] = routerStateEquals;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _deepEqual = __webpack_require__(240);
+
+	var _deepEqual2 = _interopRequireDefault(_deepEqual);
+
+	var _constants = __webpack_require__(237);
+
+	/**
+	 * Check if two router states are equal. Ignores `location.key`.
+	 * @returns {Boolean}
+	 */
+
+	function routerStateEquals(a, b) {
+	  if (!a && !b) return true;
+	  if (a && !b || !a && b) return false;
+	  if (a[_constants.DOES_NEED_REFRESH] || b[_constants.DOES_NEED_REFRESH]) return false;
+
+	  return a.location.pathname === b.location.pathname && a.location.search === b.location.search && _deepEqual2['default'](a.location.state, b.location.state);
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 240 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var pSlice = Array.prototype.slice;
+	var objectKeys = __webpack_require__(241);
+	var isArguments = __webpack_require__(242);
+
+	var deepEqual = module.exports = function (actual, expected, opts) {
+	  if (!opts) opts = {};
+	  // 7.1. All identical values are equivalent, as determined by ===.
+	  if (actual === expected) {
+	    return true;
+
+	  } else if (actual instanceof Date && expected instanceof Date) {
+	    return actual.getTime() === expected.getTime();
+
+	  // 7.3. Other pairs that do not both pass typeof value == 'object',
+	  // equivalence is determined by ==.
+	  } else if (!actual || !expected || typeof actual != 'object' && typeof expected != 'object') {
+	    return opts.strict ? actual === expected : actual == expected;
+
+	  // 7.4. For all other Object pairs, including Array objects, equivalence is
+	  // determined by having the same number of owned properties (as verified
+	  // with Object.prototype.hasOwnProperty.call), the same set of keys
+	  // (although not necessarily the same order), equivalent values for every
+	  // corresponding key, and an identical 'prototype' property. Note: this
+	  // accounts for both named and indexed properties on Arrays.
+	  } else {
+	    return objEquiv(actual, expected, opts);
+	  }
+	}
+
+	function isUndefinedOrNull(value) {
+	  return value === null || value === undefined;
+	}
+
+	function isBuffer (x) {
+	  if (!x || typeof x !== 'object' || typeof x.length !== 'number') return false;
+	  if (typeof x.copy !== 'function' || typeof x.slice !== 'function') {
+	    return false;
+	  }
+	  if (x.length > 0 && typeof x[0] !== 'number') return false;
+	  return true;
+	}
+
+	function objEquiv(a, b, opts) {
+	  var i, key;
+	  if (isUndefinedOrNull(a) || isUndefinedOrNull(b))
+	    return false;
+	  // an identical 'prototype' property.
+	  if (a.prototype !== b.prototype) return false;
+	  //~~~I've managed to break Object.keys through screwy arguments passing.
+	  //   Converting to array solves the problem.
+	  if (isArguments(a)) {
+	    if (!isArguments(b)) {
+	      return false;
+	    }
+	    a = pSlice.call(a);
+	    b = pSlice.call(b);
+	    return deepEqual(a, b, opts);
+	  }
+	  if (isBuffer(a)) {
+	    if (!isBuffer(b)) {
+	      return false;
+	    }
+	    if (a.length !== b.length) return false;
+	    for (i = 0; i < a.length; i++) {
+	      if (a[i] !== b[i]) return false;
+	    }
+	    return true;
+	  }
+	  try {
+	    var ka = objectKeys(a),
+	        kb = objectKeys(b);
+	  } catch (e) {//happens when one is a string literal and the other isn't
+	    return false;
+	  }
+	  // having the same number of owned properties (keys incorporates
+	  // hasOwnProperty)
+	  if (ka.length != kb.length)
+	    return false;
+	  //the same set of keys (although not necessarily the same order),
+	  ka.sort();
+	  kb.sort();
+	  //~~~cheap key test
+	  for (i = ka.length - 1; i >= 0; i--) {
+	    if (ka[i] != kb[i])
+	      return false;
+	  }
+	  //equivalent values for every corresponding key, and
+	  //~~~possibly expensive deep test
+	  for (i = ka.length - 1; i >= 0; i--) {
+	    key = ka[i];
+	    if (!deepEqual(a[key], b[key], opts)) return false;
+	  }
+	  return typeof a === typeof b;
+	}
+
+
+/***/ },
+/* 241 */
+/***/ function(module, exports) {
+
+	exports = module.exports = typeof Object.keys === 'function'
+	  ? Object.keys : shim;
+
+	exports.shim = shim;
+	function shim (obj) {
+	  var keys = [];
+	  for (var key in obj) keys.push(key);
+	  return keys;
+	}
+
+
+/***/ },
+/* 242 */
+/***/ function(module, exports) {
+
+	var supportsArgumentsClass = (function(){
+	  return Object.prototype.toString.call(arguments)
+	})() == '[object Arguments]';
+
+	exports = module.exports = supportsArgumentsClass ? supported : unsupported;
+
+	exports.supported = supported;
+	function supported(object) {
+	  return Object.prototype.toString.call(object) == '[object Arguments]';
+	};
+
+	exports.unsupported = unsupported;
+	function unsupported(object){
+	  return object &&
+	    typeof object == 'object' &&
+	    typeof object.length == 'number' &&
+	    Object.prototype.hasOwnProperty.call(object, 'callee') &&
+	    !Object.prototype.propertyIsEnumerable.call(object, 'callee') ||
+	    false;
+	};
+
+
+/***/ },
+/* 243 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports.routerDidChange = routerDidChange;
+	exports.replaceRoutes = replaceRoutes;
+	exports.historyAPI = historyAPI;
+
+	var _constants = __webpack_require__(237);
+
+	/**
+	 * Action creator for signaling that the router has changed.
+	 * @private
+	 * @param  {RouterState} state - New router state
+	 * @return {Action} Action object
+	 */
+
+	function routerDidChange(state) {
+	  return {
+	    type: _constants.ROUTER_DID_CHANGE,
+	    payload: state
+	  };
+	}
+
+	/**
+	 * Action creator that replaces the current route config
+	 * @private
+	 * @param {Array<Route>|ReactElement} routes - New routes
+	 */
+
+	function replaceRoutes(routes) {
+	  return {
+	    type: _constants.REPLACE_ROUTES,
+	    payload: routes
+	  };
+	}
+
+	/**
+	 * Creates an action creator for calling a history API method.
+	 * @param {string} method - Name of method
+	 * @returns {ActionCreator} Action creator with same parameters as corresponding
+	 * history method
+	 */
+
+	function historyAPI(method) {
+	  return function () {
+	    for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) {
+	      args[_key] = arguments[_key];
+	    }
+
+	    return {
+	      type: _constants.HISTORY_API,
+	      payload: {
+	        method: method,
+	        args: args
+	      }
+	    };
+	  };
+	}
+
+	var pushState = historyAPI('pushState');
+	exports.pushState = pushState;
+	var replaceState = historyAPI('replaceState');
+	exports.replaceState = replaceState;
+	var setState = historyAPI('setState');
+	exports.setState = setState;
+	var go = historyAPI('go');
+	exports.go = go;
+	var goBack = historyAPI('goBack');
+	exports.goBack = goBack;
+	var goForward = historyAPI('goForward');
+	exports.goForward = goForward;
+
+/***/ },
+/* 244 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _redux = __webpack_require__(157);
+
+	var _actionCreators = __webpack_require__(243);
+
+	var _routerStateEquals = __webpack_require__(239);
+
+	var _routerStateEquals2 = _interopRequireDefault(_routerStateEquals);
+
+	var _reduxReactRouter = __webpack_require__(245);
+
+	var _reduxReactRouter2 = _interopRequireDefault(_reduxReactRouter);
+
+	var _useDefaults = __webpack_require__(247);
+
+	var _useDefaults2 = _interopRequireDefault(_useDefaults);
+
+	var _routeReplacement = __webpack_require__(248);
+
+	var _routeReplacement2 = _interopRequireDefault(_routeReplacement);
+
+	function historySynchronization(next) {
+	  return function (options) {
+	    return function (createStore) {
+	      return function (reducer, initialState) {
+	        var onError = options.onError;
+	        var routerStateSelector = options.routerStateSelector;
+
+	        var store = next(options)(createStore)(reducer, initialState);
+	        var history = store.history;
+
+	        var routerState = undefined;
+
+	        history.listen(function (error, nextRouterState) {
+	          if (error) {
+	            onError(error);
+	            return;
+	          }
+
+	          var prevRouterState = routerStateSelector(store.getState());
+
+	          if (!_routerStateEquals2['default'](prevRouterState, nextRouterState)) {
+	            store.dispatch(_actionCreators.routerDidChange(nextRouterState));
+	          }
+	        });
+
+	        store.subscribe(function () {
+	          var nextRouterState = routerStateSelector(store.getState());
+
+	          if (nextRouterState && !_routerStateEquals2['default'](routerState, nextRouterState)) {
+	            var _nextRouterState$location = nextRouterState.location;
+	            var state = _nextRouterState$location.state;
+	            var pathname = _nextRouterState$location.pathname;
+	            var query = _nextRouterState$location.query;
+
+	            history.replaceState(state, pathname, query);
+	          }
+
+	          routerState = nextRouterState;
+	        });
+
+	        return store;
+	      };
+	    };
+	  };
+	}
+
+	exports['default'] = _redux.compose(_useDefaults2['default'], _routeReplacement2['default'], historySynchronization)(_reduxReactRouter2['default']);
+	module.exports = exports['default'];
+
+/***/ },
+/* 245 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports['default'] = reduxReactRouter;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _redux = __webpack_require__(157);
+
+	var _reactRouter = __webpack_require__(180);
+
+	var _historyMiddleware = __webpack_require__(246);
+
+	var _historyMiddleware2 = _interopRequireDefault(_historyMiddleware);
+
+	var _constants = __webpack_require__(237);
+
+	function reduxReactRouter(_ref) {
+	  var routes = _ref.routes;
+	  var createHistory = _ref.createHistory;
+	  var parseQueryString = _ref.parseQueryString;
+	  var stringifyQuery = _ref.stringifyQuery;
+	  var routerStateSelector = _ref.routerStateSelector;
+
+	  return function (createStore) {
+	    return function (reducer, initialState) {
+	      var history = _reactRouter.useRoutes(createHistory)({
+	        routes: routes,
+	        parseQueryString: parseQueryString,
+	        stringifyQuery: stringifyQuery
+	      });
+
+	      var store = _redux.applyMiddleware(_historyMiddleware2['default'](history))(createStore)(reducer, initialState);
+
+	      store.history = history;
+	      store[_constants.ROUTER_STATE_SELECTOR] = routerStateSelector;
+
+	      return store;
+	    };
+	  };
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 246 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports['default'] = historyMiddleware;
+
+	var _constants = __webpack_require__(237);
+
+	/**
+	 * Middleware for interacting with the history API
+	 * @param {History} History object
+	 */
+
+	function historyMiddleware(history) {
+	  return function () {
+	    return function (next) {
+	      return function (action) {
+	        if (action.type === _constants.HISTORY_API) {
+	          var _action$payload = action.payload;
+	          var method = _action$payload.method;
+	          var args = _action$payload.args;
+
+	          return history[method].apply(history, args);
+	        }
+	        return next(action);
+	      };
+	    };
+	  };
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 247 */
+/***/ function(module, exports) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports['default'] = useDefaults;
+	var defaults = {
+	  onError: function onError(error) {
+	    throw error;
+	  },
+	  routerStateSelector: function routerStateSelector(state) {
+	    return state.router;
+	  }
+	};
+
+	function useDefaults(next) {
+	  return function (options) {
+	    return function (createStore) {
+	      return function (reducer, initialState) {
+	        var optionsWithDefaults = _extends({}, defaults, options);
+
+	        var baseCreateHistory = optionsWithDefaults.createHistory;
+	        var baseHistory = optionsWithDefaults.history;
+
+	        var createHistory = undefined;
+	        if (typeof baseCreateHistory === 'function') {
+	          createHistory = baseCreateHistory;
+	        } else if (baseHistory) {
+	          createHistory = function () {
+	            return baseHistory;
+	          };
+	        } else {
+	          createHistory = null;
+	        }
+
+	        return next(_extends({}, optionsWithDefaults, {
+	          createHistory: createHistory
+	        }))(createStore)(reducer, initialState);
+	      };
+	    };
+	  };
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 248 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	exports['default'] = routeReplacement;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _redux = __webpack_require__(157);
+
+	var _reactRouter = __webpack_require__(180);
+
+	var _replaceRoutesMiddleware = __webpack_require__(249);
+
+	var _replaceRoutesMiddleware2 = _interopRequireDefault(_replaceRoutesMiddleware);
+
+	function routeReplacement(next) {
+	  return function (options) {
+	    return function (createStore) {
+	      return function (reducer, initialState) {
+	        var baseRoutes = options.routes;
+	        var getRoutes = options.getRoutes;
+	        var routerStateSelector = options.routerStateSelector;
+
+	        var store = undefined;
+
+	        var childRoutes = [];
+	        var areChildRoutesResolved = false;
+	        var childRoutesCallbacks = [];
+
+	        function replaceRoutes(r) {
+	          childRoutes = _reactRouter.createRoutes(r);
+
+	          var routerState = routerStateSelector(store.getState());
+	          if (routerState) {
+	            var _routerState$location = routerState.location;
+	            var state = _routerState$location.state;
+	            var pathname = _routerState$location.pathname;
+	            var query = _routerState$location.query;
+
+	            store.history.replaceState(state, pathname, query);
+	          }
+
+	          if (!areChildRoutesResolved) {
+	            areChildRoutesResolved = true;
+	            childRoutesCallbacks.forEach(function (cb) {
+	              return cb(null, childRoutes);
+	            });
+	          }
+	        }
+
+	        var routes = undefined;
+	        if (baseRoutes) {
+	          routes = baseRoutes;
+	        } else if (getRoutes) {
+	          routes = getRoutes({
+	            dispatch: function dispatch(action) {
+	              return store.dispatch(action);
+	            },
+	            getState: function getState() {
+	              return store.getState();
+	            }
+	          });
+	        } else {
+	          routes = [{
+	            getChildRoutes: function getChildRoutes(location, cb) {
+	              if (!areChildRoutesResolved) {
+	                childRoutesCallbacks.push(cb);
+	                return;
+	              }
+
+	              cb(null, childRoutes);
+	            }
+	          }];
+	        }
+
+	        store = _redux.compose(_redux.applyMiddleware(_replaceRoutesMiddleware2['default'](replaceRoutes)), next(_extends({}, options, {
+	          routes: _reactRouter.createRoutes(routes)
+	        })))(createStore)(reducer, initialState);
+
+	        return store;
+	      };
+	    };
+	  };
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 249 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports['default'] = replaceRoutesMiddleware;
+
+	var _constants = __webpack_require__(237);
+
+	function replaceRoutesMiddleware(replaceRoutes) {
+	  return function () {
+	    return function (next) {
+	      return function (action) {
+	        if (action.type === _constants.REPLACE_ROUTES) {
+	          replaceRoutes(action.payload);
+	        }
+	        return next(action);
+	      };
+	    };
+	  };
+	}
+
+	module.exports = exports['default'];
+
+/***/ },
+/* 250 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	exports.__esModule = true;
+	exports['default'] = isActive;
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _reactRouterLibIsActive = __webpack_require__(209);
+
+	var _reactRouterLibIsActive2 = _interopRequireDefault(_reactRouterLibIsActive);
+
+	/**
+	 * Creates a router state selector that returns whether or not the given
+	 * pathname and query are active.
+	 * @param {String} pathname
+	 * @param {Object} query
+	 * @param {Boolean} indexOnly
+	 * @return {Boolean}
+	 */
+
+	function isActive(pathname, query) {
+	  var indexOnly = arguments.length <= 2 || arguments[2] === undefined ? false : arguments[2];
+
+	  return function (state) {
+	    if (!state) return false;
+	    var location = state.location;
+	    var params = state.params;
+	    var routes = state.routes;
+
+	    return _reactRouterLibIsActive2['default'](pathname, query, indexOnly, location, routes, params);
+	  };
+	}
+
 	module.exports = exports['default'];
 
 /***/ }

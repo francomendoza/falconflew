@@ -1,6 +1,6 @@
 {
   currentTemplateId: 3, //from route
-  subTemplates: {
+  templateMap: {
     'x00': {
       visible: true,
       submitted: true
@@ -10,9 +10,9 @@
       submitted: true
     }
   },
-  focusTemplate: 2,  //for styling,
+  focusTemplate: 'x00',  //for styling,
   entitiesForAutosuggestByTemplateId: {3: [1,4,5]},
-  entitiesById:{1:{}, 4:{}, 5:{}}
+  entitiesById:{1:{}, 4:{}, 5:{}},
   templateInstanceById: {
     'x00': {
       parent_et: null,
