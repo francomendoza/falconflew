@@ -1,10 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-
-var Empty = require('./components/empty');
-var EntityList = require('./components/entity_list');
-var TemplateList = require('./components/template_list');
-var TemplateForm = require('./components/template_form');
+import { pushState } from 'redux-router';
+import EntityList from './components/entity_list';
+import TemplateList from './components/template_list';
 
 var App = React.createClass({
   render: function() {
@@ -16,6 +14,18 @@ var App = React.createClass({
   }
 });
 
-module.exports = App;
+function mapStateToProps(state){
+  return {
+    entities: state.entities,
+    templatesById: state.templates.templatesById,
+    currentTemplateId: state.templates.currentTemplateId,
+    templateMap: state.templateMap,
+    router: state.router
+  }
+}
+
+export default connect(mapStateToProps,{ pushState })(App);
+
+// module.exports = App;
 
 

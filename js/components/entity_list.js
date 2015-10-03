@@ -1,10 +1,7 @@
 var React = require('react');
 import { connect } from 'react-redux';
-// var Reflux = require('reflux');
-// var EntityStore = require('./../stores/entity_store');
 
 var EntityList = React.createClass({
-  // mixins: [Reflux.connect(EntityStore)],
 
   render: function() {
     console.log('I love weenis')
@@ -26,5 +23,4 @@ function mapStateToProps(state){
   }
 }
 
-// module.exports = EntityList;
 export default connect(mapStateToProps)(EntityList);

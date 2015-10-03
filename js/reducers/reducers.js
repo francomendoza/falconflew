@@ -4,10 +4,10 @@ import db from '../../example_template';
 import { routerStateReducer } from 'redux-router';
 
 const initialState =  [];
-const currentTemplateId = 1;
+// const currentTemplateId = 1;
 let templatesById = {};
 db.forEach((el) => { templatesById[el.template_id] = el });
-const initialTemplateState = { templatesById, currentTemplateId };
+const initialTemplateState = { templatesById };
 const templateMap = [{}]
 
 function updateEntities(state = initialState, action){

@@ -60,7 +60,10 @@ var RelationshipFormElement = React.createClass({
     var template_form;
     // var entities_for_template = this.getEntitiesForTemplate(entities);
     if(true){ //this.prop.is_creating
-      template_form = <TemplateForm templatesById= {this.props.templatesById} params={{currentTemplateId: this.props.related_node.template_id}} subform={true}/>
+      template_form = <TemplateForm 
+        templatesById= { this.props.templatesById } 
+        currentTemplateId = {this.props.related_node.template_id}
+        subform={true}/>
     }
     return (
       <div className="relationship_element">
@@ -199,18 +202,18 @@ var TemplateForm = React.createClass({
     //   background_color = "white"
     // }
 
-    header = <h3 style={{padding: "10px", margin: "0"}}>New {this.props.templatesById[this.props.params.currentTemplateId].node_label}</h3>
+    header = <h3 style={{padding: "10px", margin: "0"}}>New {this.props.templatesById[this.props.currentTemplateId].node_label}</h3>
 
-    properties = this.props.templatesById[this.props.params.currentTemplateId].node_properties.map(function(property, index) {
+    properties = this.props.templatesById[this.props.currentTemplateId].node_properties.map(function(property, index) {
       return <PropertyFormElement
       key = { index }
       index = { index }
-      currentTemplateId = { that.props.params.currentTemplateId }
+      currentTemplateId = { that.props.currentTemplateId }
       property = { property } 
       handleChange = { that.handlePropertyChange } />
     });
 
-    related_nodes = this.props.templatesById[this.props.params.currentTemplateId].related_nodes.map(function(related_node, index) {
+    related_nodes = this.props.templatesById[this.props.currentTemplateId].related_nodes.map(function(related_node, index) {
       return <RelationshipFormElement
       key = { index }
       index = { index }
@@ -224,7 +227,7 @@ var TemplateForm = React.createClass({
 
     submitButton = <div style={{padding: "10px"}}><button onClick = {this.createNode}> Submit </button></div>
 
-    if (this.props.params.currentTemplateId) {
+    if (this.props.currentTemplateId) {
       template = <div style={{outline: "black solid 1px", backgroundColor: background_color}}> {header} {properties} {related_nodes} {submitButton} </div>
     } else {
       template = <Empty/>
@@ -235,15 +238,15 @@ var TemplateForm = React.createClass({
 
 });
 
-function mapStateToProps(state){
-  return {
-    entities: state.entities,
-    templatesById: state.templates.templatesById,
-    currentTemplateId: state.templates.currentTemplateId,
-    templateMap: state.templateMap,
-    router: state.router
-  }
-}
+// function mapStateToProps(state){
+//   return {
+//     entities: state.entities,
+//     templatesById: state.templates.templatesById,
+//     currentTemplateId: state.router.params.currentTemplateId,
+//     templateMap: state.templateMap,
+//     router: state.router
+//   }
+// }
 
-export default connect(mapStateToProps,{ pushState })(TemplateForm);
-// module.exports = TemplateForm;
+// export default connect(mapStateToProps,{ pushState })(TemplateForm);
+module.exports = TemplateForm;
