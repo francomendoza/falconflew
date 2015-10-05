@@ -13,9 +13,9 @@
   focusTemplate: 'x00',  //for styling,
   entitiesForAutosuggestByTemplateId: {3: [1,4,5]},
   entitiesById:{1:{}, 4:{}, 5:{}},
+  mapInstanceKeys: { x0: [x01], x01:[x011], x011: [ ] },
   templateInstanceById: {
     'x00': {
-      parent_et: null,
       template_id: 3,
       node_label: "PartNumber",
       node_properties: [
