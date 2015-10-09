@@ -1,11 +1,9 @@
 var React = require('react');
 var _ = require('lodash');
-var templates = require('../../example_template')
-var entities = [];
 var Empty = require('./empty');
 var PropertyFormElement = require('./property_form_element');
 var Autosuggest = require('react-autosuggest');
-import { submitForm, updatePropertyValue, toggleFormVisibility } from '../actions/actions';
+import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate } from '../actions/actions';
 import { connect } from 'react-redux';
 import { pushState } from 'redux-router';
 
@@ -16,29 +14,7 @@ var RelationshipFormElement = React.createClass({
     obj.related_node = this.props.related_node;
     obj.related_node.entity_id = event.target.value;
     obj.index = this.props.index;
-    this.props.handleChange(obj);
-  },
-
-  // newEntityForm: function() {
-  //   this.setState({is_creating: true});
-  //   this.props.updateParentBackground();
-  // },
-
-  getTemplateById: function(id) {
-    return _.find(templates, function(template) { return template.template_id === id; }) || {node_label: ''};
-  },
-
-  // getEntitiesForTemplate: function(these_entities) {
-  //   var that = this;
-  //   return _.filter(these_entities, function(entity){
-  //     return entity.template_id === that.props.related_node.data.template_id;
-  //   });
-  // },
-
-  onEntityAdded: function(updated_entities) {
-    new_entities = this.getEntitiesForTemplate(updated_entities);
-    this.setState({value: _.last(new_entities).entity_id});
-    this.handleRelationshipChange();
+    this.props.handleRelationshipChange(obj);
   },
 
   clickDammit: function() {
@@ -55,7 +31,9 @@ var RelationshipFormElement = React.createClass({
         templateInstanceState = { this.props.templateInstanceState }
         templatesById = { this.props.templatesById } 
         currentTemplateId = { this.props.related_node.template_id }
-        dispatch = { this.props.dispatch } />
+        dispatch = { this.props.dispatch }
+        activeTemplate = { this.props.activeTemplate } 
+        clickHandler = { this.props.clickHandler(this.props.templateInstanceId) }/>
     }
     return (
       <div className="relationship_element">
@@ -104,21 +82,21 @@ var TemplateForm = React.createClass({
   },
 
   createNode: function() {
-    // this.setState({
-    //   submitted: true
-    // }, function() {
     const { dispatch } = this.props;
     let node_properties = this.props.templatesById[this.props.params.currentTemplateId].node_properties.map((node_property) => {
-
       return 
 
     });
 
       dispatch(submitForm());
-    // })
-    // if (!this.props.subform) {
-      // this.context.router.transitionTo('/');
-    // }
+  },
+
+  clickHandler: function(templateInstanceId){
+    var that = this;
+    return function(event){
+      event.stopPropagation()
+      that.props.dispatch(setActiveTemplate(templateInstanceId));
+    }
   },
 
   updateParentBackground: function(){
@@ -143,9 +121,9 @@ var TemplateForm = React.createClass({
     var header, properties, related_nodes, submitButton, template;
 
     var background_color = "#cfd4d8"
-    // if(this.state.active){
-    //   background_color = "white"
-    // }
+    if(this.props.activeTemplate === this.props.templateInstanceId){
+      background_color = "white"
+    }
 
     header = <h3 style={{padding: "10px", margin: "0"}}>New {this.props.templatesById[this.props.currentTemplateId].node_label}</h3>
 
@@ -155,7 +133,8 @@ var TemplateForm = React.createClass({
       index = { index }
       currentTemplateId = { that.props.currentTemplateId }
       property = { property } 
-      handlePropertyChange = { that.handlePropertyChange } />
+      handlePropertyChange = { that.handlePropertyChange } 
+      clickHandler = { that.clickHandler(that.props.templateInstanceId) } />
     });
 
     related_nodes = this.props.templatesById[this.props.currentTemplateId].related_nodes.map(function(related_node, index) {
@@ -169,7 +148,9 @@ var TemplateForm = React.createClass({
       templateInstances = { that.props.templateInstances }
       templateInstanceId = { that.props.templateInstanceId + index }
       toggleShow = { that.toggleTemplateFormVisibility } 
-      dispatch = { that.props.dispatch } />
+      dispatch = { that.props.dispatch }
+      activeTemplate = { that.props.activeTemplate } 
+      clickHandler = { that.clickHandler }/>
     });
 
     submitButton = <div style={{padding: "10px"}}><button onClick = {this.createNode}> Submit </button></div>
@@ -190,6 +171,7 @@ function mapStateToProps(state){
     templateInstanceState: state.templateInstances.templateInstanceState,
     templateInstanceById: state.templateInstances.templateInstanceById,
     templateInstances: state.templateInstances.templateInstances,
+    activeTemplate: state.activeTemplate
   }
 }
 

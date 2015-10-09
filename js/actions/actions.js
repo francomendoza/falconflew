@@ -17,3 +17,7 @@ export function updateTemplateMap(templateId){
 export function setInitialTemplateInstances(templateId){
   return { type: "SET_INITIAL_TEMPLATE_INSTANCES", templateId }
 };
+
+export function setActiveTemplate(templateInstanceId){
+  return { type: "SET_ACTIVE_TEMPLATE", templateInstanceId }
+};

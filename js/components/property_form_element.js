@@ -22,7 +22,8 @@ var PropertyFormElement = React.createClass({
           <input type = { property.type }
           name = { property.name }
           value = { property.value }
-          onChange={this.handlePropertyChange}/>
+          onChange={this.handlePropertyChange}
+          onClick = { this.props.clickHandler }/>
       </div>;
   }
 });

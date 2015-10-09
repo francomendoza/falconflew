@@ -29,18 +29,40 @@ function templateInstances(state = {templateInstances: {}, templateInstanceById:
       // find template using action.templateID and templates by ID
       // give template new instance ID, then MAP related nodes, and give each an instance ID
     case 'TOGGLE_FORM_VISIBILITY':
-      return Object.assign({}, state, {templateInstanceState: updateTemplateInstanceState(state.templateInstanceState, action.templateInstanceId)})
+      return Object.assign({}, state, { templateInstanceState: templateInstanceStateMap(state.templateInstanceState, action) })
     default:
       return state;
   }
 }
 
-function updateTemplateInstanceState(templateInstanceState, templateInstanceId) {
-  let updatingInstance = templateInstanceState[templateInstanceId] //{visible: false, submitted: true}
-  let previousVisibility = updatingInstance.visible // false
-  // {'x0': {visible: true, submitted:false}, 'x00': {visible:false}}
-  return Object.assign({}, templateInstanceState, {[templateInstanceId]: Object.assign({}, updatingInstance, {visible: !previousVisibility})});
+function templateInstanceStateMap(state = {}, action){
+  switch (action.type){
+    case 'SET_INITIAL_TEMPLATE_INSTANCES':
+      return state;
+    case 'TOGGLE_FORM_VISIBILITY':
+      return Object.assign({}, state, { [action.templateInstanceId]: templateInstanceState(state[action.templateInstanceId], action) });
+    default:
+      return state;
+  }
 }
+
+function templateInstanceState(state = {}, action){
+  switch (action.type){
+    case 'SET_INITIAL_TEMPLATE_INSTANCES':
+      return state;
+    case 'TOGGLE_FORM_VISIBILITY':
+      return Object.assign({}, state, { visible: !state.visible });
+    default:
+      return state;
+  }
+}
+
+// function updateTemplateInstanceState(templateInstanceState, templateInstanceId) {
+//   let updatingInstance = templateInstanceState[templateInstanceId] //{visible: false, submitted: true}
+//   let previousVisibility = updatingInstance.visible // false
+//   // {'x0': {visible: true, submitted:false}, 'x00': {visible:false}}
+//   return Object.assign({}, templateInstanceState, {[templateInstanceId]: Object.assign({}, updatingInstance, {visible: !previousVisibility})});
+// }
 
 function generateTemplateInstances(template, id, obj) {
   obj[id] = template
@@ -101,12 +123,22 @@ function templates(state = initialTemplateState, action) {
    }
 }
 
+function activeTemplate(state = 'x0', action){
+  switch (action.type){
+    case 'SET_ACTIVE_TEMPLATE':
+      return action.templateInstanceId;
+    default:
+      return state;
+  }
+}
+
 const reducers = combineReducers({
   updateEntities,
   templateMap,
   templates,
   router: routerStateReducer,
-  templateInstances
+  templateInstances,
+  activeTemplate
 })
 
 export default reducers;
