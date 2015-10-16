@@ -2,7 +2,7 @@ var React = require('react');
 var _ = require('lodash');
 var Empty = require('./empty');
 var PropertyFormElement = require('./property_form_element');
-var Autosuggest = require('react-autosuggest');
+// var Autosuggest = require('react-autosuggest');
 import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate } from '../actions/actions';
 import { connect } from 'react-redux';
 import { pushState } from 'redux-router';
@@ -87,7 +87,7 @@ var TemplateForm = React.createClass({
     const { dispatch, entities } = this.props;
     var that = this;
 
-    var header, properties, related_nodes, submitButton, template;
+    var header, properties, related_nodes = <Empty/>, submitButton, template;
 
     var background_color = "#cfd4d8";
     if(this.props.activeTemplate === this.props.templateInstanceId){
@@ -106,22 +106,23 @@ var TemplateForm = React.createClass({
       clickHandler = { that.clickHandler(that.props.templateInstanceId) } />
     });
 
-    related_nodes = this.props.templatesById[this.props.currentTemplateId].related_nodes.map(function(related_node, index) {
-      return <RelationshipFormElement
-      key = { index }
-      index = { index }
-      related_node = { related_node }
-      templatesById = { that.props.templatesById }
-      getSuggestions = { that.getSuggestions }
-      templateInstanceState = { that.props.templateInstanceState }
-      templateInstances = { that.props.templateInstances }
-      templateInstanceId = { that.props.templateInstanceId + index }
-      toggleShow = { that.toggleTemplateFormVisibility } 
-      dispatch = { that.props.dispatch }
-      activeTemplate = { that.props.activeTemplate } 
-      clickHandler = { that.clickHandler }/>
-    });
-
+    if(this.props.templatesById[this.props.currentTemplateId].related_nodes){
+      related_nodes = this.props.templatesById[this.props.currentTemplateId].related_nodes.map(function(related_node, index) {
+        return <RelationshipFormElement
+        key = { index }
+        index = { index }
+        related_node = { related_node }
+        templatesById = { that.props.templatesById }
+        getSuggestions = { that.getSuggestions }
+        templateInstanceState = { that.props.templateInstanceState }
+        templateInstances = { that.props.templateInstances }
+        templateInstanceId = { that.props.templateInstanceId + index }
+        toggleShow = { that.toggleTemplateFormVisibility } 
+        dispatch = { that.props.dispatch }
+        activeTemplate = { that.props.activeTemplate } 
+        clickHandler = { that.clickHandler }/>
+      });
+    }
     submitButton = <div style={{padding: "10px"}}><button onClick = { this.createNode }> Submit </button></div>
 
     let containerStyles = { 
@@ -142,9 +143,8 @@ var TemplateForm = React.createClass({
 
 function mapStateToProps(state){
   return {
-    templateInstanceState: state.templateInstances.templateInstanceState,
-    templateInstanceById: state.templateInstances.templateInstanceById,
-    templateInstances: state.templateInstances.templateInstances,
+    templateInstanceState: state.templateInstanceStateMap,
+    templateInstances: state.templateInstanceMap,
     activeTemplate: state.activeTemplate
   }
 }

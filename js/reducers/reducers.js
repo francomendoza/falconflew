@@ -1,14 +1,8 @@
 import { combineReducers } from 'redux';
 import * as actions from '../actions/actions';
-import db from '../../example_template';
 import { routerStateReducer } from 'redux-router';
 
-const initialState =  [];
-let templatesById = {};
-db.forEach((el) => { templatesById[el.template_id] = el });
-const initialTemplateState = { templatesById };
-
-function updateEntities(state = initialState, action){
+function updateEntities(state = [], action){
   switch (action.type){
     case 'SUBMIT_FORM':
       return [...state, action.node_obj];
@@ -17,27 +11,10 @@ function updateEntities(state = initialState, action){
   }
 }
 
-function templateInstances(state = {templateInstances: {}, templateInstanceById: {}, templateInstanceState: {}}, action){
-  switch (action.type){
-    case 'SET_INITIAL_TEMPLATE_INSTANCES':
-      return {
-        templateInstances: generateInstanceMap(templatesById[action.templateId], 'x0', {}),
-        templateInstanceById: generateTemplateInstances(templatesById[action.templateId], 'x0', {}),
-        templateInstanceState: generateTemplateInstanceState(templatesById[action.templateId], 'x0', { 'x0': { visible: true, submitted: false } })
-      }
-      // find template using action.templateID and templates by ID
-      // give template new instance ID, then MAP related nodes, and give each an instance ID
-    case 'TOGGLE_FORM_VISIBILITY':
-      return Object.assign({}, state, { templateInstanceState: templateInstanceStateMap(state.templateInstanceState, action) });
-    case 'UPDATE_PROPERTY_VALUE':
-      return Object.assign({}, state, { templateInstanceById: templateInstanceById(state.templateInstanceById, action) });
-    default:
-      return state;
-  }
-}
-
-function templateInstanceById(state = {}, action){
+function templateInstancesByInstanceId(state = {}, action){
   switch(action.type){
+    case 'ADD_TEMPLATES_BY_ID':
+      return Object.assign({}, state, generateTemplateInstancesByInstanceId(action.templatesById, action.currentTemplateId, 'x0', {}));
     case 'UPDATE_PROPERTY_VALUE':
       return Object.assign({}, state, { [action.property_section.templateInstanceId]: templateInstance(state[action.property_section.templateInstanceId], action) });
     default:
@@ -63,10 +40,19 @@ function node_properties(state = [], action){
   }
 }
 
+function templateInstanceMap(state = {}, action){
+  switch (action.type){
+    case 'ADD_TEMPLATES_BY_ID':
+      return Object.assign({}, state, generateTemplateInstanceMap(action.templatesById, action.currentTemplateId, 'x0', {}));   
+    default:
+      return state;
+  }
+}
+
 function templateInstanceStateMap(state = {}, action){
   switch (action.type){
-    case 'SET_INITIAL_TEMPLATE_INSTANCES':
-      return state;
+    case 'ADD_TEMPLATES_BY_ID':
+      return Object.assign({}, state, generateTemplateInstanceState(action.templatesById, action.currentTemplateId, 'x0', { 'x0': { visible: true, submitted: false } }))
     case 'TOGGLE_FORM_VISIBILITY':
       return Object.assign({}, state, { [action.templateInstanceId]: templateInstanceState(state[action.templateInstanceId], action) });
     default:
@@ -76,8 +62,6 @@ function templateInstanceStateMap(state = {}, action){
 
 function templateInstanceState(state = {}, action){
   switch (action.type){
-    case 'SET_INITIAL_TEMPLATE_INSTANCES':
-      return state;
     case 'TOGGLE_FORM_VISIBILITY':
       return Object.assign({}, state, { visible: !state.visible });
     default:
@@ -85,40 +69,45 @@ function templateInstanceState(state = {}, action){
   }
 }
 
-function generateTemplateInstances(template, id, obj) {
-  obj[id] = template;
-  template.related_nodes.forEach(function(el, index){
-    let thisInstanceId = `${id}${index}`;
-    let thisTemplate = templatesById[el.template_id];
-    obj[thisInstanceId] = thisTemplate;
-    generateTemplateInstances(thisTemplate, thisInstanceId, obj);
-  });
-  return obj;
-}
-
-function generateInstanceMap(template, id, obj) {
-  if(obj[id] !== undefined || obj[id] !== null) {
-    obj[id] = [];
+function generateTemplateInstancesByInstanceId(templatesById, currentTemplateId, instanceId, obj) {
+  obj[instanceId] = templatesById[currentTemplateId];
+  if(templatesById[currentTemplateId].related_nodes){
+    templatesById[currentTemplateId].related_nodes.forEach(function(el, index){
+      let thisInstanceId = `${instanceId}${index}`;
+      // let thisTemplate = templatesById[el.template_id];
+      // obj[thisInstanceId] = thisTemplate;
+      generateTemplateInstancesByInstanceId(templatesById, el.template_id, thisInstanceId, obj);
+    });
   }
-  template.related_nodes.forEach(function(el, index){
-    let thisInstanceId = `${id}${index}`;
-    obj[id].push(thisInstanceId);
-    generateInstanceMap(templatesById[el.template_id], thisInstanceId, obj);
-  });
   return obj;
 }
 
-function generateTemplateInstanceState(template, id, obj) {
-  template.related_nodes.forEach(function(el, index){
-    let thisInstanceId = `${id}${index}`;
-    obj[thisInstanceId] = {visible: false, submitted: false};
-    generateTemplateInstanceState(templatesById[el.template_id], thisInstanceId, obj);
-  });
+function generateTemplateInstanceMap(templatesById, currentTemplateId, instanceId, obj) {
+  if(obj[instanceId] !== undefined || obj[instanceId] !== null) {
+    obj[instanceId] = [];
+  }
+  if(templatesById[currentTemplateId].related_nodes){
+    templatesById[currentTemplateId].related_nodes.forEach(function(el, index){
+      let thisInstanceId = `${instanceId}${index}`;
+      obj[instanceId].push(thisInstanceId);
+      generateTemplateInstanceMap(templatesById, el.template_id, thisInstanceId, obj);
+    });
+  }
   return obj;
 }
 
+function generateTemplateInstanceState(templatesById, currentTemplateId, instanceId, obj) {
+  if(templatesById[currentTemplateId].related_nodes){
+    templatesById[currentTemplateId].related_nodes.forEach(function(el, index){
+      let thisInstanceId = `${instanceId}${index}`;
+      obj[thisInstanceId] = {visible: false, submitted: false};
+      generateTemplateInstanceState(templatesById, el.template_id, thisInstanceId, obj);
+    });
+  }
+  return obj;
+}
 
-function templates(state = initialTemplateState, action) {
+function templatesById(state = {}, action) {
   switch (action.type){
     case 'ADD_TEMPLATES_BY_ID':
       return Object.assign({}, state, action.templatesById);
@@ -136,12 +125,24 @@ function activeTemplate(state = 'x0', action){
   }
 }
 
+function autocompleteItems(state = [], action){
+  switch (action.type){
+    case 'ADD_ITEMS_TO_AUTOCOMPLETE':
+      return [...action.items]
+    default:
+      return state;
+  }
+}
+
 const reducers = combineReducers({
   updateEntities,
-  templates,
+  templatesById,
   router: routerStateReducer,
-  templateInstances,
-  activeTemplate
+  templateInstancesByInstanceId,
+  templateInstanceStateMap,
+  templateInstanceMap,
+  activeTemplate,
+  autocompleteItems
 })
 
 export default reducers;

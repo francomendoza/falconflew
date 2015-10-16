@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-fetch';
+import { pushState } from 'redux-router';
 
 export function submitForm(node_obj){
   return { type: "SUBMIT_FORM", node_obj };
@@ -16,10 +17,6 @@ export function updateTemplateMap(templateId){
   return { type: "ADD_TEMPLATE_TO_MAP", templateId };
 }
 
-export function setInitialTemplateInstances(templateId){
-  return { type: "SET_INITIAL_TEMPLATE_INSTANCES", templateId }
-};
-
 export function setActiveTemplate(templateInstanceId){
   return { type: "SET_ACTIVE_TEMPLATE", templateInstanceId }
 };
@@ -33,13 +30,26 @@ export function retrieveTemplates(currentTemplateId){
     return fetch('http://localhost:3000/template/'+currentTemplateId)
       .then(response => response.json())
       .then(data => {
-        dispatch(addTemplatesById(data));
-      });
+        dispatch(addTemplatesById(data, currentTemplateId));
+      })
+      .then(() => dispatch(pushState(null, '/template_form/'+currentTemplateId)));
   };
 };
 
-export function addTemplatesById(templates){
+export function addTemplatesById(templates, currentTemplateId){
   let templatesById = {};
   templates.forEach((template) => { templatesById[template._id["$oid"]] = template });
-  return { type: "ADD_TEMPLATES_BY_ID", templatesById };
+  return { type: "ADD_TEMPLATES_BY_ID", templatesById, currentTemplateId };
 };
+
+export function requestTemplateByName(name){
+  return (dispatch, getState) => {
+    return fetch('http://localhost:3000/templatesbyname?name='+name)
+      .then(response => response.json())
+      .then(data => dispatch(addItemsToAutocomplete(data)));
+  }
+}
+
+export function addItemsToAutocomplete(items){
+  return { type: 'ADD_ITEMS_TO_AUTOCOMPLETE', items }
+}

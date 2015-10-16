@@ -2,18 +2,18 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { pushState } from 'redux-router';
 import TemplateForm from './template_form';
-import { updateTemplateMap, setInitialTemplateInstances, retrieveTemplates } from '../actions/actions'
+import { updateTemplateMap, retrieveTemplates } from '../actions/actions'
 
 var TemplatePage = React.createClass({
 
-  componentWillMount: function(props){
-    this.props.dispatch(setInitialTemplateInstances(this.props.currentTemplateId));
-    this.props.dispatch(retrieveTemplates("56203e035d7692cc80000008"));
-  },
+  // componentWillMount: function(props){
+  //   // this.props.dispatch(setInitialTemplateInstances(this.props.currentTemplateId));
+  //   // this.props.dispatch(retrieveTemplates("56203e035d7692cc80000008"));
+  // },
 
-  componentWillReceiveProps: function(next_props){
-    this.props.dispatch(setInitialTemplateInstances(next_props.currentTemplateId));
-  },
+  // componentWillReceiveProps: function(next_props){
+  //   // this.props.dispatch(setInitialTemplateInstances(next_props.currentTemplateId));
+  // },
 
   render: function(){
 
@@ -33,7 +33,7 @@ var TemplatePage = React.createClass({
 function mapStateToProps(state){
   return {
     entities: state.entities,
-    templatesById: state.templates.templatesById,
+    templatesById: state.templatesById,
     currentTemplateId: state.router.params.currentTemplateId
   }
 }

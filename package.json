@@ -11,6 +11,7 @@
     "isomorphic-fetch": "^2.1.1",
     "lodash": "^3.10.1",
     "react": "^0.14.0-rc1",
+    "react-autocomplete": "^0.1.4",
     "react-autosuggest": "^2.0.0",
     "react-dom": "^0.14.0-rc1",
     "react-redux": "^3.0.0",
