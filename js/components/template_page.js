@@ -2,12 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { pushState } from 'redux-router';
 import TemplateForm from './template_form';
-import { updateTemplateMap, setInitialTemplateInstances } from '../actions/actions'
+import { updateTemplateMap, setInitialTemplateInstances, retrieveTemplates } from '../actions/actions'
 
 var TemplatePage = React.createClass({
 
   componentWillMount: function(props){
     this.props.dispatch(setInitialTemplateInstances(this.props.currentTemplateId));
+    this.props.dispatch(retrieveTemplates("56203e035d7692cc80000008"));
   },
 
   componentWillReceiveProps: function(next_props){
@@ -15,10 +16,16 @@ var TemplatePage = React.createClass({
   },
 
   render: function(){
-    return <TemplateForm
+
+    let container_styles = {
+      'marginLeft': '100px',
+      'marginRight': '100px'
+    };
+
+    return <div style = { container_styles } ><TemplateForm
       templateInstanceId = { 'x0' }
       templatesById = { this.props.templatesById }
-      currentTemplateId = { this.props.currentTemplateId }/>
+      currentTemplateId = { this.props.currentTemplateId } /></div>
   }
 
 });

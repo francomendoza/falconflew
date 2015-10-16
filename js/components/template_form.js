@@ -23,7 +23,7 @@ var RelationshipFormElement = React.createClass({
 
   render: function(){
     var template_form;
-    // var entities_for_template = this.getEntitiesForTemplate(entities);
+
     if(this.props.templateInstanceState[this.props.templateInstanceId].visible){
       template_form = <TemplateForm 
         templateInstanceId = { this.props.templateInstanceId }
@@ -50,45 +50,18 @@ var RelationshipFormElement = React.createClass({
 
 var TemplateForm = React.createClass({
 
-  getTemplateName: function(template_id) {
-    var component = this;
-    var this_template = _.find(templates, function(template) {
-      return template.template_id == component.props.params.template_id
-    });
-    return {
-      template_name: this_template.template_name
-    };
-  },
-
   getSuggestions: function(input, callback) {
     var regex = new RegExp('^' + input, 'i');
     var suggestions = _.filter(['Test', 'Team', 'Testicles', 'Teeth', 'Touch'], function(option){ return regex.test(option); });
     setTimeout(function(){ callback(null, suggestions);}, 300);
   },
 
-  showEntityForm: function(){
-    //change subtemplates state to show
-  },
-
   handlePropertyChange: function(modified_obj){
     this.props.dispatch(updatePropertyValue(modified_obj));
   },
 
-  getTemplate: function(id) {
-    var this_template = _.find(templates, function(template) {
-      return template.template_id == id
-    });
-    return this_template
-  },
-
-  createNode: function() {
-    const { dispatch } = this.props;
-    let node_properties = this.props.templatesById[this.props.params.currentTemplateId].node_properties.map((node_property) => {
-      return 
-
-    });
-
-      dispatch(submitForm());
+  submitHandler: function(templateInstanceId) {
+    this.props.dispatch(submitForm(templateInstanceId));
   },
 
   clickHandler: function(templateInstanceId){
@@ -97,10 +70,6 @@ var TemplateForm = React.createClass({
       event.stopPropagation()
       that.props.dispatch(setActiveTemplate(templateInstanceId));
     }
-  },
-
-  updateParentBackground: function(){
-    this.setState({active: false});
   },
 
   toggleTemplateFormVisibility: function(templateInstanceId){
@@ -120,18 +89,18 @@ var TemplateForm = React.createClass({
 
     var header, properties, related_nodes, submitButton, template;
 
-    var background_color = "#cfd4d8"
+    var background_color = "#cfd4d8";
     if(this.props.activeTemplate === this.props.templateInstanceId){
       background_color = "white"
     }
 
-    header = <h3 style={{padding: "10px", margin: "0"}}>New {this.props.templatesById[this.props.currentTemplateId].node_label}</h3>
+    header = <h3 style={{padding: "10px", margin: "0"}}>New { this.props.templatesById[this.props.currentTemplateId].node_label }</h3>
 
     properties = this.props.templatesById[this.props.currentTemplateId].node_properties.map(function(property, index) {
       return <PropertyFormElement
       key = { index }
       index = { index }
-      currentTemplateId = { that.props.currentTemplateId }
+      templateInstanceId = { that.props.templateInstanceId }
       property = { property } 
       handlePropertyChange = { that.handlePropertyChange } 
       clickHandler = { that.clickHandler(that.props.templateInstanceId) } />
@@ -153,15 +122,20 @@ var TemplateForm = React.createClass({
       clickHandler = { that.clickHandler }/>
     });
 
-    submitButton = <div style={{padding: "10px"}}><button onClick = {this.createNode}> Submit </button></div>
+    submitButton = <div style={{padding: "10px"}}><button onClick = { this.createNode }> Submit </button></div>
+
+    let containerStyles = { 
+      outline: "black solid 1px", 
+      backgroundColor: background_color
+    }
 
     if (this.props.currentTemplateId) {
-      template = <div style={{outline: "black solid 1px", backgroundColor: background_color}}> {header} {properties} {related_nodes} {submitButton} </div>
+      template = <div style={ containerStyles }> { header } { properties } { related_nodes } { submitButton } </div>
     } else {
       template = <Empty/>
     }
 
-    return <div> {template} </div>;
+    return <div> { template } </div>;
   }
 
 });

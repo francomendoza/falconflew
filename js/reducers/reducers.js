@@ -11,7 +11,6 @@ const initialTemplateState = { templatesById };
 function updateEntities(state = initialState, action){
   switch (action.type){
     case 'SUBMIT_FORM':
-      // console.log('hello from line 9!');
       return [...state, action.node_obj];
     default:
       return state;
@@ -24,12 +23,41 @@ function templateInstances(state = {templateInstances: {}, templateInstanceById:
       return {
         templateInstances: generateInstanceMap(templatesById[action.templateId], 'x0', {}),
         templateInstanceById: generateTemplateInstances(templatesById[action.templateId], 'x0', {}),
-        templateInstanceState: generateTemplateInstanceState(templatesById[action.templateId], 'x0', {'x0': {visible:true, submitted: false}})
+        templateInstanceState: generateTemplateInstanceState(templatesById[action.templateId], 'x0', { 'x0': { visible: true, submitted: false } })
       }
       // find template using action.templateID and templates by ID
       // give template new instance ID, then MAP related nodes, and give each an instance ID
     case 'TOGGLE_FORM_VISIBILITY':
-      return Object.assign({}, state, { templateInstanceState: templateInstanceStateMap(state.templateInstanceState, action) })
+      return Object.assign({}, state, { templateInstanceState: templateInstanceStateMap(state.templateInstanceState, action) });
+    case 'UPDATE_PROPERTY_VALUE':
+      return Object.assign({}, state, { templateInstanceById: templateInstanceById(state.templateInstanceById, action) });
+    default:
+      return state;
+  }
+}
+
+function templateInstanceById(state = {}, action){
+  switch(action.type){
+    case 'UPDATE_PROPERTY_VALUE':
+      return Object.assign({}, state, { [action.property_section.templateInstanceId]: templateInstance(state[action.property_section.templateInstanceId], action) });
+    default:
+      return state;
+  }
+}
+
+function templateInstance(state = {}, action){
+  switch(action.type){
+    case 'UPDATE_PROPERTY_VALUE':
+      return Object.assign({}, state, { ["node_properties"]: node_properties(state.node_properties, action) });
+    default:
+      return state;
+  }
+}
+
+function node_properties(state = [], action){
+  switch(action.type){
+    case 'UPDATE_PROPERTY_VALUE':
+      return [...state.slice(0, action.property_section.index), Object.assign({}, state[action.property_section.index], { value: action.property_section.value }), ...state.slice(action.property_section.index + 1)]
     default:
       return state;
   }
@@ -57,18 +85,11 @@ function templateInstanceState(state = {}, action){
   }
 }
 
-// function updateTemplateInstanceState(templateInstanceState, templateInstanceId) {
-//   let updatingInstance = templateInstanceState[templateInstanceId] //{visible: false, submitted: true}
-//   let previousVisibility = updatingInstance.visible // false
-//   // {'x0': {visible: true, submitted:false}, 'x00': {visible:false}}
-//   return Object.assign({}, templateInstanceState, {[templateInstanceId]: Object.assign({}, updatingInstance, {visible: !previousVisibility})});
-// }
-
 function generateTemplateInstances(template, id, obj) {
-  obj[id] = template
+  obj[id] = template;
   template.related_nodes.forEach(function(el, index){
     let thisInstanceId = `${id}${index}`;
-    let thisTemplate = templatesById[el.template_id]
+    let thisTemplate = templatesById[el.template_id];
     obj[thisInstanceId] = thisTemplate;
     generateTemplateInstances(thisTemplate, thisInstanceId, obj);
   });
@@ -96,30 +117,13 @@ function generateTemplateInstanceState(template, id, obj) {
   return obj;
 }
 
-function templateMap(state = {}, action){
-  switch (action.type){
-    case 'ADD_TEMPLATE_TO_MAP':
-      var new_id = 'x' + action.currentTemplateId + Object.keys(state).length;
-      var visible = Object.keys(state).length === 0;
-      return Object.assign({}, state, {[new_id]: {visible: visible, submitted: false}})
-    default:
-      return state;
-  }
-}
-
-function updateCurrentTemplate(){
-
-}
 
 function templates(state = initialTemplateState, action) {
   switch (action.type){
-    case "UPDATE_PROPERTY_VALUE":
-      console.log('boom');
-      var templatesById = initialTemplateState.templatesById;
-      var currentTemplate = templatesById[action.property_section.currentTemplateId];
-
+    case 'ADD_TEMPLATES_BY_ID':
+      return Object.assign({}, state, action.templatesById);
     default:
-     return state;
+      return state;
    }
 }
 
@@ -134,7 +138,6 @@ function activeTemplate(state = 'x0', action){
 
 const reducers = combineReducers({
   updateEntities,
-  templateMap,
   templates,
   router: routerStateReducer,
   templateInstances,
