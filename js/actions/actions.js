@@ -3,9 +3,13 @@ import { pushState } from 'redux-router';
 
 export function submitForm(templateInstanceId){
   return (dispatch, getState) => {
-    return fetch('http://localhost:3000/template/new', {
+    console.log(getState().templateInstancesByInstanceId[templateInstanceId])
+    return fetch('http://localhost:3000/entities/', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
       method: "post",
-      body: getState().templateInstancesByInstanceId[templateInstanceId]
+      body: JSON.stringify(getState().templateInstancesByInstanceId[templateInstanceId])
     }).then({ type: "SUBMIT_FORM", node_obj });
   }
 }
@@ -29,7 +33,7 @@ export function setActiveTemplate(templateInstanceId){
 export function retrieveTemplates(currentTemplateId){
   return (dispatch, getState) => {
     // dispatch() a syncronous action that tells state we are going to fetch data
-    return fetch('http://localhost:3000/template/'+currentTemplateId)
+    return fetch('http://localhost:3000/templates/'+currentTemplateId)
       .then(response => response.json())
       .then(data => {
         dispatch(addTemplatesById(data, currentTemplateId));
@@ -46,7 +50,7 @@ export function addTemplatesById(templates, currentTemplateId){
 
 export function requestTemplateByName(name){
   return (dispatch, getState) => {
-    return fetch('http://localhost:3000/templatesbyname?name='+name)
+    return fetch('http://localhost:3000/templates/templates_by_name?name='+name)
       .then(response => response.json())
       .then(data => dispatch(addItemsToAutocomplete(data)));
   }

@@ -59,8 +59,8 @@ var TemplateForm = React.createClass({
     this.props.dispatch(updatePropertyValue(modified_obj));
   },
 
-  submitHandler: function(templateInstanceId) {
-    this.props.dispatch(submitForm(templateInstanceId));
+  submitHandler: function(e) {
+    this.props.dispatch(submitForm(this.props.templateInstanceId));
   },
 
   clickHandler: function(templateInstanceId){
