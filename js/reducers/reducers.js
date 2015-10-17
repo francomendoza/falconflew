@@ -53,6 +53,7 @@ function templateInstanceStateMap(state = {}, action){
   switch (action.type){
     case 'ADD_TEMPLATES_BY_ID':
       return Object.assign({}, state, generateTemplateInstanceState(action.templatesById, action.currentTemplateId, 'x0', { 'x0': { visible: true, submitted: false } }))
+    case 'SUBMIT_FORM':
     case 'TOGGLE_FORM_VISIBILITY':
       return Object.assign({}, state, { [action.templateInstanceId]: templateInstanceState(state[action.templateInstanceId], action) });
     default:
@@ -62,6 +63,7 @@ function templateInstanceStateMap(state = {}, action){
 
 function templateInstanceState(state = {}, action){
   switch (action.type){
+    case 'SUBMIT_FORM':
     case 'TOGGLE_FORM_VISIBILITY':
       return Object.assign({}, state, { visible: !state.visible });
     default:

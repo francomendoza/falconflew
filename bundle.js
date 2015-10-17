@@ -20752,6 +20752,7 @@
 	  switch (action.type) {
 	    case 'ADD_TEMPLATES_BY_ID':
 	      return Object.assign({}, state, generateTemplateInstanceState(action.templatesById, action.currentTemplateId, 'x0', { 'x0': { visible: true, submitted: false } }));
+	    case 'SUBMIT_FORM':
 	    case 'TOGGLE_FORM_VISIBILITY':
 	      return Object.assign({}, state, _defineProperty({}, action.templateInstanceId, templateInstanceState(state[action.templateInstanceId], action)));
 	    default:
@@ -20763,6 +20764,7 @@
 	  if (state === undefined) state = {};
 
 	  switch (action.type) {
+	    case 'SUBMIT_FORM':
 	    case 'TOGGLE_FORM_VISIBILITY':
 	      return Object.assign({}, state, { visible: !state.visible });
 	    default:
@@ -20896,13 +20898,15 @@
 	      return response.json();
 	    }).then(function (data) {
 	      console.log(data);
-	      dispatch(submitEntityForm(data));
+	      dispatch(submitEntityForm(data, templateInstanceId));
+	    }).then(function () {
+	      dispatch((0, _reduxRouter.pushState)(null, '/', null));
 	    });
 	  };
 	}
 
-	function submitEntityForm(new_node) {
-	  return { type: "SUBMIT_FORM", new_node: new_node };
+	function submitEntityForm(new_node, templateInstanceId) {
+	  return { type: "SUBMIT_FORM", new_node: new_node, templateInstanceId: templateInstanceId };
 	}
 
 	function updatePropertyValue(property_section) {

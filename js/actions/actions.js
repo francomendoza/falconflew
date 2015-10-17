@@ -13,13 +13,14 @@ export function submitForm(templateInstanceId){
     }).then(response => response.json())
       .then(data => {
         console.log(data);
-        dispatch(submitEntityForm(data));
-    });
+        dispatch(submitEntityForm(data, templateInstanceId));
+    })
+      .then(() => { dispatch(pushState(null, '/', null)) });
   }
 }
 
-export function submitEntityForm(new_node) {
-  return { type: "SUBMIT_FORM", new_node };
+export function submitEntityForm(new_node, templateInstanceId) {
+  return { type: "SUBMIT_FORM", new_node, templateInstanceId };
 }
 
 export function updatePropertyValue(property_section){
