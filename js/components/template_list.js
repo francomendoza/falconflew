@@ -1,7 +1,4 @@
 var React = require('react');
-// var Router = require('react-router');
-// var Link = Router.Link;
-import db from '../../example_template';
 var Autocomplete = require('react-autocomplete');
 import { requestTemplateByName, retrieveTemplates } from '../actions/actions';
 import { pushState } from 'redux-router';
@@ -14,7 +11,6 @@ var TemplateList = React.createClass({
 
   onSelect: function(value, item){
     this.props.dispatch(retrieveTemplates(value));
-    // this.props.dispatch(pushState(null, '/template_form/'+value));
   },
 
   render: function() {
@@ -28,7 +24,7 @@ var TemplateList = React.createClass({
       }
     }
     return <div>
-        <h2>Templates</h2>
+        <h2>Search Templates</h2>
         <Autocomplete 
         onChange = { this.onChange } 
         onSelect = { this.onSelect }

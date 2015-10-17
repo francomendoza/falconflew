@@ -2,10 +2,9 @@ var React = require('react');
 var _ = require('lodash');
 var Empty = require('./empty');
 var PropertyFormElement = require('./property_form_element');
-// var Autosuggest = require('react-autosuggest');
+var Autosuggest = require('react-autosuggest');
 import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate } from '../actions/actions';
 import { connect } from 'react-redux';
-import { pushState } from 'redux-router';
 
 var RelationshipFormElement = React.createClass({
 
@@ -38,8 +37,8 @@ var RelationshipFormElement = React.createClass({
     return (
       <div className="relationship_element">
         <div style={{padding: "10px"}}>
-          <label>{this.props.templatesById[this.props.related_node.template_id].node_label}: </label>
-          <Autosuggest suggestions={this.props.getSuggestions} />
+          <label>{ this.props.templatesById[this.props.related_node.template_id].node_label }: </label>
+          <Autosuggest suggestions={ this.props.getSuggestions } />
           <button onClick={ this.clickDammit }>Create New</button>
         </div>
         {template_form}
@@ -94,7 +93,14 @@ var TemplateForm = React.createClass({
       background_color = "white"
     }
 
-    header = <h3 style={{padding: "10px", margin: "0"}}>New { this.props.templatesById[this.props.currentTemplateId].node_label }</h3>
+    let header_style = {
+      height: "40px",
+      textAlign: "center",
+      background: "linear-gradient(#002c6b 0%, #3971bd 100%)",
+      color: "white"
+    };
+
+    header = <div style = { header_style }><h3 style = { { padding: "10px", margin: "0" } }>New { this.props.templatesById[this.props.currentTemplateId].node_label }</h3></div>
 
     properties = this.props.templatesById[this.props.currentTemplateId].node_properties.map(function(property, index) {
       return <PropertyFormElement
@@ -123,11 +129,11 @@ var TemplateForm = React.createClass({
         clickHandler = { that.clickHandler }/>
       });
     }
-    submitButton = <div style={{padding: "10px"}}><button onClick = { this.createNode }> Submit </button></div>
+    submitButton = <div style={{padding: "10px"}}><button onClick = { this.submitHandler }> Submit </button></div>
 
     let containerStyles = { 
       outline: "black solid 1px", 
-      backgroundColor: background_color
+      opacity: this.props.activeTemplate === this.props.templateInstanceId ? "1" : "0.3"
     }
 
     if (this.props.currentTemplateId) {

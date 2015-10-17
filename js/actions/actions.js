@@ -1,8 +1,13 @@
 import fetch from 'isomorphic-fetch';
 import { pushState } from 'redux-router';
 
-export function submitForm(node_obj){
-  return { type: "SUBMIT_FORM", node_obj };
+export function submitForm(templateInstanceId){
+  return (dispatch, getState) => {
+    return fetch('http://localhost:3000/template/new', {
+      method: "post",
+      body: getState().templateInstancesByInstanceId[templateInstanceId]
+    }).then({ type: "SUBMIT_FORM", node_obj });
+  }
 }
 
 export function updatePropertyValue(property_section){
@@ -24,9 +29,6 @@ export function setActiveTemplate(templateInstanceId){
 export function retrieveTemplates(currentTemplateId){
   return (dispatch, getState) => {
     // dispatch() a syncronous action that tells state we are going to fetch data
-    var myInit = { method: 'GET',
-               mode: 'cors',
-               cache: 'default' };
     return fetch('http://localhost:3000/template/'+currentTemplateId)
       .then(response => response.json())
       .then(data => {
