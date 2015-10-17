@@ -20694,7 +20694,7 @@
 
 	  switch (action.type) {
 	    case 'SUBMIT_FORM':
-	      return [].concat(_toConsumableArray(state), [action.node_obj]);
+	      return [].concat(_toConsumableArray(state), [action.new_node]);
 	    default:
 	      return state;
 	  }
@@ -20865,6 +20865,7 @@
 	  value: true
 	});
 	exports.submitForm = submitForm;
+	exports.submitEntityForm = submitEntityForm;
 	exports.updatePropertyValue = updatePropertyValue;
 	exports.toggleFormVisibility = toggleFormVisibility;
 	exports.updateTemplateMap = updateTemplateMap;
@@ -20891,8 +20892,17 @@
 	      },
 	      method: "post",
 	      body: JSON.stringify(getState().templateInstancesByInstanceId[templateInstanceId])
-	    }).then({ type: "SUBMIT_FORM", node_obj: node_obj });
+	    }).then(function (response) {
+	      return response.json();
+	    }).then(function (data) {
+	      console.log(data);
+	      dispatch(submitEntityForm(data));
+	    });
 	  };
+	}
+
+	function submitEntityForm(new_node) {
+	  return { type: "SUBMIT_FORM", new_node: new_node };
 	}
 
 	function updatePropertyValue(property_section) {
@@ -26107,7 +26117,6 @@
 	  displayName: 'EntityList',
 
 	  render: function render() {
-	    console.log('I love weenis');
 	    console.log(this.props);
 	    return React.createElement(
 	      'div',

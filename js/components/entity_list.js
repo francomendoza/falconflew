@@ -4,7 +4,6 @@ import { connect } from 'react-redux';
 var EntityList = React.createClass({
 
   render: function() {
-    console.log('I love weenis')
     console.log(this.props);
     return <div>
       <h2>Entities</h2>

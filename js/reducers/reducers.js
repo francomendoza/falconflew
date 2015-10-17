@@ -5,7 +5,7 @@ import { routerStateReducer } from 'redux-router';
 function updateEntities(state = [], action){
   switch (action.type){
     case 'SUBMIT_FORM':
-      return [...state, action.node_obj];
+      return [...state, action.new_node];
     default:
       return state;
   }

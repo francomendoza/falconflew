@@ -10,8 +10,16 @@ export function submitForm(templateInstanceId){
       },
       method: "post",
       body: JSON.stringify(getState().templateInstancesByInstanceId[templateInstanceId])
-    }).then({ type: "SUBMIT_FORM", node_obj });
+    }).then(response => response.json())
+      .then(data => {
+        console.log(data);
+        dispatch(submitEntityForm(data));
+    });
   }
+}
+
+export function submitEntityForm(new_node) {
+  return { type: "SUBMIT_FORM", new_node };
 }
 
 export function updatePropertyValue(property_section){
