@@ -11,8 +11,18 @@ function updateEntities(state = [], action){
   }
 }
 
+//TODO: organize entities by node_label because templates may evolve in future, this will require changing the template identifier in rel_nodes
+function entitiesByTemplateId(state = {}, action){
+  switch (action.type){
+    case 'ADD_ENTITIES_BY_TEMPLATE_ID':
+      return Object.assign({}, state, { [action.template_id]: action.entities });
+    default:
+      return state;
+  }
+}
+
 function templateInstancesByInstanceId(state = {}, action){
-  switch(action.type){
+  switch (action.type){
     case 'ADD_TEMPLATES_BY_ID':
       return Object.assign({}, state, generateTemplateInstancesByInstanceId(action.templatesById, action.currentTemplateId, 'x0', {}));
     case 'UPDATE_PROPERTY_VALUE':
@@ -23,7 +33,7 @@ function templateInstancesByInstanceId(state = {}, action){
 }
 
 function templateInstance(state = {}, action){
-  switch(action.type){
+  switch (action.type){
     case 'UPDATE_PROPERTY_VALUE':
       return Object.assign({}, state, { ["node_properties"]: node_properties(state.node_properties, action) });
     default:
@@ -32,7 +42,7 @@ function templateInstance(state = {}, action){
 }
 
 function node_properties(state = [], action){
-  switch(action.type){
+  switch (action.type){
     case 'UPDATE_PROPERTY_VALUE':
       return [...state.slice(0, action.property_section.index), Object.assign({}, state[action.property_section.index], { value: action.property_section.value }), ...state.slice(action.property_section.index + 1)]
     default:
@@ -138,6 +148,7 @@ function autocompleteItems(state = [], action){
 
 const reducers = combineReducers({
   updateEntities,
+  entitiesByTemplateId,
   templatesById,
   router: routerStateReducer,
   templateInstancesByInstanceId,

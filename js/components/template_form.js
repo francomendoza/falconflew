@@ -2,8 +2,8 @@ var React = require('react');
 var _ = require('lodash');
 var Empty = require('./empty');
 var PropertyFormElement = require('./property_form_element');
-var Autosuggest = require('react-autosuggest');
-import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate } from '../actions/actions';
+import Autocomplete from 'react-autocomplete';
+import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate, getEntitiesByTemplateId } from '../actions/actions';
 import { connect } from 'react-redux';
 
 var RelationshipFormElement = React.createClass({
@@ -20,8 +20,29 @@ var RelationshipFormElement = React.createClass({
     this.props.toggleShow(this.props.templateInstanceId);
   },
 
+  onChange: function(event, value){
+    // var regex = new RegExp('^' + value, 'i');
+    // _.filter(this.props.entitiesByTemplateId[this.props.related_node.template_id], function(entity){
+    //   return regex.test(entity.city);
+    // })
+    this.props.dispatch(getEntitiesByTemplateId(this.props.related_node.template_id, value));
+  },
+
+  onSelect: function(){
+
+  },
+
   render: function(){
     var template_form;
+
+    var styles = {
+      highlightedItem: {
+        backgroundColor: "blue"
+      },
+      item: {
+        backgroundColor: "white"
+      }
+    }
 
     if(this.props.templateInstanceState[this.props.templateInstanceId].visible){
       template_form = <TemplateForm 
@@ -38,7 +59,18 @@ var RelationshipFormElement = React.createClass({
       <div className="relationship_element">
         <div style={{padding: "10px"}}>
           <label>{ this.props.templatesById[this.props.related_node.template_id].node_label }: </label>
-          <Autosuggest suggestions={ this.props.getSuggestions } />
+          <Autocomplete 
+          onChange = { this.onChange } 
+          onSelect = { this.onSelect }
+          getItemValue = { (item) => item.id }
+          items = { this.props.entitiesByTemplateId } 
+          renderItem={ (item, isHighlighted) => (
+              <div
+                style = {isHighlighted ? styles.highlightedItem : styles.item}
+                key = { item.id }
+                id = { item.id }
+              >{ item.city }</div>
+            ) } />
           <button onClick={ this.clickDammit }>Create New</button>
         </div>
         {template_form}
@@ -126,7 +158,8 @@ var TemplateForm = React.createClass({
         toggleShow = { that.toggleTemplateFormVisibility } 
         dispatch = { that.props.dispatch }
         activeTemplate = { that.props.activeTemplate } 
-        clickHandler = { that.clickHandler }/>
+        clickHandler = { that.clickHandler }
+        entities = { that.props.entitiesByTemplateId }/>
       });
     }
     submitButton = <div style={{padding: "10px"}}><button onClick = { this.submitHandler }> Submit </button></div>
@@ -151,7 +184,8 @@ function mapStateToProps(state){
   return {
     templateInstanceState: state.templateInstanceStateMap,
     templateInstances: state.templateInstanceMap,
-    activeTemplate: state.activeTemplate
+    activeTemplate: state.activeTemplate,
+    entitiesByTemplateId: state.entitiesByTemplateId
   }
 }
 

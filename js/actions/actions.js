@@ -3,7 +3,6 @@ import { pushState } from 'redux-router';
 
 export function submitForm(templateInstanceId){
   return (dispatch, getState) => {
-    console.log(getState().templateInstancesByInstanceId[templateInstanceId])
     return fetch('http://localhost:3000/entities/', {
       headers: {
         'Content-Type': 'application/json'
@@ -12,7 +11,6 @@ export function submitForm(templateInstanceId){
       body: JSON.stringify(getState().templateInstancesByInstanceId[templateInstanceId])
     }).then(response => response.json())
       .then(data => {
-        console.log(data);
         dispatch(submitEntityForm(data, templateInstanceId));
     })
       .then(() => { dispatch(pushState(null, '/', null)) });
@@ -21,6 +19,18 @@ export function submitForm(templateInstanceId){
 
 export function submitEntityForm(new_node, templateInstanceId) {
   return { type: "SUBMIT_FORM", new_node, templateInstanceId };
+}
+
+export function getEntitiesByTemplateId(template_id){
+  return (dispatch, getState) => {
+    return fetch('http://localhost:3000/entities/entities_by_template_id?template_id='+template_id)
+      .then(response => response.json())
+      .then(data => dispatch(addEntitiesByTemplateId(data, template_id)))
+  }
+}
+
+export function addEntitiesByTemplateId(entities, template_id){
+  return { type: "ADD_ENTITIES_BY_TEMPLATE_ID", entities, template_id }
 }
 
 export function updatePropertyValue(property_section){
