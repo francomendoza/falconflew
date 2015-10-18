@@ -13,7 +13,7 @@ export function submitForm(templateInstanceId){
       .then(data => {
         dispatch(submitEntityForm(data, templateInstanceId));
     })
-      .then(() => { dispatch(pushState(null, '/', null)) });
+      .then(() => { if(templateInstanceId === 'x0') { dispatch(pushState(null, '/', null))  }});
   }
 }
 
