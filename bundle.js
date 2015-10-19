@@ -56,7 +56,7 @@
 
 	var _reactRedux = __webpack_require__(166);
 
-	var _reducersReducers = __webpack_require__(176);
+	var _reducersReducers = __webpack_require__(175);
 
 	var _reducersReducers2 = _interopRequireDefault(_reducersReducers);
 
@@ -70,7 +70,7 @@
 
 	var _routes2 = _interopRequireDefault(_routes);
 
-	var _historyLibCreateBrowserHistory = __webpack_require__(254);
+	var _historyLibCreateBrowserHistory = __webpack_require__(255);
 
 	var _historyLibCreateBrowserHistory2 = _interopRequireDefault(_historyLibCreateBrowserHistory);
 
@@ -20070,6 +20070,9 @@
 	'use strict';
 
 	exports.__esModule = true;
+
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 	exports['default'] = createProvider;
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
@@ -20135,12 +20138,27 @@
 	    '<Provider> does not support changing `store` on the fly. ' + 'It is most likely that you see this error because you updated to ' + 'Redux 2.x and React Redux 2.x which no longer hot reload reducers ' + 'automatically. See https://github.com/rackt/react-redux/releases/' + 'tag/v2.0.0 for the migration instructions.');
 	  }
 
-	  var Provider = (function (_Component) {
+	  return (function (_Component) {
 	    _inherits(Provider, _Component);
 
 	    Provider.prototype.getChildContext = function getChildContext() {
 	      return { store: this.store };
 	    };
+
+	    _createClass(Provider, null, [{
+	      key: 'childContextTypes',
+	      value: {
+	        store: storeShape.isRequired
+	      },
+	      enumerable: true
+	    }, {
+	      key: 'propTypes',
+	      value: {
+	        store: storeShape.isRequired,
+	        children: (requireFunctionChild ? PropTypes.func : PropTypes.element).isRequired
+	      },
+	      enumerable: true
+	    }]);
 
 	    function Provider(props, context) {
 	      _classCallCheck(this, Provider);
@@ -20173,16 +20191,6 @@
 
 	    return Provider;
 	  })(Component);
-
-	  Provider.childContextTypes = {
-	    store: storeShape.isRequired
-	  };
-	  Provider.propTypes = {
-	    store: storeShape.isRequired,
-	    children: (requireFunctionChild ? PropTypes.func : PropTypes.element).isRequired
-	  };
-
-	  return Provider;
 	}
 
 	module.exports = exports['default'];
@@ -20214,6 +20222,8 @@
 
 	exports.__esModule = true;
 
+	var _createClass = (function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ('value' in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; })();
+
 	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
 	exports['default'] = createConnect;
@@ -20240,11 +20250,7 @@
 
 	var _utilsWrapActionCreators2 = _interopRequireDefault(_utilsWrapActionCreators);
 
-	var _hoistNonReactStatics = __webpack_require__(174);
-
-	var _hoistNonReactStatics2 = _interopRequireDefault(_hoistNonReactStatics);
-
-	var _invariant = __webpack_require__(175);
+	var _invariant = __webpack_require__(174);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
@@ -20315,8 +20321,6 @@
 
 	        Connect.prototype.shouldComponentUpdate = function shouldComponentUpdate(nextProps, nextState) {
 	          if (!pure) {
-	            this.updateStateProps(nextProps);
-	            this.updateDispatchProps(nextProps);
 	            this.updateState(nextProps);
 	            return true;
 	          }
@@ -20341,6 +20345,28 @@
 
 	          return false;
 	        };
+
+	        _createClass(Connect, null, [{
+	          key: 'displayName',
+	          value: 'Connect(' + getDisplayName(WrappedComponent) + ')',
+	          enumerable: true
+	        }, {
+	          key: 'WrappedComponent',
+	          value: WrappedComponent,
+	          enumerable: true
+	        }, {
+	          key: 'contextTypes',
+	          value: {
+	            store: storeShape
+	          },
+	          enumerable: true
+	        }, {
+	          key: 'propTypes',
+	          value: {
+	            store: storeShape
+	          },
+	          enumerable: true
+	        }]);
 
 	        function Connect(props, context) {
 	          _classCallCheck(this, Connect);
@@ -20441,15 +20467,6 @@
 	        return Connect;
 	      })(Component);
 
-	      Connect.displayName = 'Connect(' + getDisplayName(WrappedComponent) + ')';
-	      Connect.WrappedComponent = WrappedComponent;
-	      Connect.contextTypes = {
-	        store: storeShape
-	      };
-	      Connect.propTypes = {
-	        store: storeShape
-	      };
-
 	      if (process.env.NODE_ENV !== 'production') {
 	        Connect.prototype.componentWillUpdate = function componentWillUpdate() {
 	          if (this.version === version) {
@@ -20467,7 +20484,7 @@
 	        };
 	      }
 
-	      return _hoistNonReactStatics2['default'](Connect, WrappedComponent);
+	      return Connect;
 	    };
 	  };
 	}
@@ -20565,48 +20582,6 @@
 
 /***/ },
 /* 174 */
-/***/ function(module, exports) {
-
-	/**
-	 * Copyright 2015, Yahoo! Inc.
-	 * Copyrights licensed under the New BSD License. See the accompanying LICENSE file for terms.
-	 */
-	'use strict';
-
-	var REACT_STATICS = {
-	    childContextTypes: true,
-	    contextTypes: true,
-	    defaultProps: true,
-	    displayName: true,
-	    getDefaultProps: true,
-	    mixins: true,
-	    propTypes: true,
-	    type: true
-	};
-
-	var KNOWN_STATICS = {
-	    name: true,
-	    length: true,
-	    prototype: true,
-	    caller: true,
-	    arguments: true,
-	    arity: true
-	};
-
-	module.exports = function hoistNonReactStatics(targetComponent, sourceComponent) {
-	    var keys = Object.getOwnPropertyNames(sourceComponent);
-	    for (var i=0; i<keys.length; ++i) {
-	        if (!REACT_STATICS[keys[i]] && !KNOWN_STATICS[keys[i]]) {
-	            targetComponent[keys[i]] = sourceComponent[keys[i]];
-	        }
-	    }
-
-	    return targetComponent;
-	};
-
-
-/***/ },
-/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20666,7 +20641,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 176 */
+/* 175 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20683,7 +20658,7 @@
 
 	var _redux = __webpack_require__(157);
 
-	var _actionsActions = __webpack_require__(177);
+	var _actionsActions = __webpack_require__(176);
 
 	var actions = _interopRequireWildcard(_actionsActions);
 
@@ -20701,12 +20676,12 @@
 	}
 
 	//TODO: organize entities by node_label because templates may evolve in future, this will require changing the template identifier in rel_nodes
-	function entitiesByTemplateId(state, action) {
+	function entitiesByLabel(state, action) {
 	  if (state === undefined) state = {};
 
 	  switch (action.type) {
-	    case 'ADD_ENTITIES_BY_TEMPLATE_ID':
-	      return Object.assign({}, state, _defineProperty({}, action.template_id, action.entities));
+	    case 'ADD_ENTITIES_BY_LABEL':
+	      return Object.assign({}, state, _defineProperty({}, action.label, action.entities));
 	    default:
 	      return state;
 	  }
@@ -20857,7 +20832,7 @@
 
 	var reducers = (0, _redux.combineReducers)({
 	  updateEntities: updateEntities,
-	  entitiesByTemplateId: entitiesByTemplateId,
+	  entitiesByLabel: entitiesByLabel,
 	  templatesById: templatesById,
 	  router: _reduxRouter.routerStateReducer,
 	  templateInstancesByInstanceId: templateInstancesByInstanceId,
@@ -20871,7 +20846,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 177 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -20881,8 +20856,8 @@
 	});
 	exports.submitForm = submitForm;
 	exports.submitEntityForm = submitEntityForm;
-	exports.getEntitiesByTemplateId = getEntitiesByTemplateId;
-	exports.addEntitiesByTemplateId = addEntitiesByTemplateId;
+	exports.autocompleteEntitiesByLabel = autocompleteEntitiesByLabel;
+	exports.addEntitiesByLabel = addEntitiesByLabel;
 	exports.updatePropertyValue = updatePropertyValue;
 	exports.toggleFormVisibility = toggleFormVisibility;
 	exports.updateTemplateMap = updateTemplateMap;
@@ -20894,7 +20869,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _isomorphicFetch = __webpack_require__(178);
+	var _isomorphicFetch = __webpack_require__(177);
 
 	var _isomorphicFetch2 = _interopRequireDefault(_isomorphicFetch);
 
@@ -20924,18 +20899,18 @@
 	  return { type: "SUBMIT_FORM", new_node: new_node, templateInstanceId: templateInstanceId };
 	}
 
-	function getEntitiesByTemplateId(template_id) {
+	function autocompleteEntitiesByLabel(label, value) {
 	  return function (dispatch, getState) {
-	    return (0, _isomorphicFetch2['default'])('http://localhost:3000/entities/entities_by_template_id?template_id=' + template_id).then(function (response) {
+	    return (0, _isomorphicFetch2['default'])('http://localhost:3000/entities/autocomplete?type=' + label + '&term=' + value).then(function (response) {
 	      return response.json();
 	    }).then(function (data) {
-	      return dispatch(addEntitiesByTemplateId(data, template_id));
+	      return dispatch(addEntitiesByLabel(data, label));
 	    });
 	  };
 	}
 
-	function addEntitiesByTemplateId(entities, template_id) {
-	  return { type: "ADD_ENTITIES_BY_TEMPLATE_ID", entities: entities, template_id: template_id };
+	function addEntitiesByLabel(entities, label) {
+	  return { type: "ADD_ENTITIES_BY_LABEL", entities: entities, label: label };
 	}
 
 	function updatePropertyValue(property_section) {
@@ -20996,19 +20971,19 @@
 	}
 
 /***/ },
-/* 178 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	// the whatwg-fetch polyfill installs the fetch() function
 	// on the global object (window or self)
 	//
 	// Return that as the export for use in Webpack, Browserify etc.
-	__webpack_require__(179);
+	__webpack_require__(178);
 	module.exports = self.fetch.bind(self);
 
 
 /***/ },
-/* 179 */
+/* 178 */
 /***/ function(module, exports) {
 
 	(function() {
@@ -21349,6 +21324,7 @@
 
 
 /***/ },
+/* 179 */,
 /* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -26065,11 +26041,11 @@
 
 	var _app2 = _interopRequireDefault(_app);
 
-	var _componentsTemplate_form = __webpack_require__(248);
+	var _componentsTemplate_form = __webpack_require__(243);
 
 	var _componentsTemplate_form2 = _interopRequireDefault(_componentsTemplate_form);
 
-	var _componentsTemplate_page = __webpack_require__(253);
+	var _componentsTemplate_page = __webpack_require__(254);
 
 	var _componentsTemplate_page2 = _interopRequireDefault(_componentsTemplate_page);
 
@@ -26192,12 +26168,12 @@
 
 	'use strict';
 
-	var _actionsActions = __webpack_require__(177);
+	var _actionsActions = __webpack_require__(176);
 
 	var _reduxRouter = __webpack_require__(180);
 
 	var React = __webpack_require__(1);
-	var Autocomplete = __webpack_require__(243);
+	var Autocomplete = __webpack_require__(459);
 
 	var TemplateList = React.createClass({
 	  displayName: 'TemplateList',
@@ -26258,954 +26234,24 @@
 
 	'use strict';
 
-	module.exports = __webpack_require__(244);
-
-/***/ },
-/* 244 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
-
-	var React = __webpack_require__(1);
-	var scrollIntoView = __webpack_require__(245);
-
-	var _debugStates = [];
-
-	var Autocomplete = React.createClass({
-	  displayName: 'Autocomplete',
-
-	  propTypes: {
-	    initialValue: React.PropTypes.any,
-	    onChange: React.PropTypes.func,
-	    onSelect: React.PropTypes.func,
-	    shouldItemRender: React.PropTypes.func,
-	    renderItem: React.PropTypes.func.isRequired,
-	    menuStyle: React.PropTypes.object,
-	    inputProps: React.PropTypes.object
-	  },
-
-	  getDefaultProps: function getDefaultProps() {
-	    return {
-	      inputProps: {},
-	      onChange: function onChange() {},
-	      onSelect: function onSelect(value, item) {},
-	      renderMenu: function renderMenu(items, value, style) {
-	        return React.createElement('div', { style: _extends({}, style, this.menuStyle), children: items });
-	      },
-	      shouldItemRender: function shouldItemRender() {
-	        return true;
-	      },
-	      menuStyle: {
-	        borderRadius: '3px',
-	        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
-	        background: 'rgba(255, 255, 255, 0.9)',
-	        padding: '2px 0',
-	        fontSize: '90%',
-	        position: 'fixed',
-	        overflow: 'auto',
-	        maxHeight: '50%' }
-	    };
-	  },
-
-	  // TODO: don't cheat, let it flow to the bottom
-	  getInitialState: function getInitialState() {
-	    return {
-	      value: this.props.initialValue || '',
-	      isOpen: false,
-	      highlightedIndex: null
-	    };
-	  },
-
-	  componentWillMount: function componentWillMount() {
-	    this._ignoreBlur = false;
-	    this._performAutoCompleteOnUpdate = false;
-	    this._performAutoCompleteOnKeyUp = false;
-	  },
-
-	  componentWillReceiveProps: function componentWillReceiveProps() {
-	    this._performAutoCompleteOnUpdate = true;
-	  },
-
-	  componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
-	    if (this.state.isOpen === true && prevState.isOpen === false) this.setMenuPositions();
-
-	    if (this.state.isOpen && this._performAutoCompleteOnUpdate) {
-	      this._performAutoCompleteOnUpdate = false;
-	      this.maybeAutoCompleteText();
-	    }
-
-	    this.maybeScrollItemIntoView();
-	  },
-
-	  maybeScrollItemIntoView: function maybeScrollItemIntoView() {
-	    if (this.state.isOpen === true && this.state.highlightedIndex !== null) {
-	      var itemNode = React.findDOMNode(this.refs['item-' + this.state.highlightedIndex]);
-	      var menuNode = React.findDOMNode(this.refs.menu);
-	      scrollIntoView(itemNode, menuNode, { onlyScrollIfNeeded: true });
-	    }
-	  },
-
-	  handleKeyDown: function handleKeyDown(event) {
-	    if (this.keyDownHandlers[event.key]) this.keyDownHandlers[event.key].call(this, event);else {
-	      this.setState({
-	        highlightedIndex: null,
-	        isOpen: true
-	      });
-	    }
-	  },
-
-	  handleChange: function handleChange(event) {
-	    var _this = this;
-
-	    this._performAutoCompleteOnKeyUp = true;
-	    this.setState({
-	      value: event.target.value
-	    }, function () {
-	      _this.props.onChange(event, _this.state.value);
-	    });
-	  },
-
-	  handleKeyUp: function handleKeyUp() {
-	    if (this._performAutoCompleteOnKeyUp) {
-	      this._performAutoCompleteOnKeyUp = false;
-	      this.maybeAutoCompleteText();
-	    }
-	  },
-
-	  keyDownHandlers: {
-	    ArrowDown: function ArrowDown() {
-	      event.preventDefault();
-	      var highlightedIndex = this.state.highlightedIndex;
-
-	      var index = highlightedIndex === null || highlightedIndex === this.getFilteredItems().length - 1 ? 0 : highlightedIndex + 1;
-	      this._performAutoCompleteOnKeyUp = true;
-	      this.setState({
-	        highlightedIndex: index,
-	        isOpen: true
-	      });
-	    },
-
-	    ArrowUp: function ArrowUp(event) {
-	      event.preventDefault();
-	      var highlightedIndex = this.state.highlightedIndex;
-
-	      var index = highlightedIndex === 0 || highlightedIndex === null ? this.getFilteredItems().length - 1 : highlightedIndex - 1;
-	      this._performAutoCompleteOnKeyUp = true;
-	      this.setState({
-	        highlightedIndex: index,
-	        isOpen: true
-	      });
-	    },
-
-	    Enter: function Enter(event) {
-	      var _this2 = this;
-
-	      if (this.state.isOpen === false) {
-	        // already selected this, do nothing
-	        return;
-	      } else if (this.state.highlightedIndex == null) {
-	        // hit enter after focus but before typing anything so no autocomplete attempt yet
-	        this.setState({
-	          isOpen: false
-	        }, function () {
-	          React.findDOMNode(_this2.refs.input).select();
-	        });
-	      } else {
-	        var item = this.getFilteredItems()[this.state.highlightedIndex];
-	        this.setState({
-	          value: this.props.getItemValue(item),
-	          isOpen: false,
-	          highlightedIndex: null
-	        }, function () {
-	          //React.findDOMNode(this.refs.input).focus() // TODO: file issue
-	          React.findDOMNode(_this2.refs.input).setSelectionRange(_this2.state.value.length, _this2.state.value.length);
-	          _this2.props.onSelect(_this2.state.value, item);
-	        });
-	      }
-	    },
-
-	    Escape: function Escape(event) {
-	      this.setState({
-	        highlightedIndex: null,
-	        isOpen: false
-	      });
-	    }
-	  },
-
-	  getFilteredItems: function getFilteredItems() {
-	    var _this3 = this;
-
-	    var items = this.props.items;
-
-	    if (this.props.shouldItemRender) {
-	      items = items.filter(function (item) {
-	        return _this3.props.shouldItemRender(item, _this3.state.value);
-	      });
-	    }
-
-	    if (this.props.sortItems) {
-	      items.sort(function (a, b) {
-	        return _this3.props.sortItems(a, b, _this3.state.value);
-	      });
-	    }
-
-	    return items;
-	  },
-
-	  maybeAutoCompleteText: function maybeAutoCompleteText() {
-	    var _this4 = this;
-
-	    if (this.state.value === '') return;
-	    var highlightedIndex = this.state.highlightedIndex;
-
-	    var items = this.getFilteredItems();
-	    if (items.length === 0) return;
-	    var matchedItem = highlightedIndex !== null ? items[highlightedIndex] : items[0];
-	    var itemValue = this.props.getItemValue(matchedItem);
-	    var itemValueDoesMatch = itemValue.toLowerCase().indexOf(this.state.value.toLowerCase()) === 0;
-	    if (itemValueDoesMatch) {
-	      var node = React.findDOMNode(this.refs.input);
-	      var setSelection = function setSelection() {
-	        node.value = itemValue;
-	        node.setSelectionRange(_this4.state.value.length, itemValue.length);
-	      };
-	      if (highlightedIndex === null) this.setState({ highlightedIndex: 0 }, setSelection);else setSelection();
-	    }
-	  },
-
-	  setMenuPositions: function setMenuPositions() {
-	    var node = React.findDOMNode(this.refs.input);
-	    var rect = node.getBoundingClientRect();
-	    var computedStyle = getComputedStyle(node);
-	    var marginBottom = parseInt(computedStyle.marginBottom, 10);
-	    var marginLeft = parseInt(computedStyle.marginLeft, 10);
-	    var marginRight = parseInt(computedStyle.marginRight, 10);
-	    this.setState({
-	      menuTop: rect.bottom + marginBottom,
-	      menuLeft: rect.left + marginLeft,
-	      menuWidth: rect.width + marginLeft + marginRight
-	    });
-	  },
-
-	  highlightItemFromMouse: function highlightItemFromMouse(index) {
-	    this.setState({ highlightedIndex: index });
-	  },
-
-	  selectItemFromMouse: function selectItemFromMouse(item) {
-	    var _this5 = this;
-
-	    this.setState({
-	      value: this.props.getItemValue(item),
-	      isOpen: false,
-	      highlightedIndex: null
-	    }, function () {
-	      _this5.props.onSelect(_this5.state.value, item);
-	      React.findDOMNode(_this5.refs.input).focus();
-	      _this5.setIgnoreBlur(false);
-	    });
-	  },
-
-	  setIgnoreBlur: function setIgnoreBlur(ignore) {
-	    this._ignoreBlur = ignore;
-	  },
-
-	  renderMenu: function renderMenu() {
-	    var _this6 = this;
-
-	    var items = this.getFilteredItems().map(function (item, index) {
-	      var element = _this6.props.renderItem(item, _this6.state.highlightedIndex === index, { cursor: 'default' });
-	      return React.cloneElement(element, {
-	        onMouseDown: function onMouseDown() {
-	          return _this6.setIgnoreBlur(true);
-	        },
-	        onMouseEnter: function onMouseEnter() {
-	          return _this6.highlightItemFromMouse(index);
-	        },
-	        onClick: function onClick() {
-	          return _this6.selectItemFromMouse(item);
-	        },
-	        ref: 'item-' + index
-	      });
-	    });
-	    var style = {
-	      left: this.state.menuLeft,
-	      top: this.state.menuTop,
-	      minWidth: this.state.menuWidth
-	    };
-	    var menu = this.props.renderMenu(items, this.state.value, style);
-	    return React.cloneElement(menu, { ref: 'menu' });
-	  },
-
-	  getActiveItemValue: function getActiveItemValue() {
-	    if (this.state.highlightedIndex === null) return '';else {
-	      var item = this.props.items[this.state.highlightedIndex];
-	      // items can match when we maybeAutoCompleteText, but then get replaced by the app
-	      // for the next render? I think? TODO: file an issue (alab -> enter -> type 'a' for
-	      // alabamaa and then an error would happen w/o this guard, pretty sure there's a
-	      // better way)
-	      return item ? this.props.getItemValue(item) : '';
-	    }
-	  },
-
-	  handleInputBlur: function handleInputBlur() {
-	    if (this._ignoreBlur) return;
-	    this.setState({
-	      isOpen: false,
-	      highlightedIndex: null
-	    });
-	  },
-
-	  handleInputFocus: function handleInputFocus() {
-	    if (this._ignoreBlur) return;
-	    this.setState({ isOpen: true });
-	  },
-
-	  handleInputClick: function handleInputClick() {
-	    if (this.state.isOpen === false) this.setState({ isOpen: true });
-	  },
-
-	  render: function render() {
-	    var _this7 = this;
-
-	    if (this.props.debug) {
-	      // you don't like it, you love it
-	      _debugStates.push({
-	        id: _debugStates.length,
-	        state: this.state
-	      });
-	    }
-	    return React.createElement(
-	      'div',
-	      { style: { display: 'inline-block' } },
-	      React.createElement('input', _extends({}, this.props.inputProps, {
-	        role: 'combobox',
-	        'aria-autocomplete': 'both',
-	        'aria-label': this.getActiveItemValue(),
-	        ref: 'input',
-	        onFocus: this.handleInputFocus,
-	        onBlur: this.handleInputBlur,
-	        onChange: function (event) {
-	          return _this7.handleChange(event);
-	        },
-	        onKeyDown: function (event) {
-	          return _this7.handleKeyDown(event);
-	        },
-	        onKeyUp: function (event) {
-	          return _this7.handleKeyUp(event);
-	        },
-	        onClick: this.handleInputClick,
-	        value: this.state.value
-	      })),
-	      this.state.isOpen && this.renderMenu(),
-	      this.props.debug && React.createElement(
-	        'pre',
-	        { style: { marginLeft: 300 } },
-	        JSON.stringify(_debugStates.slice(_debugStates.length - 5, _debugStates.length), null, 2)
-	      )
-	    );
-	  }
-	});
-
-	module.exports = Autocomplete;
-
-/***/ },
-/* 245 */
-/***/ function(module, exports, __webpack_require__) {
-
-	module.exports = __webpack_require__(246);
-
-
-/***/ },
-/* 246 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var util = __webpack_require__(247);
-
-	function scrollIntoView(elem, container, config) {
-	  config = config || {};
-	  // document 归一化到 window
-	  if (container.nodeType === 9) {
-	    container = util.getWindow(container);
-	  }
-
-	  var allowHorizontalScroll = config.allowHorizontalScroll;
-	  var onlyScrollIfNeeded = config.onlyScrollIfNeeded;
-	  var alignWithTop = config.alignWithTop;
-	  var alignWithLeft = config.alignWithLeft;
-
-	  allowHorizontalScroll = allowHorizontalScroll === undefined ? true : allowHorizontalScroll;
-
-	  var isWin = util.isWindow(container);
-	  var elemOffset = util.offset(elem);
-	  var eh = util.outerHeight(elem);
-	  var ew = util.outerWidth(elem);
-	  var containerOffset, ch, cw, containerScroll,
-	    diffTop, diffBottom, win,
-	    winScroll, ww, wh;
-
-	  if (isWin) {
-	    win = container;
-	    wh = util.height(win);
-	    ww = util.width(win);
-	    winScroll = {
-	      left: util.scrollLeft(win),
-	      top: util.scrollTop(win)
-	    };
-	    // elem 相对 container 可视视窗的距离
-	    diffTop = {
-	      left: elemOffset.left - winScroll.left,
-	      top: elemOffset.top - winScroll.top
-	    };
-	    diffBottom = {
-	      left: elemOffset.left + ew - (winScroll.left + ww),
-	      top: elemOffset.top + eh - (winScroll.top + wh)
-	    };
-	    containerScroll = winScroll;
-	  } else {
-	    containerOffset = util.offset(container);
-	    ch = container.clientHeight;
-	    cw = container.clientWidth;
-	    containerScroll = {
-	      left: container.scrollLeft,
-	      top: container.scrollTop
-	    };
-	    // elem 相对 container 可视视窗的距离
-	    // 注意边框, offset 是边框到根节点
-	    diffTop = {
-	      left: elemOffset.left - (containerOffset.left +
-	      (parseFloat(util.css(container, 'borderLeftWidth')) || 0)),
-	      top: elemOffset.top - (containerOffset.top +
-	      (parseFloat(util.css(container, 'borderTopWidth')) || 0))
-	    };
-	    diffBottom = {
-	      left: elemOffset.left + ew -
-	      (containerOffset.left + cw +
-	      (parseFloat(util.css(container, 'borderRightWidth')) || 0)),
-	      top: elemOffset.top + eh -
-	      (containerOffset.top + ch +
-	      (parseFloat(util.css(container, 'borderBottomWidth')) || 0))
-	    };
-	  }
-
-	  if (diffTop.top < 0 || diffBottom.top > 0) {
-	    // 强制向上
-	    if (alignWithTop === true) {
-	      util.scrollTop(container, containerScroll.top + diffTop.top);
-	    } else if (alignWithTop === false) {
-	      util.scrollTop(container, containerScroll.top + diffBottom.top);
-	    } else {
-	      // 自动调整
-	      if (diffTop.top < 0) {
-	        util.scrollTop(container, containerScroll.top + diffTop.top);
-	      } else {
-	        util.scrollTop(container, containerScroll.top + diffBottom.top);
-	      }
-	    }
-	  } else {
-	    if (!onlyScrollIfNeeded) {
-	      alignWithTop = alignWithTop === undefined ? true : !!alignWithTop;
-	      if (alignWithTop) {
-	        util.scrollTop(container, containerScroll.top + diffTop.top);
-	      } else {
-	        util.scrollTop(container, containerScroll.top + diffBottom.top);
-	      }
-	    }
-	  }
-
-	  if (allowHorizontalScroll) {
-	    if (diffTop.left < 0 || diffBottom.left > 0) {
-	      // 强制向上
-	      if (alignWithLeft === true) {
-	        util.scrollLeft(container, containerScroll.left + diffTop.left);
-	      } else if (alignWithLeft === false) {
-	        util.scrollLeft(container, containerScroll.left + diffBottom.left);
-	      } else {
-	        // 自动调整
-	        if (diffTop.left < 0) {
-	          util.scrollLeft(container, containerScroll.left + diffTop.left);
-	        } else {
-	          util.scrollLeft(container, containerScroll.left + diffBottom.left);
-	        }
-	      }
-	    } else {
-	      if (!onlyScrollIfNeeded) {
-	        alignWithLeft = alignWithLeft === undefined ? true : !!alignWithLeft;
-	        if (alignWithLeft) {
-	          util.scrollLeft(container, containerScroll.left + diffTop.left);
-	        } else {
-	          util.scrollLeft(container, containerScroll.left + diffBottom.left);
-	        }
-	      }
-	    }
-	  }
-	}
-
-	module.exports = scrollIntoView;
-
-
-/***/ },
-/* 247 */
-/***/ function(module, exports) {
-
-	var RE_NUM = /[\-+]?(?:\d*\.|)\d+(?:[eE][\-+]?\d+|)/.source;
-
-	function getClientPosition(elem) {
-	  var box, x, y;
-	  var doc = elem.ownerDocument;
-	  var body = doc.body;
-	  var docElem = doc && doc.documentElement;
-	  // 根据 GBS 最新数据，A-Grade Browsers 都已支持 getBoundingClientRect 方法，不用再考虑传统的实现方式
-	  box = elem.getBoundingClientRect();
-
-	  // 注：jQuery 还考虑减去 docElem.clientLeft/clientTop
-	  // 但测试发现，这样反而会导致当 html 和 body 有边距/边框样式时，获取的值不正确
-	  // 此外，ie6 会忽略 html 的 margin 值，幸运地是没有谁会去设置 html 的 margin
-
-	  x = box.left;
-	  y = box.top;
-
-	  // In IE, most of the time, 2 extra pixels are added to the top and left
-	  // due to the implicit 2-pixel inset border.  In IE6/7 quirks mode and
-	  // IE6 standards mode, this border can be overridden by setting the
-	  // document element's border to zero -- thus, we cannot rely on the
-	  // offset always being 2 pixels.
-
-	  // In quirks mode, the offset can be determined by querying the body's
-	  // clientLeft/clientTop, but in standards mode, it is found by querying
-	  // the document element's clientLeft/clientTop.  Since we already called
-	  // getClientBoundingRect we have already forced a reflow, so it is not
-	  // too expensive just to query them all.
-
-	  // ie 下应该减去窗口的边框吧，毕竟默认 absolute 都是相对窗口定位的
-	  // 窗口边框标准是设 documentElement ,quirks 时设置 body
-	  // 最好禁止在 body 和 html 上边框 ，但 ie < 9 html 默认有 2px ，减去
-	  // 但是非 ie 不可能设置窗口边框，body html 也不是窗口 ,ie 可以通过 html,body 设置
-	  // 标准 ie 下 docElem.clientTop 就是 border-top
-	  // ie7 html 即窗口边框改变不了。永远为 2
-	  // 但标准 firefox/chrome/ie9 下 docElem.clientTop 是窗口边框，即使设了 border-top 也为 0
-
-	  x -= docElem.clientLeft || body.clientLeft || 0;
-	  y -= docElem.clientTop || body.clientTop || 0;
-
-	  return {left: x, top: y};
-	}
-
-	function getScroll(w, top) {
-	  var ret = w['page' + (top ? 'Y' : 'X') + 'Offset'];
-	  var method = 'scroll' + (top ? 'Top' : 'Left');
-	  if (typeof ret !== 'number') {
-	    var d = w.document;
-	    //ie6,7,8 standard mode
-	    ret = d.documentElement[method];
-	    if (typeof ret !== 'number') {
-	      //quirks mode
-	      ret = d.body[method];
-	    }
-	  }
-	  return ret;
-	}
-
-	function getScrollLeft(w) {
-	  return getScroll(w);
-	}
-
-	function getScrollTop(w) {
-	  return getScroll(w, true);
-	}
-
-	function getOffset(el) {
-	  var pos = getClientPosition(el);
-	  var doc = el.ownerDocument;
-	  var w = doc.defaultView || doc.parentWindow;
-	  pos.left += getScrollLeft(w);
-	  pos.top += getScrollTop(w);
-	  return pos;
-	}
-	function _getComputedStyle(elem, name, computedStyle) {
-	  var val = '';
-	  var d = elem.ownerDocument;
-
-	  // https://github.com/kissyteam/kissy/issues/61
-	  if ((computedStyle = (computedStyle || d.defaultView.getComputedStyle(elem, null)))) {
-	    val = computedStyle.getPropertyValue(name) || computedStyle[name];
-	  }
-
-	  return val;
-	}
-
-	var _RE_NUM_NO_PX = new RegExp('^(' + RE_NUM + ')(?!px)[a-z%]+$', 'i');
-	var RE_POS = /^(top|right|bottom|left)$/,
-	  CURRENT_STYLE = 'currentStyle',
-	  RUNTIME_STYLE = 'runtimeStyle',
-	  LEFT = 'left',
-	  PX = 'px';
-
-	function _getComputedStyleIE(elem, name) {
-	  // currentStyle maybe null
-	  // http://msdn.microsoft.com/en-us/library/ms535231.aspx
-	  var ret = elem[CURRENT_STYLE] && elem[CURRENT_STYLE][name];
-
-	  // 当 width/height 设置为百分比时，通过 pixelLeft 方式转换的 width/height 值
-	  // 一开始就处理了! CUSTOM_STYLE.height,CUSTOM_STYLE.width ,cssHook 解决@2011-08-19
-	  // 在 ie 下不对，需要直接用 offset 方式
-	  // borderWidth 等值也有问题，但考虑到 borderWidth 设为百分比的概率很小，这里就不考虑了
-
-	  // From the awesome hack by Dean Edwards
-	  // http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
-	  // If we're not dealing with a regular pixel number
-	  // but a number that has a weird ending, we need to convert it to pixels
-	  // exclude left right for relativity
-	  if (_RE_NUM_NO_PX.test(ret) && !RE_POS.test(name)) {
-	    // Remember the original values
-	    var style = elem.style,
-	      left = style[LEFT],
-	      rsLeft = elem[RUNTIME_STYLE][LEFT];
-
-	    // prevent flashing of content
-	    elem[RUNTIME_STYLE][LEFT] = elem[CURRENT_STYLE][LEFT];
-
-	    // Put in the new values to get a computed value out
-	    style[LEFT] = name === 'fontSize' ? '1em' : (ret || 0);
-	    ret = style.pixelLeft + PX;
-
-	    // Revert the changed values
-	    style[LEFT] = left;
-
-	    elem[RUNTIME_STYLE][LEFT] = rsLeft;
-	  }
-	  return ret === '' ? 'auto' : ret;
-	}
-
-	var getComputedStyleX;
-	if (typeof window !== 'undefined') {
-	  getComputedStyleX = window.getComputedStyle ? _getComputedStyle : _getComputedStyleIE;
-	}
-
-	// 设置 elem 相对 elem.ownerDocument 的坐标
-	function setOffset(elem, offset) {
-	  // set position first, in-case top/left are set even on static elem
-	  if (css(elem, 'position') === 'static') {
-	    elem.style.position = 'relative';
-	  }
-
-	  var old = getOffset(elem),
-	    ret = {},
-	    current, key;
-
-	  for (key in offset) {
-	    current = parseFloat(css(elem, key)) || 0;
-	    ret[key] = current + offset[key] - old[key];
-	  }
-	  css(elem, ret);
-	}
-
-	function each(arr, fn) {
-	  for (var i = 0; i < arr.length; i++) {
-	    fn(arr[i]);
-	  }
-	}
-
-	function isBorderBoxFn(elem) {
-	  return getComputedStyleX(elem, 'boxSizing') === 'border-box';
-	}
-
-	var BOX_MODELS = ['margin', 'border', 'padding'],
-	  CONTENT_INDEX = -1,
-	  PADDING_INDEX = 2,
-	  BORDER_INDEX = 1,
-	  MARGIN_INDEX = 0;
-
-	function swap(elem, options, callback) {
-	  var old = {},
-	    style = elem.style,
-	    name;
-
-	  // Remember the old values, and insert the new ones
-	  for (name in options) {
-	    old[name] = style[name];
-	    style[name] = options[name];
-	  }
-
-	  callback.call(elem);
-
-	  // Revert the old values
-	  for (name in options) {
-	    style[name] = old[name];
-	  }
-	}
-
-	function getPBMWidth(elem, props, which) {
-	  var value = 0, prop, j, i;
-	  for (j = 0; j < props.length; j++) {
-	    prop = props[j];
-	    if (prop) {
-	      for (i = 0; i < which.length; i++) {
-	        var cssProp;
-	        if (prop === 'border') {
-	          cssProp = prop + which[i] + 'Width';
-	        } else {
-	          cssProp = prop + which[i];
-	        }
-	        value += parseFloat(getComputedStyleX(elem, cssProp)) || 0;
-	      }
-	    }
-	  }
-	  return value;
-	}
-
-	/**
-	 * A crude way of determining if an object is a window
-	 * @member util
-	 */
-	function isWindow(obj) {
-	  // must use == for ie8
-	  /*jshint eqeqeq:false*/
-	  return obj != null && obj == obj.window;
-	}
-
-	var domUtils = {};
-
-	each(['Width', 'Height'], function (name) {
-	  domUtils['doc' + name] = function (refWin) {
-	    var d = refWin.document;
-	    return Math.max(
-	      //firefox chrome documentElement.scrollHeight< body.scrollHeight
-	      //ie standard mode : documentElement.scrollHeight> body.scrollHeight
-	      d.documentElement['scroll' + name],
-	      //quirks : documentElement.scrollHeight 最大等于可视窗口多一点？
-	      d.body['scroll' + name],
-	      domUtils['viewport' + name](d));
-	  };
-
-	  domUtils['viewport' + name] = function (win) {
-	    // pc browser includes scrollbar in window.innerWidth
-	    var prop = 'client' + name,
-	      doc = win.document,
-	      body = doc.body,
-	      documentElement = doc.documentElement,
-	      documentElementProp = documentElement[prop];
-	    // 标准模式取 documentElement
-	    // backcompat 取 body
-	    return doc.compatMode === 'CSS1Compat' && documentElementProp ||
-	      body && body[prop] || documentElementProp;
-	  };
-	});
-
-	/*
-	 得到元素的大小信息
-	 @param elem
-	 @param name
-	 @param {String} [extra]  'padding' : (css width) + padding
-	 'border' : (css width) + padding + border
-	 'margin' : (css width) + padding + border + margin
-	 */
-	function getWH(elem, name, extra) {
-	  if (isWindow(elem)) {
-	    return name === 'width' ? domUtils.viewportWidth(elem) : domUtils.viewportHeight(elem);
-	  } else if (elem.nodeType === 9) {
-	    return name === 'width' ? domUtils.docWidth(elem) : domUtils.docHeight(elem);
-	  }
-	  var which = name === 'width' ? ['Left', 'Right'] : ['Top', 'Bottom'],
-	    borderBoxValue = name === 'width' ? elem.offsetWidth : elem.offsetHeight;
-	  var computedStyle = getComputedStyleX(elem);
-	  var isBorderBox = isBorderBoxFn(elem, computedStyle);
-	  var cssBoxValue = 0;
-	  if (borderBoxValue == null || borderBoxValue <= 0) {
-	    borderBoxValue = undefined;
-	    // Fall back to computed then un computed css if necessary
-	    cssBoxValue = getComputedStyleX(elem, name);
-	    if (cssBoxValue == null || (Number(cssBoxValue)) < 0) {
-	      cssBoxValue = elem.style[name] || 0;
-	    }
-	    // Normalize '', auto, and prepare for extra
-	    cssBoxValue = parseFloat(cssBoxValue) || 0;
-	  }
-	  if (extra === undefined) {
-	    extra = isBorderBox ? BORDER_INDEX : CONTENT_INDEX;
-	  }
-	  var borderBoxValueOrIsBorderBox = borderBoxValue !== undefined || isBorderBox;
-	  var val = borderBoxValue || cssBoxValue;
-	  if (extra === CONTENT_INDEX) {
-	    if (borderBoxValueOrIsBorderBox) {
-	      return val - getPBMWidth(elem, ['border', 'padding'],
-	          which, computedStyle);
-	    } else {
-	      return cssBoxValue;
-	    }
-	  } else if (borderBoxValueOrIsBorderBox) {
-	    return val + (extra === BORDER_INDEX ? 0 :
-	        (extra === PADDING_INDEX ?
-	          -getPBMWidth(elem, ['border'], which, computedStyle) :
-	          getPBMWidth(elem, ['margin'], which, computedStyle)));
-	  } else {
-	    return cssBoxValue + getPBMWidth(elem, BOX_MODELS.slice(extra),
-	        which, computedStyle);
-	  }
-	}
-
-	var cssShow = {position: 'absolute', visibility: 'hidden', display: 'block'};
-
-	// fix #119 : https://github.com/kissyteam/kissy/issues/119
-	function getWHIgnoreDisplay(elem) {
-	  var val, args = arguments;
-	  // in case elem is window
-	  // elem.offsetWidth === undefined
-	  if (elem.offsetWidth !== 0) {
-	    val = getWH.apply(undefined, args);
-	  } else {
-	    swap(elem, cssShow, function () {
-	      val = getWH.apply(undefined, args);
-	    });
-	  }
-	  return val;
-	}
-
-	each(['width', 'height'], function (name) {
-	  var first = name.charAt(0).toUpperCase() + name.slice(1);
-	  domUtils['outer' + first] = function (el, includeMargin) {
-	    return el && getWHIgnoreDisplay(el, name, includeMargin ? MARGIN_INDEX : BORDER_INDEX);
-	  };
-	  var which = name === 'width' ? ['Left', 'Right'] : ['Top', 'Bottom'];
-
-	  domUtils[name] = function (elem, val) {
-	    if (val !== undefined) {
-	      if (elem) {
-	        var computedStyle = getComputedStyleX(elem);
-	        var isBorderBox = isBorderBoxFn(elem);
-	        if (isBorderBox) {
-	          val += getPBMWidth(elem, ['padding', 'border'], which, computedStyle);
-	        }
-	        return css(elem, name, val);
-	      }
-	      return;
-	    }
-	    return elem && getWHIgnoreDisplay(elem, name, CONTENT_INDEX);
-	  };
-	});
-
-	function css(el, name, value) {
-	  if (typeof name === 'object') {
-	    for (var i in name) {
-	      css(el, i, name[i]);
-	    }
-	    return;
-	  }
-	  if (typeof value !== 'undefined') {
-	    if (typeof value === 'number') {
-	      value = value + 'px';
-	    }
-	    el.style[name] = value;
-	  } else {
-	    return getComputedStyleX(el, name);
-	  }
-	}
-
-	function mix(to, from) {
-	  for (var i in from) {
-	    to[i] = from[i];
-	  }
-	  return to;
-	}
-
-	var utils = module.exports = {
-	  getWindow: function (node) {
-	    var doc = node.ownerDocument || node;
-	    return doc.defaultView || doc.parentWindow;
-	  },
-	  offset: function (el, value) {
-	    if (typeof value !== 'undefined') {
-	      setOffset(el, value);
-	    } else {
-	      return getOffset(el);
-	    }
-	  },
-	  isWindow: isWindow,
-	  each: each,
-	  css: css,
-	  clone: function (obj) {
-	    var ret = {};
-	    for (var i in obj) {
-	      ret[i] = obj[i];
-	    }
-	    var overflow = obj.overflow;
-	    if (overflow) {
-	      for (i in obj) {
-	        ret.overflow[i] = obj.overflow[i];
-	      }
-	    }
-	    return ret;
-	  },
-	  mix: mix,
-	  scrollLeft: function (w, v) {
-	    if (isWindow(w)) {
-	      if (v === undefined) {
-	        return getScrollLeft(w);
-	      } else {
-	        window.scrollTo(v, getScrollTop(w));
-	      }
-	    } else {
-	      if (v === undefined) {
-	        return w.scrollLeft;
-	      } else {
-	        w.scrollLeft = v;
-	      }
-	    }
-	  },
-	  scrollTop: function (w, v) {
-	    if (isWindow(w)) {
-	      if (v === undefined) {
-	        return getScrollTop(w);
-	      } else {
-	        window.scrollTo(getScrollLeft(w), v);
-	      }
-	    } else {
-	      if (v === undefined) {
-	        return w.scrollTop;
-	      } else {
-	        w.scrollTop = v;
-	      }
-	    }
-	  },
-	  merge: function () {
-	    var ret = {};
-	    for (var i = 0; i < arguments.length; i++) {
-	      utils.mix(ret, arguments[i]);
-	    }
-	    return ret;
-	  },
-	  viewportWidth: 0,
-	  viewportHeight: 0
-	};
-
-	mix(utils, domUtils);
-
-
-/***/ },
-/* 248 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
 	Object.defineProperty(exports, '__esModule', {
 	  value: true
 	});
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _reactAutocomplete = __webpack_require__(243);
+	var _reactAutocomplete = __webpack_require__(459);
 
 	var _reactAutocomplete2 = _interopRequireDefault(_reactAutocomplete);
 
-	var _actionsActions = __webpack_require__(177);
+	var _actionsActions = __webpack_require__(176);
 
 	var _reactRedux = __webpack_require__(166);
 
 	var React = __webpack_require__(1);
-	var _ = __webpack_require__(249);
-	var Empty = __webpack_require__(251);
-	var PropertyFormElement = __webpack_require__(252);
+	var _ = __webpack_require__(244);
+	var Empty = __webpack_require__(246);
+	var PropertyFormElement = __webpack_require__(247);
 
 	var RelationshipFormElement = React.createClass({
 	  displayName: 'RelationshipFormElement',
@@ -27227,7 +26273,7 @@
 	    // _.filter(this.props.entitiesByTemplateId[this.props.related_node.template_id], function(entity){
 	    //   return regex.test(entity.city);
 	    // })
-	    this.props.dispatch((0, _actionsActions.getEntitiesByTemplateId)(this.props.related_node.template_id, value));
+	    this.props.dispatch((0, _actionsActions.autocompleteEntitiesByLabel)(this.props.templatesById[this.props.related_node.template_id].node_label, value));
 	  },
 
 	  onSelect: function onSelect() {},
@@ -27273,16 +26319,18 @@
 	          getItemValue: function (item) {
 	            return item.id;
 	          },
-	          items: this.props.entitiesByTemplateId,
+	          items: this.props.entitiesByLabel[this.props.templatesById[this.props.related_node.template_id].node_label] || [],
 	          renderItem: function (item, isHighlighted) {
 	            return React.createElement(
 	              'div',
 	              {
 	                style: isHighlighted ? styles.highlightedItem : styles.item,
-	                key: item.id,
-	                id: item.id
+	                key: item.entity_id,
+	                id: item.entity_id
 	              },
-	              item.city
+	              item.node_properties[0].name,
+	              ': ',
+	              item.node_properties[0].value
 	            );
 	          } }),
 	        React.createElement(
@@ -27389,7 +26437,6 @@
 	          index: index,
 	          related_node: related_node,
 	          templatesById: that.props.templatesById,
-	          getSuggestions: that.getSuggestions,
 	          templateInstanceState: that.props.templateInstanceState,
 	          templateInstances: that.props.templateInstances,
 	          templateInstanceId: that.props.templateInstanceId + index,
@@ -27397,7 +26444,7 @@
 	          dispatch: that.props.dispatch,
 	          activeTemplate: that.props.activeTemplate,
 	          clickHandler: that.clickHandler,
-	          entities: that.props.entitiesByTemplateId });
+	          entitiesByLabel: that.props.entitiesByLabel });
 	      });
 	    }
 	    submitButton = React.createElement(
@@ -27449,7 +26496,7 @@
 	    templateInstanceState: state.templateInstanceStateMap,
 	    templateInstances: state.templateInstanceMap,
 	    activeTemplate: state.activeTemplate,
-	    entitiesByTemplateId: state.entitiesByTemplateId
+	    entitiesByLabel: state.entitiesByLabel
 	  };
 	}
 
@@ -27459,7 +26506,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 249 */
+/* 244 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(module, global) {/**
@@ -39814,10 +38861,10 @@
 	  }
 	}.call(this));
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(250)(module), (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(245)(module), (function() { return this; }())))
 
 /***/ },
-/* 250 */
+/* 245 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -39833,7 +38880,7 @@
 
 
 /***/ },
-/* 251 */
+/* 246 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39851,7 +38898,7 @@
 	module.exports = Empty;
 
 /***/ },
-/* 252 */
+/* 247 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use strict";
@@ -39894,7 +38941,13 @@
 	module.exports = PropertyFormElement;
 
 /***/ },
-/* 253 */
+/* 248 */,
+/* 249 */,
+/* 250 */,
+/* 251 */,
+/* 252 */,
+/* 253 */,
+/* 254 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39913,11 +38966,11 @@
 
 	var _reduxRouter = __webpack_require__(180);
 
-	var _template_form = __webpack_require__(248);
+	var _template_form = __webpack_require__(243);
 
 	var _template_form2 = _interopRequireDefault(_template_form);
 
-	var _actionsActions = __webpack_require__(177);
+	var _actionsActions = __webpack_require__(176);
 
 	var TemplatePage = _react2['default'].createClass({
 	  displayName: 'TemplatePage',
@@ -39962,7 +39015,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 254 */
+/* 255 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -39973,21 +39026,25 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _invariant = __webpack_require__(255);
+	var _invariant = __webpack_require__(256);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
-	var _Actions = __webpack_require__(256);
+	var _Actions = __webpack_require__(257);
 
-	var _ExecutionEnvironment = __webpack_require__(257);
+	var _ExecutionEnvironment = __webpack_require__(258);
 
-	var _DOMUtils = __webpack_require__(258);
+	var _DOMUtils = __webpack_require__(259);
 
-	var _DOMStateStorage = __webpack_require__(259);
+	var _DOMStateStorage = __webpack_require__(260);
 
 	var _createDOMHistory = __webpack_require__(261);
 
 	var _createDOMHistory2 = _interopRequireDefault(_createDOMHistory);
+
+	var _createLocation = __webpack_require__(267);
+
+	var _createLocation2 = _interopRequireDefault(_createLocation);
 
 	/**
 	 * Creates and returns a history object that uses HTML5's history API
@@ -40020,7 +39077,7 @@
 	      if (isSupported) window.history.replaceState(_extends({}, historyState, { key: key }), null, path);
 	    }
 
-	    return history.createLocation(path, state, undefined, key);
+	    return _createLocation2['default'](path, state, undefined, key);
 	  }
 
 	  function startPopStateListener(_ref) {
@@ -40043,7 +39100,6 @@
 	    var basename = location.basename;
 	    var pathname = location.pathname;
 	    var search = location.search;
-	    var hash = location.hash;
 	    var state = location.state;
 	    var action = location.action;
 	    var key = location.key;
@@ -40052,7 +39108,7 @@
 
 	    _DOMStateStorage.saveState(key, state);
 
-	    var path = (basename || '') + pathname + search + hash;
+	    var path = (basename || '') + pathname + search;
 	    var historyState = {
 	      key: key
 	    };
@@ -40061,18 +39117,16 @@
 	      if (isSupported) {
 	        window.history.pushState(historyState, null, path);
 	      } else {
-	        // Use a full-page reload to preserve the URL.
-	        window.location.href = path;
+	        window.location.href = path; // Use page reload to preserve the URL.
 	      }
 	    } else {
-	      // REPLACE
-	      if (isSupported) {
-	        window.history.replaceState(historyState, null, path);
-	      } else {
-	        // Use a full-page reload to preserve the URL.
-	        window.location.replace(path);
+	        // REPLACE
+	        if (isSupported) {
+	          window.history.replaceState(historyState, null, path);
+	        } else {
+	          window.location.replace(path); // Use page reload to preserve the URL.
+	        }
 	      }
-	    }
 	  }
 
 	  var history = _createDOMHistory2['default'](_extends({}, options, {
@@ -40083,18 +39137,6 @@
 
 	  var listenerCount = 0,
 	      stopPopStateListener = undefined;
-
-	  function listenBefore(listener) {
-	    if (++listenerCount === 1) stopPopStateListener = startPopStateListener(history);
-
-	    var unlisten = history.listenBefore(listener);
-
-	    return function () {
-	      unlisten();
-
-	      if (--listenerCount === 0) stopPopStateListener();
-	    };
-	  }
 
 	  function listen(listener) {
 	    if (++listenerCount === 1) stopPopStateListener = startPopStateListener(history);
@@ -40108,25 +39150,8 @@
 	    };
 	  }
 
-	  // deprecated
-	  function registerTransitionHook(hook) {
-	    if (++listenerCount === 1) stopPopStateListener = startPopStateListener(history);
-
-	    history.registerTransitionHook(hook);
-	  }
-
-	  // deprecated
-	  function unregisterTransitionHook(hook) {
-	    history.unregisterTransitionHook(hook);
-
-	    if (--listenerCount === 0) stopPopStateListener();
-	  }
-
 	  return _extends({}, history, {
-	    listenBefore: listenBefore,
-	    listen: listen,
-	    registerTransitionHook: registerTransitionHook,
-	    unregisterTransitionHook: unregisterTransitionHook
+	    listen: listen
 	  });
 	}
 
@@ -40134,7 +39159,7 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 255 */
+/* 256 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -40194,7 +39219,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
-/* 256 */
+/* 257 */
 /***/ function(module, exports) {
 
 	/**
@@ -40230,7 +39255,7 @@
 	};
 
 /***/ },
-/* 257 */
+/* 258 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -40240,7 +39265,7 @@
 	exports.canUseDOM = canUseDOM;
 
 /***/ },
-/* 258 */
+/* 259 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -40320,8 +39345,8 @@
 	}
 
 /***/ },
-/* 259 */
-/***/ function(module, exports, __webpack_require__) {
+/* 260 */
+/***/ function(module, exports) {
 
 	/*eslint-disable no-empty */
 	'use strict';
@@ -40329,33 +39354,14 @@
 	exports.__esModule = true;
 	exports.saveState = saveState;
 	exports.readState = readState;
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _warning = __webpack_require__(260);
-
-	var _warning2 = _interopRequireDefault(_warning);
-
 	var KeyPrefix = '@@History/';
-	var QuotaExceededError = 'QuotaExceededError';
 
 	function createKey(key) {
 	  return KeyPrefix + key;
 	}
 
 	function saveState(key, state) {
-	  try {
-	    window.sessionStorage.setItem(createKey(key), JSON.stringify(state));
-	  } catch (error) {
-	    if (error.name === QuotaExceededError || window.sessionStorage.length === 0) {
-	      // Probably in Safari "private mode" where sessionStorage quota is 0. #42
-	      _warning2['default'](false, '[history] Unable to save state; sessionStorage is not available in Safari private mode');
-
-	      return;
-	    }
-
-	    throw error;
-	  }
+	  window.sessionStorage.setItem(createKey(key), JSON.stringify(state));
 	}
 
 	function readState(key) {
@@ -40373,73 +39379,6 @@
 	}
 
 /***/ },
-/* 260 */
-/***/ function(module, exports, __webpack_require__) {
-
-	/* WEBPACK VAR INJECTION */(function(process) {/**
-	 * Copyright 2014-2015, Facebook, Inc.
-	 * All rights reserved.
-	 *
-	 * This source code is licensed under the BSD-style license found in the
-	 * LICENSE file in the root directory of this source tree. An additional grant
-	 * of patent rights can be found in the PATENTS file in the same directory.
-	 */
-
-	'use strict';
-
-	/**
-	 * Similar to invariant but only logs a warning if the condition is not met.
-	 * This can be used to log issues in development environments in critical
-	 * paths. Removing the logging code for production environments will keep the
-	 * same logic and follow the same code paths.
-	 */
-
-	var warning = function() {};
-
-	if (process.env.NODE_ENV !== 'production') {
-	  warning = function(condition, format, args) {
-	    var len = arguments.length;
-	    args = new Array(len > 2 ? len - 2 : 0);
-	    for (var key = 2; key < len; key++) {
-	      args[key - 2] = arguments[key];
-	    }
-	    if (format === undefined) {
-	      throw new Error(
-	        '`warning(condition, format, ...args)` requires a warning ' +
-	        'message argument'
-	      );
-	    }
-
-	    if (format.length < 10 || (/^[s\W]*$/).test(format)) {
-	      throw new Error(
-	        'The warning format should be able to uniquely identify this ' +
-	        'warning. Please, use a more descriptive format than: ' + format
-	      );
-	    }
-
-	    if (!condition) {
-	      var argIndex = 0;
-	      var message = 'Warning: ' +
-	        format.replace(/%s/g, function() {
-	          return args[argIndex++];
-	        });
-	      if (typeof console !== 'undefined') {
-	        console.error(message);
-	      }
-	      try {
-	        // This error was thrown as a convenience so that you can use this stack
-	        // to find the callsite that caused this warning to fire.
-	        throw new Error(message);
-	      } catch(x) {}
-	    }
-	  };
-	}
-
-	module.exports = warning;
-
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
-
-/***/ },
 /* 261 */
 /***/ function(module, exports, __webpack_require__) {
 
@@ -40451,13 +39390,13 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _invariant = __webpack_require__(255);
+	var _invariant = __webpack_require__(256);
 
 	var _invariant2 = _interopRequireDefault(_invariant);
 
-	var _ExecutionEnvironment = __webpack_require__(257);
+	var _ExecutionEnvironment = __webpack_require__(258);
 
-	var _DOMUtils = __webpack_require__(258);
+	var _DOMUtils = __webpack_require__(259);
 
 	var _createHistory = __webpack_require__(262);
 
@@ -40502,11 +39441,11 @@
 
 	var _AsyncUtils = __webpack_require__(266);
 
-	var _Actions = __webpack_require__(256);
+	var _Actions = __webpack_require__(257);
 
-	var _createLocation2 = __webpack_require__(267);
+	var _createLocation = __webpack_require__(267);
 
-	var _createLocation3 = _interopRequireDefault(_createLocation2);
+	var _createLocation2 = _interopRequireDefault(_createLocation);
 
 	var _runTransitionHook = __webpack_require__(269);
 
@@ -40642,11 +39581,25 @@
 	  }
 
 	  function pushState(state, path) {
-	    transitionTo(createLocation(path, state, _Actions.PUSH, createKey()));
+	    transitionTo(_createLocation2['default'](path, state, _Actions.PUSH, createKey()));
 	  }
 
 	  function replaceState(state, path) {
-	    transitionTo(createLocation(path, state, _Actions.REPLACE, createKey()));
+	    transitionTo(_createLocation2['default'](path, state, _Actions.REPLACE, createKey()));
+	  }
+
+	  function setState(state) {
+	    if (location) {
+	      updateLocationState(location, state);
+	      updateLocation(location);
+	    } else {
+	      updateLocationState(getCurrentLocation(), state);
+	    }
+	  }
+
+	  function updateLocationState(location, state) {
+	    location.state = _extends({}, location.state, state);
+	    saveState(location.key, location.state);
 	  }
 
 	  function goBack() {
@@ -40662,44 +39615,11 @@
 	  }
 
 	  function createPath(path) {
-	    if (path == null || typeof path === 'string') return path;
-
-	    var pathname = path.pathname;
-	    var search = path.search;
-	    var hash = path.hash;
-
-	    var result = pathname;
-
-	    if (search) result += search;
-
-	    if (hash) result += hash;
-
-	    return result;
+	    return path;
 	  }
 
 	  function createHref(path) {
-	    return createPath(path);
-	  }
-
-	  function createLocation(path, state, action) {
-	    var key = arguments.length <= 3 || arguments[3] === undefined ? createKey() : arguments[3];
-
-	    return _createLocation3['default'](path, state, action, key);
-	  }
-
-	  // deprecated
-	  function setState(state) {
-	    if (location) {
-	      updateLocationState(location, state);
-	      updateLocation(location);
-	    } else {
-	      updateLocationState(getCurrentLocation(), state);
-	    }
-	  }
-
-	  function updateLocationState(location, state) {
-	    location.state = _extends({}, location.state, state);
-	    saveState(location.key, location.state);
+	    return path;
 	  }
 
 	  // deprecated
@@ -40720,15 +39640,14 @@
 	    transitionTo: transitionTo,
 	    pushState: pushState,
 	    replaceState: replaceState,
+	    setState: setState,
 	    go: go,
 	    goBack: goBack,
 	    goForward: goForward,
 	    createKey: createKey,
 	    createPath: createPath,
 	    createHref: createHref,
-	    createLocation: createLocation,
 
-	    setState: _deprecate2['default'](setState, 'setState is deprecated; use location.key to save state instead'),
 	    registerTransitionHook: _deprecate2['default'](registerTransitionHook, 'registerTransitionHook is deprecated; use listenBefore instead'),
 	    unregisterTransitionHook: _deprecate2['default'](unregisterTransitionHook, 'unregisterTransitionHook is deprecated; use the callback returned from listenBefore instead')
 	  };
@@ -40919,11 +39838,21 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _Actions = __webpack_require__(256);
+	var _warning = __webpack_require__(268);
 
-	var _parsePath = __webpack_require__(268);
+	var _warning2 = _interopRequireDefault(_warning);
 
-	var _parsePath2 = _interopRequireDefault(_parsePath);
+	var _Actions = __webpack_require__(257);
+
+	function extractPath(string) {
+	  var match = string.match(/https?:\/\/[^\/]*/);
+
+	  if (match == null) return string;
+
+	  _warning2['default'](false, 'Location path must be pathname + query string only, not a fully qualified URL like "%s"', string);
+
+	  return string.substring(match[0].length);
+	}
 
 	function createLocation() {
 	  var path = arguments.length <= 0 || arguments[0] === undefined ? '/' : arguments[0];
@@ -40931,51 +39860,9 @@
 	  var action = arguments.length <= 2 || arguments[2] === undefined ? _Actions.POP : arguments[2];
 	  var key = arguments.length <= 3 || arguments[3] === undefined ? null : arguments[3];
 
-	  if (typeof path === 'string') path = _parsePath2['default'](path);
+	  path = extractPath(path);
 
-	  var pathname = path.pathname || '/';
-	  var search = path.search || '';
-	  var hash = path.hash || '';
-
-	  return {
-	    pathname: pathname,
-	    search: search,
-	    hash: hash,
-	    state: state,
-	    action: action,
-	    key: key
-	  };
-	}
-
-	exports['default'] = createLocation;
-	module.exports = exports['default'];
-
-/***/ },
-/* 268 */
-/***/ function(module, exports, __webpack_require__) {
-
-	'use strict';
-
-	exports.__esModule = true;
-
-	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
-
-	var _warning = __webpack_require__(260);
-
-	var _warning2 = _interopRequireDefault(_warning);
-
-	function extractPath(string) {
-	  var match = string.match(/https?:\/\/[^\/]*/);
-
-	  if (match == null) return string;
-
-	  _warning2['default'](false, 'A path must be pathname + search + hash only, not a fully qualified URL like "%s"', string);
-
-	  return string.substring(match[0].length);
-	}
-
-	function parsePath(path) {
-	  var pathname = extractPath(path);
+	  var pathname = path;
 	  var search = '';
 	  var hash = '';
 
@@ -40996,12 +39883,82 @@
 	  return {
 	    pathname: pathname,
 	    search: search,
-	    hash: hash
+	    hash: hash,
+	    state: state,
+	    action: action,
+	    key: key
 	  };
 	}
 
-	exports['default'] = parsePath;
+	exports['default'] = createLocation;
 	module.exports = exports['default'];
+
+/***/ },
+/* 268 */
+/***/ function(module, exports, __webpack_require__) {
+
+	/* WEBPACK VAR INJECTION */(function(process) {/**
+	 * Copyright 2014-2015, Facebook, Inc.
+	 * All rights reserved.
+	 *
+	 * This source code is licensed under the BSD-style license found in the
+	 * LICENSE file in the root directory of this source tree. An additional grant
+	 * of patent rights can be found in the PATENTS file in the same directory.
+	 */
+
+	'use strict';
+
+	/**
+	 * Similar to invariant but only logs a warning if the condition is not met.
+	 * This can be used to log issues in development environments in critical
+	 * paths. Removing the logging code for production environments will keep the
+	 * same logic and follow the same code paths.
+	 */
+
+	var warning = function() {};
+
+	if (process.env.NODE_ENV !== 'production') {
+	  warning = function(condition, format, args) {
+	    var len = arguments.length;
+	    args = new Array(len > 2 ? len - 2 : 0);
+	    for (var key = 2; key < len; key++) {
+	      args[key - 2] = arguments[key];
+	    }
+	    if (format === undefined) {
+	      throw new Error(
+	        '`warning(condition, format, ...args)` requires a warning ' +
+	        'message argument'
+	      );
+	    }
+
+	    if (format.length < 10 || (/^[s\W]*$/).test(format)) {
+	      throw new Error(
+	        'The warning format should be able to uniquely identify this ' +
+	        'warning. Please, use a more descriptive format than: ' + format
+	      );
+	    }
+
+	    if (!condition) {
+	      var argIndex = 0;
+	      var message = 'Warning: ' +
+	        format.replace(/%s/g, function() {
+	          return args[argIndex++];
+	        });
+	      if (typeof console !== 'undefined') {
+	        console.error(message);
+	      }
+	      try {
+	        // This error was thrown as a convenience so that you can use this stack
+	        // to find the callsite that caused this warning to fire.
+	        throw new Error(message);
+	      } catch(x) {}
+	    }
+	  };
+	}
+
+	module.exports = warning;
+
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(4)))
 
 /***/ },
 /* 269 */
@@ -41013,7 +39970,7 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _warning = __webpack_require__(260);
+	var _warning = __webpack_require__(268);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
@@ -41042,13 +39999,13 @@
 
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
 
-	var _warning = __webpack_require__(260);
+	var _warning = __webpack_require__(268);
 
 	var _warning2 = _interopRequireDefault(_warning);
 
 	function deprecate(fn, message) {
 	  return function () {
-	    _warning2['default'](false, '[history] ' + message);
+	    _warning2['default'](false, message);
 	    return fn.apply(this, arguments);
 	  };
 	}
@@ -41648,7 +40605,7 @@
 /* 287 */
 /***/ function(module, exports) {
 
-	var core = module.exports = {version: '1.2.1'};
+	var core = module.exports = {version: '1.2.0'};
 	if(typeof __e == 'number')__e = core; // eslint-disable-line no-undef
 
 /***/ },
@@ -41982,7 +40939,6 @@
 	  , keyOf          = __webpack_require__(309)
 	  , $names         = __webpack_require__(310)
 	  , enumKeys       = __webpack_require__(311)
-	  , isArray        = __webpack_require__(300)
 	  , isObject       = __webpack_require__(283)
 	  , anObject       = __webpack_require__(303)
 	  , toIObject      = __webpack_require__(304)
@@ -41992,8 +40948,6 @@
 	  , _create        = $.create
 	  , getNames       = $names.get
 	  , $Symbol        = global.Symbol
-	  , $JSON          = global.JSON
-	  , _stringify     = $JSON && $JSON.stringify
 	  , setter         = false
 	  , HIDDEN         = wks('_hidden')
 	  , isEnum         = $.isEnum
@@ -42025,10 +40979,6 @@
 	    }
 	  });
 	  return sym;
-	};
-
-	var isSymbol = function(it){
-	  return typeof it == 'symbol';
 	};
 
 	var $defineProperty = function defineProperty(it, key, D){
@@ -42080,41 +41030,16 @@
 	  while(names.length > i)if(has(AllSymbols, key = names[i++]))result.push(AllSymbols[key]);
 	  return result;
 	};
-	var $stringify = function stringify(it){
-	  var args = [it]
-	    , i    = 1
-	    , replacer, $replacer;
-	  while(arguments.length > i)args.push(arguments[i++]);
-	  replacer = args[1];
-	  if(typeof replacer == 'function')$replacer = replacer;
-	  if($replacer || !isArray(replacer))replacer = function(key, value){
-	    if($replacer)value = $replacer.call(this, key, value);
-	    if(!isSymbol(value))return value;
-	  };
-	  args[1] = replacer;
-	  return _stringify.apply($JSON, args);
-	};
-	var buggyJSON = $fails(function(){
-	  var S = $Symbol();
-	  // MS Edge converts symbol values to JSON as {}
-	  // WebKit converts symbol values to JSON as null
-	  // V8 throws on boxed symbols
-	  return _stringify([S]) != '[null]' || _stringify({a: S}) != '{}' || _stringify(Object(S)) != '{}';
-	});
 
 	// 19.4.1.1 Symbol([description])
 	if(!useNative){
 	  $Symbol = function Symbol(){
-	    if(isSymbol(this))throw TypeError('Symbol is not a constructor');
+	    if(this instanceof $Symbol)throw TypeError('Symbol is not a constructor');
 	    return wrap(uid(arguments[0]));
 	  };
 	  $redef($Symbol.prototype, 'toString', function toString(){
 	    return this._k;
 	  });
-
-	  isSymbol = function(it){
-	    return it instanceof $Symbol;
-	  };
 
 	  $.create     = $create;
 	  $.isEnum     = $propertyIsEnumerable;
@@ -42128,6 +41053,13 @@
 	    $redef(ObjectProto, 'propertyIsEnumerable', $propertyIsEnumerable, true);
 	  }
 	}
+
+	// MS Edge converts symbol values to JSON as {}
+	if(!useNative || $fails(function(){
+	  return JSON.stringify([$Symbol()]) != '[null]';
+	}))$redef($Symbol.prototype, 'toJSON', function toJSON(){
+	  if(useNative && isObject(this))return this;
+	});
 
 	var symbolStatics = {
 	  // 19.4.2.1 Symbol.for(key)
@@ -42183,9 +41115,6 @@
 	  // 19.1.2.8 Object.getOwnPropertySymbols(O)
 	  getOwnPropertySymbols: $getOwnPropertySymbols
 	});
-
-	// 24.3.2 JSON.stringify(value [, replacer [, space]])
-	$JSON && $def($def.S + $def.F * (!useNative || buggyJSON), 'JSON', {stringify: $stringify});
 
 	// 19.4.3.5 Symbol.prototype[@@toStringTag]
 	setTag($Symbol, 'Symbol');
@@ -44309,7 +43238,7 @@
 	    defer = ctx(port.postMessage, port, 1);
 	  // Browsers with postMessage, skip WebWorkers
 	  // IE8 has postMessage, but it's sync & typeof its postMessage is 'object'
-	  } else if(global.addEventListener && typeof postMessage == 'function' && !global.importScripts){
+	  } else if(global.addEventListener && typeof postMessage == 'function' && !global.importScript){
 	    defer = function(id){
 	      global.postMessage(id + '', '*');
 	    };
@@ -46081,6 +45010,936 @@
 	);
 
 	/* WEBPACK VAR INJECTION */}.call(exports, (function() { return this; }()), __webpack_require__(4)))
+
+/***/ },
+/* 459 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	module.exports = __webpack_require__(460);
+
+/***/ },
+/* 460 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
+
+	var React = __webpack_require__(1);
+	var scrollIntoView = __webpack_require__(461);
+
+	var _debugStates = [];
+
+	var Autocomplete = React.createClass({
+	  displayName: 'Autocomplete',
+
+	  propTypes: {
+	    initialValue: React.PropTypes.any,
+	    onChange: React.PropTypes.func,
+	    onSelect: React.PropTypes.func,
+	    shouldItemRender: React.PropTypes.func,
+	    renderItem: React.PropTypes.func.isRequired,
+	    menuStyle: React.PropTypes.object,
+	    inputProps: React.PropTypes.object
+	  },
+
+	  getDefaultProps: function getDefaultProps() {
+	    return {
+	      inputProps: {},
+	      onChange: function onChange() {},
+	      onSelect: function onSelect(value, item) {},
+	      renderMenu: function renderMenu(items, value, style) {
+	        return React.createElement('div', { style: _extends({}, style, this.menuStyle), children: items });
+	      },
+	      shouldItemRender: function shouldItemRender() {
+	        return true;
+	      },
+	      menuStyle: {
+	        borderRadius: '3px',
+	        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.1)',
+	        background: 'rgba(255, 255, 255, 0.9)',
+	        padding: '2px 0',
+	        fontSize: '90%',
+	        position: 'fixed',
+	        overflow: 'auto',
+	        maxHeight: '50%' }
+	    };
+	  },
+
+	  // TODO: don't cheat, let it flow to the bottom
+	  getInitialState: function getInitialState() {
+	    return {
+	      value: this.props.initialValue || '',
+	      isOpen: false,
+	      highlightedIndex: null
+	    };
+	  },
+
+	  componentWillMount: function componentWillMount() {
+	    this._ignoreBlur = false;
+	    this._performAutoCompleteOnUpdate = false;
+	    this._performAutoCompleteOnKeyUp = false;
+	  },
+
+	  componentWillReceiveProps: function componentWillReceiveProps() {
+	    this._performAutoCompleteOnUpdate = true;
+	  },
+
+	  componentDidUpdate: function componentDidUpdate(prevProps, prevState) {
+	    if (this.state.isOpen === true && prevState.isOpen === false) this.setMenuPositions();
+
+	    if (this.state.isOpen && this._performAutoCompleteOnUpdate) {
+	      this._performAutoCompleteOnUpdate = false;
+	      this.maybeAutoCompleteText();
+	    }
+
+	    this.maybeScrollItemIntoView();
+	  },
+
+	  maybeScrollItemIntoView: function maybeScrollItemIntoView() {
+	    if (this.state.isOpen === true && this.state.highlightedIndex !== null) {
+	      var itemNode = React.findDOMNode(this.refs['item-' + this.state.highlightedIndex]);
+	      var menuNode = React.findDOMNode(this.refs.menu);
+	      scrollIntoView(itemNode, menuNode, { onlyScrollIfNeeded: true });
+	    }
+	  },
+
+	  handleKeyDown: function handleKeyDown(event) {
+	    if (this.keyDownHandlers[event.key]) this.keyDownHandlers[event.key].call(this, event);else {
+	      this.setState({
+	        highlightedIndex: null,
+	        isOpen: true
+	      });
+	    }
+	  },
+
+	  handleChange: function handleChange(event) {
+	    var _this = this;
+
+	    this._performAutoCompleteOnKeyUp = true;
+	    this.setState({
+	      value: event.target.value
+	    }, function () {
+	      _this.props.onChange(event, _this.state.value);
+	    });
+	  },
+
+	  handleKeyUp: function handleKeyUp() {
+	    if (this._performAutoCompleteOnKeyUp) {
+	      this._performAutoCompleteOnKeyUp = false;
+	      this.maybeAutoCompleteText();
+	    }
+	  },
+
+	  keyDownHandlers: {
+	    ArrowDown: function ArrowDown() {
+	      event.preventDefault();
+	      var highlightedIndex = this.state.highlightedIndex;
+
+	      var index = highlightedIndex === null || highlightedIndex === this.getFilteredItems().length - 1 ? 0 : highlightedIndex + 1;
+	      this._performAutoCompleteOnKeyUp = true;
+	      this.setState({
+	        highlightedIndex: index,
+	        isOpen: true
+	      });
+	    },
+
+	    ArrowUp: function ArrowUp(event) {
+	      event.preventDefault();
+	      var highlightedIndex = this.state.highlightedIndex;
+
+	      var index = highlightedIndex === 0 || highlightedIndex === null ? this.getFilteredItems().length - 1 : highlightedIndex - 1;
+	      this._performAutoCompleteOnKeyUp = true;
+	      this.setState({
+	        highlightedIndex: index,
+	        isOpen: true
+	      });
+	    },
+
+	    Enter: function Enter(event) {
+	      var _this2 = this;
+
+	      if (this.state.isOpen === false) {
+	        // already selected this, do nothing
+	        return;
+	      } else if (this.state.highlightedIndex == null) {
+	        // hit enter after focus but before typing anything so no autocomplete attempt yet
+	        this.setState({
+	          isOpen: false
+	        }, function () {
+	          React.findDOMNode(_this2.refs.input).select();
+	        });
+	      } else {
+	        var item = this.getFilteredItems()[this.state.highlightedIndex];
+	        this.setState({
+	          value: this.props.getItemValue(item),
+	          isOpen: false,
+	          highlightedIndex: null
+	        }, function () {
+	          //React.findDOMNode(this.refs.input).focus() // TODO: file issue
+	          React.findDOMNode(_this2.refs.input).setSelectionRange(_this2.state.value.length, _this2.state.value.length);
+	          _this2.props.onSelect(_this2.state.value, item);
+	        });
+	      }
+	    },
+
+	    Escape: function Escape(event) {
+	      this.setState({
+	        highlightedIndex: null,
+	        isOpen: false
+	      });
+	    }
+	  },
+
+	  getFilteredItems: function getFilteredItems() {
+	    var _this3 = this;
+
+	    var items = this.props.items;
+
+	    if (this.props.shouldItemRender) {
+	      items = items.filter(function (item) {
+	        return _this3.props.shouldItemRender(item, _this3.state.value);
+	      });
+	    }
+
+	    if (this.props.sortItems) {
+	      items.sort(function (a, b) {
+	        return _this3.props.sortItems(a, b, _this3.state.value);
+	      });
+	    }
+
+	    return items;
+	  },
+
+	  maybeAutoCompleteText: function maybeAutoCompleteText() {
+	    var _this4 = this;
+
+	    if (this.state.value === '') return;
+	    var highlightedIndex = this.state.highlightedIndex;
+
+	    var items = this.getFilteredItems();
+	    if (items.length === 0) return;
+	    var matchedItem = highlightedIndex !== null ? items[highlightedIndex] : items[0];
+	    var itemValue = this.props.getItemValue(matchedItem);
+	    var itemValueDoesMatch = itemValue.toLowerCase().indexOf(this.state.value.toLowerCase()) === 0;
+	    if (itemValueDoesMatch) {
+	      var node = React.findDOMNode(this.refs.input);
+	      var setSelection = function setSelection() {
+	        node.value = itemValue;
+	        node.setSelectionRange(_this4.state.value.length, itemValue.length);
+	      };
+	      if (highlightedIndex === null) this.setState({ highlightedIndex: 0 }, setSelection);else setSelection();
+	    }
+	  },
+
+	  setMenuPositions: function setMenuPositions() {
+	    var node = React.findDOMNode(this.refs.input);
+	    var rect = node.getBoundingClientRect();
+	    var computedStyle = getComputedStyle(node);
+	    var marginBottom = parseInt(computedStyle.marginBottom, 10);
+	    var marginLeft = parseInt(computedStyle.marginLeft, 10);
+	    var marginRight = parseInt(computedStyle.marginRight, 10);
+	    this.setState({
+	      menuTop: rect.bottom + marginBottom,
+	      menuLeft: rect.left + marginLeft,
+	      menuWidth: rect.width + marginLeft + marginRight
+	    });
+	  },
+
+	  highlightItemFromMouse: function highlightItemFromMouse(index) {
+	    this.setState({ highlightedIndex: index });
+	  },
+
+	  selectItemFromMouse: function selectItemFromMouse(item) {
+	    var _this5 = this;
+
+	    this.setState({
+	      value: this.props.getItemValue(item),
+	      isOpen: false,
+	      highlightedIndex: null
+	    }, function () {
+	      _this5.props.onSelect(_this5.state.value, item);
+	      React.findDOMNode(_this5.refs.input).focus();
+	      _this5.setIgnoreBlur(false);
+	    });
+	  },
+
+	  setIgnoreBlur: function setIgnoreBlur(ignore) {
+	    this._ignoreBlur = ignore;
+	  },
+
+	  renderMenu: function renderMenu() {
+	    var _this6 = this;
+
+	    var items = this.getFilteredItems().map(function (item, index) {
+	      var element = _this6.props.renderItem(item, _this6.state.highlightedIndex === index, { cursor: 'default' });
+	      return React.cloneElement(element, {
+	        onMouseDown: function onMouseDown() {
+	          return _this6.setIgnoreBlur(true);
+	        },
+	        onMouseEnter: function onMouseEnter() {
+	          return _this6.highlightItemFromMouse(index);
+	        },
+	        onClick: function onClick() {
+	          return _this6.selectItemFromMouse(item);
+	        },
+	        ref: 'item-' + index
+	      });
+	    });
+	    var style = {
+	      left: this.state.menuLeft,
+	      top: this.state.menuTop,
+	      minWidth: this.state.menuWidth
+	    };
+	    var menu = this.props.renderMenu(items, this.state.value, style);
+	    return React.cloneElement(menu, { ref: 'menu' });
+	  },
+
+	  getActiveItemValue: function getActiveItemValue() {
+	    if (this.state.highlightedIndex === null) return '';else {
+	      var item = this.props.items[this.state.highlightedIndex];
+	      // items can match when we maybeAutoCompleteText, but then get replaced by the app
+	      // for the next render? I think? TODO: file an issue (alab -> enter -> type 'a' for
+	      // alabamaa and then an error would happen w/o this guard, pretty sure there's a
+	      // better way)
+	      return item ? this.props.getItemValue(item) : '';
+	    }
+	  },
+
+	  handleInputBlur: function handleInputBlur() {
+	    if (this._ignoreBlur) return;
+	    this.setState({
+	      isOpen: false,
+	      highlightedIndex: null
+	    });
+	  },
+
+	  handleInputFocus: function handleInputFocus() {
+	    if (this._ignoreBlur) return;
+	    this.setState({ isOpen: true });
+	  },
+
+	  handleInputClick: function handleInputClick() {
+	    if (this.state.isOpen === false) this.setState({ isOpen: true });
+	  },
+
+	  render: function render() {
+	    var _this7 = this;
+
+	    if (this.props.debug) {
+	      // you don't like it, you love it
+	      _debugStates.push({
+	        id: _debugStates.length,
+	        state: this.state
+	      });
+	    }
+	    return React.createElement(
+	      'div',
+	      { style: { display: 'inline-block' } },
+	      React.createElement('input', _extends({}, this.props.inputProps, {
+	        role: 'combobox',
+	        'aria-autocomplete': 'both',
+	        'aria-label': this.getActiveItemValue(),
+	        ref: 'input',
+	        onFocus: this.handleInputFocus,
+	        onBlur: this.handleInputBlur,
+	        onChange: function (event) {
+	          return _this7.handleChange(event);
+	        },
+	        onKeyDown: function (event) {
+	          return _this7.handleKeyDown(event);
+	        },
+	        onKeyUp: function (event) {
+	          return _this7.handleKeyUp(event);
+	        },
+	        onClick: this.handleInputClick,
+	        value: this.state.value
+	      })),
+	      this.state.isOpen && this.renderMenu(),
+	      this.props.debug && React.createElement(
+	        'pre',
+	        { style: { marginLeft: 300 } },
+	        JSON.stringify(_debugStates.slice(_debugStates.length - 5, _debugStates.length), null, 2)
+	      )
+	    );
+	  }
+	});
+
+	module.exports = Autocomplete;
+
+/***/ },
+/* 461 */
+/***/ function(module, exports, __webpack_require__) {
+
+	module.exports = __webpack_require__(462);
+
+
+/***/ },
+/* 462 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var util = __webpack_require__(463);
+
+	function scrollIntoView(elem, container, config) {
+	  config = config || {};
+	  // document 归一化到 window
+	  if (container.nodeType === 9) {
+	    container = util.getWindow(container);
+	  }
+
+	  var allowHorizontalScroll = config.allowHorizontalScroll;
+	  var onlyScrollIfNeeded = config.onlyScrollIfNeeded;
+	  var alignWithTop = config.alignWithTop;
+	  var alignWithLeft = config.alignWithLeft;
+
+	  allowHorizontalScroll = allowHorizontalScroll === undefined ? true : allowHorizontalScroll;
+
+	  var isWin = util.isWindow(container);
+	  var elemOffset = util.offset(elem);
+	  var eh = util.outerHeight(elem);
+	  var ew = util.outerWidth(elem);
+	  var containerOffset, ch, cw, containerScroll,
+	    diffTop, diffBottom, win,
+	    winScroll, ww, wh;
+
+	  if (isWin) {
+	    win = container;
+	    wh = util.height(win);
+	    ww = util.width(win);
+	    winScroll = {
+	      left: util.scrollLeft(win),
+	      top: util.scrollTop(win)
+	    };
+	    // elem 相对 container 可视视窗的距离
+	    diffTop = {
+	      left: elemOffset.left - winScroll.left,
+	      top: elemOffset.top - winScroll.top
+	    };
+	    diffBottom = {
+	      left: elemOffset.left + ew - (winScroll.left + ww),
+	      top: elemOffset.top + eh - (winScroll.top + wh)
+	    };
+	    containerScroll = winScroll;
+	  } else {
+	    containerOffset = util.offset(container);
+	    ch = container.clientHeight;
+	    cw = container.clientWidth;
+	    containerScroll = {
+	      left: container.scrollLeft,
+	      top: container.scrollTop
+	    };
+	    // elem 相对 container 可视视窗的距离
+	    // 注意边框, offset 是边框到根节点
+	    diffTop = {
+	      left: elemOffset.left - (containerOffset.left +
+	      (parseFloat(util.css(container, 'borderLeftWidth')) || 0)),
+	      top: elemOffset.top - (containerOffset.top +
+	      (parseFloat(util.css(container, 'borderTopWidth')) || 0))
+	    };
+	    diffBottom = {
+	      left: elemOffset.left + ew -
+	      (containerOffset.left + cw +
+	      (parseFloat(util.css(container, 'borderRightWidth')) || 0)),
+	      top: elemOffset.top + eh -
+	      (containerOffset.top + ch +
+	      (parseFloat(util.css(container, 'borderBottomWidth')) || 0))
+	    };
+	  }
+
+	  if (diffTop.top < 0 || diffBottom.top > 0) {
+	    // 强制向上
+	    if (alignWithTop === true) {
+	      util.scrollTop(container, containerScroll.top + diffTop.top);
+	    } else if (alignWithTop === false) {
+	      util.scrollTop(container, containerScroll.top + diffBottom.top);
+	    } else {
+	      // 自动调整
+	      if (diffTop.top < 0) {
+	        util.scrollTop(container, containerScroll.top + diffTop.top);
+	      } else {
+	        util.scrollTop(container, containerScroll.top + diffBottom.top);
+	      }
+	    }
+	  } else {
+	    if (!onlyScrollIfNeeded) {
+	      alignWithTop = alignWithTop === undefined ? true : !!alignWithTop;
+	      if (alignWithTop) {
+	        util.scrollTop(container, containerScroll.top + diffTop.top);
+	      } else {
+	        util.scrollTop(container, containerScroll.top + diffBottom.top);
+	      }
+	    }
+	  }
+
+	  if (allowHorizontalScroll) {
+	    if (diffTop.left < 0 || diffBottom.left > 0) {
+	      // 强制向上
+	      if (alignWithLeft === true) {
+	        util.scrollLeft(container, containerScroll.left + diffTop.left);
+	      } else if (alignWithLeft === false) {
+	        util.scrollLeft(container, containerScroll.left + diffBottom.left);
+	      } else {
+	        // 自动调整
+	        if (diffTop.left < 0) {
+	          util.scrollLeft(container, containerScroll.left + diffTop.left);
+	        } else {
+	          util.scrollLeft(container, containerScroll.left + diffBottom.left);
+	        }
+	      }
+	    } else {
+	      if (!onlyScrollIfNeeded) {
+	        alignWithLeft = alignWithLeft === undefined ? true : !!alignWithLeft;
+	        if (alignWithLeft) {
+	          util.scrollLeft(container, containerScroll.left + diffTop.left);
+	        } else {
+	          util.scrollLeft(container, containerScroll.left + diffBottom.left);
+	        }
+	      }
+	    }
+	  }
+	}
+
+	module.exports = scrollIntoView;
+
+
+/***/ },
+/* 463 */
+/***/ function(module, exports) {
+
+	var RE_NUM = /[\-+]?(?:\d*\.|)\d+(?:[eE][\-+]?\d+|)/.source;
+
+	function getClientPosition(elem) {
+	  var box, x, y;
+	  var doc = elem.ownerDocument;
+	  var body = doc.body;
+	  var docElem = doc && doc.documentElement;
+	  // 根据 GBS 最新数据，A-Grade Browsers 都已支持 getBoundingClientRect 方法，不用再考虑传统的实现方式
+	  box = elem.getBoundingClientRect();
+
+	  // 注：jQuery 还考虑减去 docElem.clientLeft/clientTop
+	  // 但测试发现，这样反而会导致当 html 和 body 有边距/边框样式时，获取的值不正确
+	  // 此外，ie6 会忽略 html 的 margin 值，幸运地是没有谁会去设置 html 的 margin
+
+	  x = box.left;
+	  y = box.top;
+
+	  // In IE, most of the time, 2 extra pixels are added to the top and left
+	  // due to the implicit 2-pixel inset border.  In IE6/7 quirks mode and
+	  // IE6 standards mode, this border can be overridden by setting the
+	  // document element's border to zero -- thus, we cannot rely on the
+	  // offset always being 2 pixels.
+
+	  // In quirks mode, the offset can be determined by querying the body's
+	  // clientLeft/clientTop, but in standards mode, it is found by querying
+	  // the document element's clientLeft/clientTop.  Since we already called
+	  // getClientBoundingRect we have already forced a reflow, so it is not
+	  // too expensive just to query them all.
+
+	  // ie 下应该减去窗口的边框吧，毕竟默认 absolute 都是相对窗口定位的
+	  // 窗口边框标准是设 documentElement ,quirks 时设置 body
+	  // 最好禁止在 body 和 html 上边框 ，但 ie < 9 html 默认有 2px ，减去
+	  // 但是非 ie 不可能设置窗口边框，body html 也不是窗口 ,ie 可以通过 html,body 设置
+	  // 标准 ie 下 docElem.clientTop 就是 border-top
+	  // ie7 html 即窗口边框改变不了。永远为 2
+	  // 但标准 firefox/chrome/ie9 下 docElem.clientTop 是窗口边框，即使设了 border-top 也为 0
+
+	  x -= docElem.clientLeft || body.clientLeft || 0;
+	  y -= docElem.clientTop || body.clientTop || 0;
+
+	  return {left: x, top: y};
+	}
+
+	function getScroll(w, top) {
+	  var ret = w['page' + (top ? 'Y' : 'X') + 'Offset'];
+	  var method = 'scroll' + (top ? 'Top' : 'Left');
+	  if (typeof ret !== 'number') {
+	    var d = w.document;
+	    //ie6,7,8 standard mode
+	    ret = d.documentElement[method];
+	    if (typeof ret !== 'number') {
+	      //quirks mode
+	      ret = d.body[method];
+	    }
+	  }
+	  return ret;
+	}
+
+	function getScrollLeft(w) {
+	  return getScroll(w);
+	}
+
+	function getScrollTop(w) {
+	  return getScroll(w, true);
+	}
+
+	function getOffset(el) {
+	  var pos = getClientPosition(el);
+	  var doc = el.ownerDocument;
+	  var w = doc.defaultView || doc.parentWindow;
+	  pos.left += getScrollLeft(w);
+	  pos.top += getScrollTop(w);
+	  return pos;
+	}
+	function _getComputedStyle(elem, name, computedStyle) {
+	  var val = '';
+	  var d = elem.ownerDocument;
+
+	  // https://github.com/kissyteam/kissy/issues/61
+	  if ((computedStyle = (computedStyle || d.defaultView.getComputedStyle(elem, null)))) {
+	    val = computedStyle.getPropertyValue(name) || computedStyle[name];
+	  }
+
+	  return val;
+	}
+
+	var _RE_NUM_NO_PX = new RegExp('^(' + RE_NUM + ')(?!px)[a-z%]+$', 'i');
+	var RE_POS = /^(top|right|bottom|left)$/,
+	  CURRENT_STYLE = 'currentStyle',
+	  RUNTIME_STYLE = 'runtimeStyle',
+	  LEFT = 'left',
+	  PX = 'px';
+
+	function _getComputedStyleIE(elem, name) {
+	  // currentStyle maybe null
+	  // http://msdn.microsoft.com/en-us/library/ms535231.aspx
+	  var ret = elem[CURRENT_STYLE] && elem[CURRENT_STYLE][name];
+
+	  // 当 width/height 设置为百分比时，通过 pixelLeft 方式转换的 width/height 值
+	  // 一开始就处理了! CUSTOM_STYLE.height,CUSTOM_STYLE.width ,cssHook 解决@2011-08-19
+	  // 在 ie 下不对，需要直接用 offset 方式
+	  // borderWidth 等值也有问题，但考虑到 borderWidth 设为百分比的概率很小，这里就不考虑了
+
+	  // From the awesome hack by Dean Edwards
+	  // http://erik.eae.net/archives/2007/07/27/18.54.15/#comment-102291
+	  // If we're not dealing with a regular pixel number
+	  // but a number that has a weird ending, we need to convert it to pixels
+	  // exclude left right for relativity
+	  if (_RE_NUM_NO_PX.test(ret) && !RE_POS.test(name)) {
+	    // Remember the original values
+	    var style = elem.style,
+	      left = style[LEFT],
+	      rsLeft = elem[RUNTIME_STYLE][LEFT];
+
+	    // prevent flashing of content
+	    elem[RUNTIME_STYLE][LEFT] = elem[CURRENT_STYLE][LEFT];
+
+	    // Put in the new values to get a computed value out
+	    style[LEFT] = name === 'fontSize' ? '1em' : (ret || 0);
+	    ret = style.pixelLeft + PX;
+
+	    // Revert the changed values
+	    style[LEFT] = left;
+
+	    elem[RUNTIME_STYLE][LEFT] = rsLeft;
+	  }
+	  return ret === '' ? 'auto' : ret;
+	}
+
+	var getComputedStyleX;
+	if (typeof window !== 'undefined') {
+	  getComputedStyleX = window.getComputedStyle ? _getComputedStyle : _getComputedStyleIE;
+	}
+
+	// 设置 elem 相对 elem.ownerDocument 的坐标
+	function setOffset(elem, offset) {
+	  // set position first, in-case top/left are set even on static elem
+	  if (css(elem, 'position') === 'static') {
+	    elem.style.position = 'relative';
+	  }
+
+	  var old = getOffset(elem),
+	    ret = {},
+	    current, key;
+
+	  for (key in offset) {
+	    current = parseFloat(css(elem, key)) || 0;
+	    ret[key] = current + offset[key] - old[key];
+	  }
+	  css(elem, ret);
+	}
+
+	function each(arr, fn) {
+	  for (var i = 0; i < arr.length; i++) {
+	    fn(arr[i]);
+	  }
+	}
+
+	function isBorderBoxFn(elem) {
+	  return getComputedStyleX(elem, 'boxSizing') === 'border-box';
+	}
+
+	var BOX_MODELS = ['margin', 'border', 'padding'],
+	  CONTENT_INDEX = -1,
+	  PADDING_INDEX = 2,
+	  BORDER_INDEX = 1,
+	  MARGIN_INDEX = 0;
+
+	function swap(elem, options, callback) {
+	  var old = {},
+	    style = elem.style,
+	    name;
+
+	  // Remember the old values, and insert the new ones
+	  for (name in options) {
+	    old[name] = style[name];
+	    style[name] = options[name];
+	  }
+
+	  callback.call(elem);
+
+	  // Revert the old values
+	  for (name in options) {
+	    style[name] = old[name];
+	  }
+	}
+
+	function getPBMWidth(elem, props, which) {
+	  var value = 0, prop, j, i;
+	  for (j = 0; j < props.length; j++) {
+	    prop = props[j];
+	    if (prop) {
+	      for (i = 0; i < which.length; i++) {
+	        var cssProp;
+	        if (prop === 'border') {
+	          cssProp = prop + which[i] + 'Width';
+	        } else {
+	          cssProp = prop + which[i];
+	        }
+	        value += parseFloat(getComputedStyleX(elem, cssProp)) || 0;
+	      }
+	    }
+	  }
+	  return value;
+	}
+
+	/**
+	 * A crude way of determining if an object is a window
+	 * @member util
+	 */
+	function isWindow(obj) {
+	  // must use == for ie8
+	  /*jshint eqeqeq:false*/
+	  return obj != null && obj == obj.window;
+	}
+
+	var domUtils = {};
+
+	each(['Width', 'Height'], function (name) {
+	  domUtils['doc' + name] = function (refWin) {
+	    var d = refWin.document;
+	    return Math.max(
+	      //firefox chrome documentElement.scrollHeight< body.scrollHeight
+	      //ie standard mode : documentElement.scrollHeight> body.scrollHeight
+	      d.documentElement['scroll' + name],
+	      //quirks : documentElement.scrollHeight 最大等于可视窗口多一点？
+	      d.body['scroll' + name],
+	      domUtils['viewport' + name](d));
+	  };
+
+	  domUtils['viewport' + name] = function (win) {
+	    // pc browser includes scrollbar in window.innerWidth
+	    var prop = 'client' + name,
+	      doc = win.document,
+	      body = doc.body,
+	      documentElement = doc.documentElement,
+	      documentElementProp = documentElement[prop];
+	    // 标准模式取 documentElement
+	    // backcompat 取 body
+	    return doc.compatMode === 'CSS1Compat' && documentElementProp ||
+	      body && body[prop] || documentElementProp;
+	  };
+	});
+
+	/*
+	 得到元素的大小信息
+	 @param elem
+	 @param name
+	 @param {String} [extra]  'padding' : (css width) + padding
+	 'border' : (css width) + padding + border
+	 'margin' : (css width) + padding + border + margin
+	 */
+	function getWH(elem, name, extra) {
+	  if (isWindow(elem)) {
+	    return name === 'width' ? domUtils.viewportWidth(elem) : domUtils.viewportHeight(elem);
+	  } else if (elem.nodeType === 9) {
+	    return name === 'width' ? domUtils.docWidth(elem) : domUtils.docHeight(elem);
+	  }
+	  var which = name === 'width' ? ['Left', 'Right'] : ['Top', 'Bottom'],
+	    borderBoxValue = name === 'width' ? elem.offsetWidth : elem.offsetHeight;
+	  var computedStyle = getComputedStyleX(elem);
+	  var isBorderBox = isBorderBoxFn(elem, computedStyle);
+	  var cssBoxValue = 0;
+	  if (borderBoxValue == null || borderBoxValue <= 0) {
+	    borderBoxValue = undefined;
+	    // Fall back to computed then un computed css if necessary
+	    cssBoxValue = getComputedStyleX(elem, name);
+	    if (cssBoxValue == null || (Number(cssBoxValue)) < 0) {
+	      cssBoxValue = elem.style[name] || 0;
+	    }
+	    // Normalize '', auto, and prepare for extra
+	    cssBoxValue = parseFloat(cssBoxValue) || 0;
+	  }
+	  if (extra === undefined) {
+	    extra = isBorderBox ? BORDER_INDEX : CONTENT_INDEX;
+	  }
+	  var borderBoxValueOrIsBorderBox = borderBoxValue !== undefined || isBorderBox;
+	  var val = borderBoxValue || cssBoxValue;
+	  if (extra === CONTENT_INDEX) {
+	    if (borderBoxValueOrIsBorderBox) {
+	      return val - getPBMWidth(elem, ['border', 'padding'],
+	          which, computedStyle);
+	    } else {
+	      return cssBoxValue;
+	    }
+	  } else if (borderBoxValueOrIsBorderBox) {
+	    return val + (extra === BORDER_INDEX ? 0 :
+	        (extra === PADDING_INDEX ?
+	          -getPBMWidth(elem, ['border'], which, computedStyle) :
+	          getPBMWidth(elem, ['margin'], which, computedStyle)));
+	  } else {
+	    return cssBoxValue + getPBMWidth(elem, BOX_MODELS.slice(extra),
+	        which, computedStyle);
+	  }
+	}
+
+	var cssShow = {position: 'absolute', visibility: 'hidden', display: 'block'};
+
+	// fix #119 : https://github.com/kissyteam/kissy/issues/119
+	function getWHIgnoreDisplay(elem) {
+	  var val, args = arguments;
+	  // in case elem is window
+	  // elem.offsetWidth === undefined
+	  if (elem.offsetWidth !== 0) {
+	    val = getWH.apply(undefined, args);
+	  } else {
+	    swap(elem, cssShow, function () {
+	      val = getWH.apply(undefined, args);
+	    });
+	  }
+	  return val;
+	}
+
+	each(['width', 'height'], function (name) {
+	  var first = name.charAt(0).toUpperCase() + name.slice(1);
+	  domUtils['outer' + first] = function (el, includeMargin) {
+	    return el && getWHIgnoreDisplay(el, name, includeMargin ? MARGIN_INDEX : BORDER_INDEX);
+	  };
+	  var which = name === 'width' ? ['Left', 'Right'] : ['Top', 'Bottom'];
+
+	  domUtils[name] = function (elem, val) {
+	    if (val !== undefined) {
+	      if (elem) {
+	        var computedStyle = getComputedStyleX(elem);
+	        var isBorderBox = isBorderBoxFn(elem);
+	        if (isBorderBox) {
+	          val += getPBMWidth(elem, ['padding', 'border'], which, computedStyle);
+	        }
+	        return css(elem, name, val);
+	      }
+	      return;
+	    }
+	    return elem && getWHIgnoreDisplay(elem, name, CONTENT_INDEX);
+	  };
+	});
+
+	function css(el, name, value) {
+	  if (typeof name === 'object') {
+	    for (var i in name) {
+	      css(el, i, name[i]);
+	    }
+	    return;
+	  }
+	  if (typeof value !== 'undefined') {
+	    if (typeof value === 'number') {
+	      value = value + 'px';
+	    }
+	    el.style[name] = value;
+	  } else {
+	    return getComputedStyleX(el, name);
+	  }
+	}
+
+	function mix(to, from) {
+	  for (var i in from) {
+	    to[i] = from[i];
+	  }
+	  return to;
+	}
+
+	var utils = module.exports = {
+	  getWindow: function (node) {
+	    var doc = node.ownerDocument || node;
+	    return doc.defaultView || doc.parentWindow;
+	  },
+	  offset: function (el, value) {
+	    if (typeof value !== 'undefined') {
+	      setOffset(el, value);
+	    } else {
+	      return getOffset(el);
+	    }
+	  },
+	  isWindow: isWindow,
+	  each: each,
+	  css: css,
+	  clone: function (obj) {
+	    var ret = {};
+	    for (var i in obj) {
+	      ret[i] = obj[i];
+	    }
+	    var overflow = obj.overflow;
+	    if (overflow) {
+	      for (i in obj) {
+	        ret.overflow[i] = obj.overflow[i];
+	      }
+	    }
+	    return ret;
+	  },
+	  mix: mix,
+	  scrollLeft: function (w, v) {
+	    if (isWindow(w)) {
+	      if (v === undefined) {
+	        return getScrollLeft(w);
+	      } else {
+	        window.scrollTo(v, getScrollTop(w));
+	      }
+	    } else {
+	      if (v === undefined) {
+	        return w.scrollLeft;
+	      } else {
+	        w.scrollLeft = v;
+	      }
+	    }
+	  },
+	  scrollTop: function (w, v) {
+	    if (isWindow(w)) {
+	      if (v === undefined) {
+	        return getScrollTop(w);
+	      } else {
+	        window.scrollTo(getScrollLeft(w), v);
+	      }
+	    } else {
+	      if (v === undefined) {
+	        return w.scrollTop;
+	      } else {
+	        w.scrollTop = v;
+	      }
+	    }
+	  },
+	  merge: function () {
+	    var ret = {};
+	    for (var i = 0; i < arguments.length; i++) {
+	      utils.mix(ret, arguments[i]);
+	    }
+	    return ret;
+	  },
+	  viewportWidth: 0,
+	  viewportHeight: 0
+	};
+
+	mix(utils, domUtils);
+
 
 /***/ }
 /******/ ]);

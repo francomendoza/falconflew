@@ -12,10 +12,10 @@ function updateEntities(state = [], action){
 }
 
 //TODO: organize entities by node_label because templates may evolve in future, this will require changing the template identifier in rel_nodes
-function entitiesByTemplateId(state = {}, action){
+function entitiesByLabel(state = {}, action){
   switch (action.type){
-    case 'ADD_ENTITIES_BY_TEMPLATE_ID':
-      return Object.assign({}, state, { [action.template_id]: action.entities });
+    case 'ADD_ENTITIES_BY_LABEL':
+      return Object.assign({}, state, { [action.label]: action.entities });
     default:
       return state;
   }
@@ -148,7 +148,7 @@ function autocompleteItems(state = [], action){
 
 const reducers = combineReducers({
   updateEntities,
-  entitiesByTemplateId,
+  entitiesByLabel,
   templatesById,
   router: routerStateReducer,
   templateInstancesByInstanceId,

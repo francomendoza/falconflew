@@ -21,16 +21,16 @@ export function submitEntityForm(new_node, templateInstanceId) {
   return { type: "SUBMIT_FORM", new_node, templateInstanceId };
 }
 
-export function getEntitiesByTemplateId(template_id){
+export function autocompleteEntitiesByLabel(label, value){
   return (dispatch, getState) => {
-    return fetch('http://localhost:3000/entities/entities_by_template_id?template_id='+template_id)
+    return fetch(`http://localhost:3000/entities/autocomplete?type=${label}&term=${value}`)
       .then(response => response.json())
-      .then(data => dispatch(addEntitiesByTemplateId(data, template_id)))
+      .then(data => dispatch(addEntitiesByLabel(data, label)))
   }
 }
 
-export function addEntitiesByTemplateId(entities, template_id){
-  return { type: "ADD_ENTITIES_BY_TEMPLATE_ID", entities, template_id }
+export function addEntitiesByLabel(entities, label){
+  return { type: "ADD_ENTITIES_BY_LABEL", entities, label }
 }
 
 export function updatePropertyValue(property_section){
