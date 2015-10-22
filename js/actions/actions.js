@@ -33,8 +33,12 @@ export function addEntitiesByLabel(entities, label){
   return { type: "ADD_ENTITIES_BY_LABEL", entities, label }
 }
 
-export function updatePropertyValue(property_section){
-  return { type: "UPDATE_PROPERTY_VALUE", property_section };
+export function updatePropertyValue(templateInstanceId, index, value){
+  return { type: "UPDATE_PROPERTY_VALUE", templateInstanceId, index, value };
+}
+
+export function updateRelationshipEntityId(templateInstanceId, index, value){
+  return { type: "UPDATE_RELATIONSHIP_VALUE", templateInstanceId, index, value };
 }
 
 export function toggleFormVisibility(templateInstanceId){

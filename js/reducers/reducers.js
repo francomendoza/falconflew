@@ -11,7 +11,6 @@ function updateEntities(state = [], action){
   }
 }
 
-//TODO: organize entities by node_label because templates may evolve in future, this will require changing the template identifier in rel_nodes
 function entitiesByLabel(state = {}, action){
   switch (action.type){
     case 'ADD_ENTITIES_BY_LABEL':
@@ -26,7 +25,8 @@ function templateInstancesByInstanceId(state = {}, action){
     case 'ADD_TEMPLATES_BY_ID':
       return Object.assign({}, state, generateTemplateInstancesByInstanceId(action.templatesById, action.currentTemplateId, 'x0', {}));
     case 'UPDATE_PROPERTY_VALUE':
-      return Object.assign({}, state, { [action.property_section.templateInstanceId]: templateInstance(state[action.property_section.templateInstanceId], action) });
+    case 'UPDATE_RELATIONSHIP_VALUE':
+      return Object.assign({}, state, { [action.templateInstanceId]: templateInstance(state[action.templateInstanceId], action) });
     default:
       return state;
   }
@@ -36,6 +36,17 @@ function templateInstance(state = {}, action){
   switch (action.type){
     case 'UPDATE_PROPERTY_VALUE':
       return Object.assign({}, state, { ["node_properties"]: node_properties(state.node_properties, action) });
+    case 'UPDATE_RELATIONSHIP_VALUE':
+      return Object.assign({}, state, { ["related_nodes"]: related_nodes(state.related_nodes, action) });
+    default:
+      return state;
+  }
+}
+
+function related_nodes(state = [], action){
+  switch (action.type){
+    case 'UPDATE_RELATIONSHIP_VALUE':
+      return [...state.slice(0, action.index), Object.assign({}, state[action.index], { entity_id: action.value }), ...state.slice(action.index + 1)];
     default:
       return state;
   }
@@ -44,7 +55,7 @@ function templateInstance(state = {}, action){
 function node_properties(state = [], action){
   switch (action.type){
     case 'UPDATE_PROPERTY_VALUE':
-      return [...state.slice(0, action.property_section.index), Object.assign({}, state[action.property_section.index], { value: action.property_section.value }), ...state.slice(action.property_section.index + 1)]
+      return [...state.slice(0, action.index), Object.assign({}, state[action.index], { value: action.value }), ...state.slice(action.index + 1)];
     default:
       return state;
   }
@@ -86,8 +97,6 @@ function generateTemplateInstancesByInstanceId(templatesById, currentTemplateId,
   if(templatesById[currentTemplateId].related_nodes){
     templatesById[currentTemplateId].related_nodes.forEach(function(el, index){
       let thisInstanceId = `${instanceId}${index}`;
-      // let thisTemplate = templatesById[el.template_id];
-      // obj[thisInstanceId] = thisTemplate;
       generateTemplateInstancesByInstanceId(templatesById, el.template_id, thisInstanceId, obj);
     });
   }

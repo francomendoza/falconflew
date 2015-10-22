@@ -16,8 +16,7 @@ var App = React.createClass({
 
 function mapStateToProps(state){
   return {
-    autocompleteItems: state.autocompleteItems,
-    templatesById: state.templatesById
+    autocompleteItems: state.autocompleteItems
   }
 }
 
