@@ -51,11 +51,16 @@ export function updateTemplateMap(templateId){
 
 export function setActiveTemplate(templateInstanceId){
   return { type: "SET_ACTIVE_TEMPLATE", templateInstanceId }
-};
+}
+
+export function clearTemplates(){
+  return { type: 'CLEAR_TEMPLATES' }
+}
 
 export function retrieveTemplates(currentTemplateId){
   return (dispatch, getState) => {
     // dispatch() a syncronous action that tells state we are going to fetch data
+    dispatch(clearTemplates())
     return fetch('http://localhost:3000/templates/'+currentTemplateId)
       .then(response => response.json())
       .then(data => {

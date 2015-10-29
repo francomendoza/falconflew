@@ -27,6 +27,8 @@ function templateInstancesByInstanceId(state = {}, action){
     case 'UPDATE_PROPERTY_VALUE':
     case 'UPDATE_RELATIONSHIP_VALUE':
       return Object.assign({}, state, { [action.templateInstanceId]: templateInstance(state[action.templateInstanceId], action) });
+    case 'CLEAR_TEMPLATES':
+      return {}
     default:
       return state;
   }
@@ -65,6 +67,8 @@ function templateInstanceMap(state = {}, action){
   switch (action.type){
     case 'ADD_TEMPLATES_BY_ID':
       return Object.assign({}, state, generateTemplateInstanceMap(action.templatesById, action.currentTemplateId, 'x0', {}));   
+    case 'CLEAR_TEMPLATES':
+      return {}
     default:
       return state;
   }
@@ -77,6 +81,8 @@ function templateInstanceStateMap(state = {}, action){
     case 'SUBMIT_FORM':
     case 'TOGGLE_FORM_VISIBILITY':
       return Object.assign({}, state, { [action.templateInstanceId]: templateInstanceState(state[action.templateInstanceId], action) });
+    case 'CLEAR_TEMPLATES':
+      return {}
     default:
       return state;
   }

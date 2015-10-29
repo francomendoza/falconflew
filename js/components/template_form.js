@@ -49,7 +49,7 @@ var RelationshipFormElement = React.createClass({
           onChange = { this.onChange } 
           onSelect = { this.onSelect }
           getItemValue = { (item) => item.entity_id }
-          items = { this.props.entitiesByLabel[templateInstance.node_label] || [] } 
+          items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[templateInstance.node_label] || []) : []  }
           renderItem={ (item, isHighlighted) => (
               <div
                 style = {isHighlighted ? styles.highlightedItem : styles.item}
