@@ -1,8 +1,136 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import TemplateForm from './template_form';
+import PropertyFormElement from './property_form_element';
+import Empty from './empty';
+import RelatedNodeElement from './related_node_element';
+import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, updateRelationshipEntityId } from '../actions/actions';
 
 var TemplatePage = React.createClass({
+
+  handlePropertyChange: function(templateInstanceId, index){
+    var that = this;
+    return function(value){
+      that.props.dispatch(updatePropertyValue(templateInstanceId, index, value));
+    }
+  },
+
+  submitHandler: function(templateInstanceId) {
+    return () => {
+      this.props.dispatch(submitForm(templateInstanceId));
+    }
+  },
+
+  clickHandler: function(templateInstanceId){
+    var that = this;
+    return function(event){
+      event.stopPropagation()
+      that.props.dispatch(setActiveTemplate(templateInstanceId));
+    }
+  },
+
+  toggleTemplateFormVisibility: function(templateInstanceId){
+    this.props.dispatch(toggleFormVisibility(templateInstanceId));
+  },
+
+  handleRelationshipChange: function(templateInstanceId, index) {
+    var that = this;
+    return function(value) {
+      that.props.dispatch(updateRelationshipEntityId(templateInstanceId, index, value));
+    }
+  },
+
+  // createNodePropertyElements: function(templateInstanceId){
+  //   return this.props.templateInstancesByInstanceId[templateInstanceId].node_properties.map((node_property, index) => {
+  //     if(this.props.templateInstanceStateMap[templateInstanceId].visible){
+  //       return <PropertyFormElement
+  //       key = { index }
+  //       property = { node_property } 
+  //       handlePropertyChange = { this.handlePropertyChange(templateInstanceId, index) } 
+  //       clickHandler = { this.clickHandler(templateInstanceId) } />
+  //     } else {
+  //       return <Empty/>
+  //     }
+  //   })
+  // },
+
+  recursive: function(templateInstanceId, array){
+
+    var templateInstance = this.props.templateInstancesByInstanceId[templateInstanceId];
+
+    let header_style = {
+      height: "40px",
+      textAlign: "center",
+      background: "linear-gradient(#002c6b 0%, #3971bd 100%)",
+      color: "white"
+    };
+
+    let containerStyles = { 
+      outline: "black solid 1px", 
+      opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3"
+    }
+
+    array.push(<div style = { header_style }
+      key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0" } }>New { templateInstance.node_label }</h3></div>);
+
+    this.props.templateInstancesByInstanceId[templateInstanceId].node_properties.map((node_property, index) => {
+      var property_form_element = <PropertyFormElement
+        key = { node_property._id['$oid'] }
+        property = { node_property } 
+        handlePropertyChange = { this.handlePropertyChange(templateInstanceId, index) } 
+        clickHandler = { this.clickHandler(templateInstanceId) } 
+        style = { containerStyles }/>
+
+      array.push(property_form_element);
+    });
+
+    (this.props.templateInstancesByInstanceId[templateInstanceId].related_nodes || []).map((related_node, index) => {
+      var related_node_element = <RelatedNodeElement
+        key = { related_node._id['$oid'] }
+        related_node = { related_node }
+        templateInstanceId = { templateInstanceId + index }
+        toggleShow = { this.toggleTemplateFormVisibility } 
+        dispatch = { this.props.dispatch }
+        activeTemplate = { this.props.activeTemplate } 
+        entitiesByLabel = { this.props.entitiesByLabel }
+        templateInstancesByInstanceId = { this.props.templateInstancesByInstanceId } 
+        handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) } />
+
+      array.push(related_node_element);
+      var nextTemplateInstanceId = this.props.templateInstanceMap[templateInstanceId][index];
+      var nextTemplate = <Empty/>
+
+      if(this.props.templateInstanceStateMap[nextTemplateInstanceId].visible){
+        nextTemplate = this.recursive(nextTemplateInstanceId, array);
+      }
+    });
+
+    array.push(<div style = { { padding: "10px" } }
+      key = { templateInstanceId + 'submit' }><button onClick = { this.submitHandler(templateInstanceId) }> Submit </button></div>)
+    
+    return array;
+  },
+
+  // createRelationshipFormElement: function(templateInstanceId){
+  //   return (this.props.templateInstancesByInstanceId[templateInstanceId].related_nodes || []).map((related_node, index) => {
+  //     if(this.props.templateInstanceStateMap[templateInstanceId].visible){
+  //       return <RelatedNodeElement
+  //       key = { index }
+  //       related_node = { related_node }
+  //       templateInstanceStateMap = { this.props.templateInstanceStateMap }
+  //       templateInstanceMap = { this.props.templateInstanceMap }
+  //       templateInstanceId = { templateInstanceId + index }
+  //       toggleShow = { this.toggleTemplateFormVisibility } 
+  //       dispatch = { this.props.dispatch }
+  //       activeTemplate = { this.props.activeTemplate } 
+  //       clickHandler = { this.clickHandler }
+  //       entitiesByLabel = { this.props.entitiesByLabel }
+  //       templateInstancesByInstanceId = { this.props.templateInstancesByInstanceId } 
+  //       handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) } />
+  //     } else {
+  //       return <Empty/>
+  //     }
+  //   })
+  // },
 
   render: function(){
 
@@ -11,16 +139,9 @@ var TemplatePage = React.createClass({
       'marginRight': '100px'
     };
 
-    return <div style = { container_styles } ><TemplateForm
-      templateInstanceId = { 'x0' }
-      templatesById = { this.props.templatesById }
-      currentTemplateId = { this.props.currentTemplateId } 
-      templateInstancesByInstanceId = { this.props.templateInstancesByInstanceId } 
-      templateInstanceStateMap = { this.props.templateInstanceStateMap }
-      templateInstanceMap = { this.props.templateInstanceMap }
-      activeTemplate = { this.props.activeTemplate }
-      entitiesByLabel = { this.props.entitiesByLabel } 
-      dispatch = { this.props.dispatch } /></div>
+    var mega_array = this.recursive('x0', []);
+ 
+    return <div style = { container_styles } >{ mega_array }</div>
   }
 
 });

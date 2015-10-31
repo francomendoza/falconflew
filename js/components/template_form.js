@@ -147,7 +147,7 @@ var TemplateForm = React.createClass({
       });
     }
 
-    submitButton = <div style = { { padding: "10px" } }><button onClick = { this.submitHandler }> Submit </button></div>
+    submitButton = <div style = { { padding: "10px" } }><button onClick = { this.submitHandler(templateInstanceId) }> Submit </button></div>
 
     let containerStyles = { 
       outline: "black solid 1px", 
