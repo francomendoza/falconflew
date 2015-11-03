@@ -35,7 +35,7 @@ var TemplateList = React.createClass({
               style = {isHighlighted ? styles.highlightedItem : styles.item}
               key = { item._id["$oid"] }
               id = { item._id["$oid"] }
-            >{ item.node_label }</div>
+            >{ item.node_label[0] }</div>
           ) } />
       </div>;
   }

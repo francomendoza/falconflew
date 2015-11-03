@@ -9,7 +9,7 @@ var EntityList = React.createClass({
       <h2>Entities</h2>
       <ul>
         {this.props.entities.map(function(entity) {
-           return <li key = { entity.entity_id } >{entity.node_properties[0].value} ({entity.node_label})</li>
+           return <li key = { entity.entity_id } >{entity.node_properties[0].value} ({entity.node_label[0]})</li>
         })}
       </ul>
     </div>;

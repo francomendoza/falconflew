@@ -77,9 +77,10 @@ function templateInstanceMap(state = {}, action){
 function templateInstanceStateMap(state = {}, action){
   switch (action.type){
     case 'ADD_TEMPLATES_BY_ID':
-      return Object.assign({}, state, generateTemplateInstanceState(action.templatesById, action.currentTemplateId, 'x0', { 'x0': { visible: true, submitted: false } }))
+      return Object.assign({}, state, generateTemplateInstanceState(action.templatesById, action.currentTemplateId, 'x0', { 'x0': { visible: true, submitted: false, related_node_counts: action.templatesById[action.currentTemplateId].related_nodes.map((el) => { return 1; }) } }))
     case 'SUBMIT_FORM':
     case 'TOGGLE_FORM_VISIBILITY':
+    case 'INCREMENT_RELATED_NODE_COUNT':
       return Object.assign({}, state, { [action.templateInstanceId]: templateInstanceState(state[action.templateInstanceId], action) });
     case 'CLEAR_TEMPLATES':
       return {}
@@ -93,10 +94,14 @@ function templateInstanceState(state = {}, action){
     case 'SUBMIT_FORM':
     case 'TOGGLE_FORM_VISIBILITY':
       return Object.assign({}, state, { visible: !state.visible });
+    case 'INCREMENT_RELATED_NODE_COUNT':
+      let related_node_counts = state.related_node_counts
+      return Object.assign({}, state, { related_node_counts: [...related_node_counts.slice(0, action.index), related_node_counts[action.index] + 1, ...related_node_counts.slice(action.index + 1)] })
     default:
       return state;
   }
 }
+
 
 function generateTemplateInstancesByInstanceId(templatesById, currentTemplateId, instanceId, obj) {
   obj[instanceId] = templatesById[currentTemplateId];
@@ -127,7 +132,7 @@ function generateTemplateInstanceState(templatesById, currentTemplateId, instanc
   if(templatesById[currentTemplateId].related_nodes){
     templatesById[currentTemplateId].related_nodes.forEach(function(el, index){
       let thisInstanceId = `${instanceId}${index}`;
-      obj[thisInstanceId] = {visible: false, submitted: false};
+      obj[thisInstanceId] = {visible: false, submitted: false, related_node_counts: (templatesById[el.template_id].related_nodes || []).map((el) => { return 1; })};
       generateTemplateInstanceState(templatesById, el.template_id, thisInstanceId, obj);
     });
   }

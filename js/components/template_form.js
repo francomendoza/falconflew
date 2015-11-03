@@ -11,7 +11,7 @@ var RelationshipFormElement = React.createClass({
   },
 
   onChange: function(event, value){
-    this.props.dispatch(autocompleteEntitiesByLabel(this.props.templateInstancesByInstanceId[this.props.templateInstanceId].node_label, value));
+    this.props.dispatch(autocompleteEntitiesByLabel(this.props.templateInstancesByInstanceId[this.props.templateInstanceId].node_label[0], value));
   },
 
   onSelect: function(value, item){
@@ -44,12 +44,12 @@ var RelationshipFormElement = React.createClass({
     return (
       <div className="relationship_element">
         <div style = { { padding: "10px" } }>
-          <label>{ templateInstance.node_label }: </label>
+          <label>{ templateInstance.node_label[0] }: </label>
           <Autocomplete 
           onChange = { this.onChange } 
           onSelect = { this.onSelect }
           getItemValue = { (item) => item.entity_id }
-          items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[templateInstance.node_label] || []) : []  }
+          items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[templateInstance.node_label[0]] || []) : []  }
           renderItem={ (item, isHighlighted) => (
               <div
                 style = {isHighlighted ? styles.highlightedItem : styles.item}
@@ -118,7 +118,7 @@ var TemplateForm = React.createClass({
       color: "white"
     };
 
-    header = <div style = { header_style }><h3 style = { { padding: "10px", margin: "0" } }>New { templateInstance.node_label }</h3></div>
+    header = <div style = { header_style }><h3 style = { { padding: "10px", margin: "0" } }>New { templateInstance.node_label[0] }</h3></div>
 
     properties = templateInstance.node_properties.map(function(property, index) {
       return <PropertyFormElement

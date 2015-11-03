@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropertyFormElement from './property_form_element';
 import Empty from './empty';
 import RelatedNodeElement from './related_node_element';
-import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, updateRelationshipEntityId } from '../actions/actions';
+import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, updateRelationshipEntityId, incrementRelatedNodeCount } from '../actions/actions';
 
 var TemplatePage = React.createClass({
 
@@ -39,6 +39,13 @@ var TemplatePage = React.createClass({
     }
   },
 
+  incrementRelatedNode: function(templateInstanceId, index) {
+    return () => {
+      console.log('LULZ')
+      this.props.dispatch(incrementRelatedNodeCount(templateInstanceId, index));
+    }
+  },
+
   // createNodePropertyElements: function(templateInstanceId){
   //   return this.props.templateInstancesByInstanceId[templateInstanceId].node_properties.map((node_property, index) => {
   //     if(this.props.templateInstanceStateMap[templateInstanceId].visible){
@@ -70,7 +77,7 @@ var TemplatePage = React.createClass({
     }
 
     array.push(<div style = { header_style }
-      key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0" } }>New { templateInstance.node_label }</h3></div>);
+      key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0" } }>New { templateInstance.node_label[0] }</h3></div>);
 
     this.props.templateInstancesByInstanceId[templateInstanceId].node_properties.map((node_property, index) => {
       var property_form_element = <PropertyFormElement
@@ -93,7 +100,9 @@ var TemplatePage = React.createClass({
         activeTemplate = { this.props.activeTemplate } 
         entitiesByLabel = { this.props.entitiesByLabel }
         templateInstancesByInstanceId = { this.props.templateInstancesByInstanceId } 
-        handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) } />
+        handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) } 
+        incrementRelatedNode = { this.incrementRelatedNode(templateInstanceId, index) }
+        relatedNodeCount = { this.props.templateInstanceStateMap[templateInstanceId].related_node_counts[index] }/>
 
       array.push(related_node_element);
       var nextTemplateInstanceId = this.props.templateInstanceMap[templateInstanceId][index];

@@ -85,5 +85,9 @@ export function requestTemplateByName(name){
 }
 
 export function addItemsToAutocomplete(items){
-  return { type: 'ADD_ITEMS_TO_AUTOCOMPLETE', items }
+  return { type: 'ADD_ITEMS_TO_AUTOCOMPLETE', items };
+}
+
+export function incrementRelatedNodeCount(templateInstanceId, index){
+  return { type: 'INCREMENT_RELATED_NODE_COUNT', templateInstanceId, index };
 }
