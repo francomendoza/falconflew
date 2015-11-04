@@ -23,6 +23,7 @@ var TemplateList = React.createClass({
         backgroundColor: "white"
       }
     }
+    
     return <div>
         <h2>Search Templates</h2>
         <Autocomplete 

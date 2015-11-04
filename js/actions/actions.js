@@ -37,8 +37,8 @@ export function updatePropertyValue(templateInstanceId, index, value){
   return { type: "UPDATE_PROPERTY_VALUE", templateInstanceId, index, value };
 }
 
-export function updateRelationshipEntityId(templateInstanceId, index, value){
-  return { type: "UPDATE_RELATIONSHIP_VALUE", templateInstanceId, index, value };
+export function updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex){
+  return { type: "UPDATE_RELATIONSHIP_VALUE", templateInstanceId, relatedNodeIndex, value, entityIdIndex };
 }
 
 export function toggleFormVisibility(templateInstanceId){

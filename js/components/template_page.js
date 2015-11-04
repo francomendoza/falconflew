@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import PropertyFormElement from './property_form_element';
 import Empty from './empty';
 import RelatedNodeElement from './related_node_element';
-import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, updateRelationshipEntityId, incrementRelatedNodeCount } from '../actions/actions';
+import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, updateRelationshipEntityIdArray, incrementRelatedNodeCount } from '../actions/actions';
 
 var TemplatePage = React.createClass({
 
@@ -32,33 +32,18 @@ var TemplatePage = React.createClass({
     this.props.dispatch(toggleFormVisibility(templateInstanceId));
   },
 
-  handleRelationshipChange: function(templateInstanceId, index) {
+  handleRelationshipChange: function(templateInstanceId, relatedNodeIndex) {
     var that = this;
-    return function(value) {
-      that.props.dispatch(updateRelationshipEntityId(templateInstanceId, index, value));
+    return function(value, entityIdIndex) {
+      that.props.dispatch(updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex));
     }
   },
 
   incrementRelatedNode: function(templateInstanceId, index) {
     return () => {
-      console.log('LULZ')
       this.props.dispatch(incrementRelatedNodeCount(templateInstanceId, index));
     }
   },
-
-  // createNodePropertyElements: function(templateInstanceId){
-  //   return this.props.templateInstancesByInstanceId[templateInstanceId].node_properties.map((node_property, index) => {
-  //     if(this.props.templateInstanceStateMap[templateInstanceId].visible){
-  //       return <PropertyFormElement
-  //       key = { index }
-  //       property = { node_property } 
-  //       handlePropertyChange = { this.handlePropertyChange(templateInstanceId, index) } 
-  //       clickHandler = { this.clickHandler(templateInstanceId) } />
-  //     } else {
-  //       return <Empty/>
-  //     }
-  //   })
-  // },
 
   recursive: function(templateInstanceId, array){
 
@@ -119,33 +104,12 @@ var TemplatePage = React.createClass({
     return array;
   },
 
-  // createRelationshipFormElement: function(templateInstanceId){
-  //   return (this.props.templateInstancesByInstanceId[templateInstanceId].related_nodes || []).map((related_node, index) => {
-  //     if(this.props.templateInstanceStateMap[templateInstanceId].visible){
-  //       return <RelatedNodeElement
-  //       key = { index }
-  //       related_node = { related_node }
-  //       templateInstanceStateMap = { this.props.templateInstanceStateMap }
-  //       templateInstanceMap = { this.props.templateInstanceMap }
-  //       templateInstanceId = { templateInstanceId + index }
-  //       toggleShow = { this.toggleTemplateFormVisibility } 
-  //       dispatch = { this.props.dispatch }
-  //       activeTemplate = { this.props.activeTemplate } 
-  //       clickHandler = { this.clickHandler }
-  //       entitiesByLabel = { this.props.entitiesByLabel }
-  //       templateInstancesByInstanceId = { this.props.templateInstancesByInstanceId } 
-  //       handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) } />
-  //     } else {
-  //       return <Empty/>
-  //     }
-  //   })
-  // },
-
   render: function(){
 
     let container_styles = {
-      'marginLeft': '100px',
-      'marginRight': '100px'
+      marginLeft: '100px',
+      marginRight: '100px',
+      outline: "black solid 1px"
     };
 
     var mega_array = this.recursive('x0', []);

@@ -48,7 +48,26 @@ function templateInstance(state = {}, action){
 function related_nodes(state = [], action){
   switch (action.type){
     case 'UPDATE_RELATIONSHIP_VALUE':
-      return [...state.slice(0, action.index), Object.assign({}, state[action.index], { entity_id: action.value }), ...state.slice(action.index + 1)];
+      return [...state.slice(0, action.relatedNodeIndex), related_node(state[action.relatedNodeIndex], action), ...state.slice(action.relatedNodeIndex + 1)];
+    default:
+      return state;
+  }
+}
+
+function related_node(state = {}, action){
+  switch (action.type){
+    case 'UPDATE_RELATIONSHIP_VALUE':
+      return Object.assign({}, state, { entity_id: entityIds(state.entity_id, action) });
+    default:
+      return state;
+  }
+}
+
+function entityIds(state = [], action){
+  switch (action.type){
+    case 'UPDATE_RELATIONSHIP_VALUE':
+    //need the || statement for initial load where entity_id is null
+      return [...(state || []).slice(0, action.entityIdIndex), action.value, ...(state || []).slice(action.entityIdIndex + 1)];
     default:
       return state;
   }
