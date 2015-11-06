@@ -62,7 +62,8 @@ var TemplatePage = React.createClass({
     }
 
     array.push(<div style = { header_style }
-      key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0" } }>New { templateInstance.node_label[0] }</h3></div>);
+      key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0" } }>New { templateInstance.node_label[0] }</h3></div>
+    );
 
     this.props.templateInstancesByInstanceId[templateInstanceId].node_properties.map((node_property, index) => {
       var property_form_element = <PropertyFormElement

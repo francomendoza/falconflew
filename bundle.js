@@ -20778,7 +20778,7 @@
 
 	  switch (action.type) {
 	    case 'ADD_TEMPLATES_BY_ID':
-	      return Object.assign({}, state, generateTemplateInstanceState(action.templatesById, action.currentTemplateId, 'x0', { 'x0': { visible: true, submitted: false, related_node_counts: action.templatesById[action.currentTemplateId].related_nodes.map(function (el) {
+	      return Object.assign({}, state, generateTemplateInstanceState(action.templatesById, action.currentTemplateId, 'x0', { 'x0': { visible: true, submitted: false, related_node_counts: (action.templatesById[action.currentTemplateId].related_nodes || []).map(function (el) {
 	            return 1;
 	          }) } }));
 	    case 'SUBMIT_FORM':
