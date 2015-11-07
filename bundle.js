@@ -25854,9 +25854,9 @@
 	  return { type: "SUBMIT_FORM", new_node: new_node, templateInstanceId: templateInstanceId };
 	}
 
-	function autocompleteEntitiesByLabel(label, value) {
+	function autocompleteEntitiesByLabel(label, match_type, value) {
 	  return function (dispatch, getState) {
-	    return (0, _isomorphicFetch2['default'])('http://localhost:3000/entities/autocomplete?type=' + label + '&term=' + value).then(function (response) {
+	    return (0, _isomorphicFetch2['default'])('http://localhost:3000/entities/autocomplete?node_label=' + label + '&match_type=' + match_type + '&term=' + value).then(function (response) {
 	      return response.json();
 	    }).then(function (data) {
 	      return dispatch(addEntitiesByLabel(data, label));
@@ -27732,7 +27732,7 @@
 	  },
 
 	  onChange: function onChange(event, value) {
-	    this.props.dispatch((0, _actionsActions.autocompleteEntitiesByLabel)(this.props.templateInstancesByInstanceId[this.props.templateInstanceId].node_label[0], value));
+	    this.props.dispatch((0, _actionsActions.autocompleteEntitiesByLabel)(this.props.templateInstancesByInstanceId[this.props.templateInstanceId].node_label[0], this.props.related_node.match_type, value));
 	  },
 
 	  onSelect: function onSelect(entityIdIndex) {

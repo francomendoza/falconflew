@@ -10,7 +10,7 @@ var RelatedNodeElement = React.createClass({
   },
 
   onChange: function(event, value){
-    this.props.dispatch(autocompleteEntitiesByLabel(this.props.templateInstancesByInstanceId[this.props.templateInstanceId].node_label[0], value));
+    this.props.dispatch(autocompleteEntitiesByLabel(this.props.templateInstancesByInstanceId[this.props.templateInstanceId].node_label[0], this.props.related_node.match_type, value));
   },
 
   onSelect: function(entityIdIndex){

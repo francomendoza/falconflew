@@ -1,9 +1,10 @@
 {
   currentTemplateId: 3, //from route
-  templateMap: {
+  templateStateMap: {
     'x00': {
       visible: true,
-      submitted: true
+      submitted: true,
+      count_of_related: [2, 3]
     },
     'x01': {
       visible: true,
@@ -11,9 +12,15 @@
     }
   },
   focusTemplate: 'x00',  //for styling,
-  entitiesForAutosuggestByTemplateId: {3: [1,4,5]},
+  entitiesForAutosuggestByTemplateId: {
+    "Equipment": {
+      exact: [1,4,5],
+      child: []
+    }
+  },
   entitiesById:{1:{}, 4:{}, 5:{}},
   mapInstanceKeys: { x0: [x01], x01:[x011], x011: [ ] },
+  related_node_count: { x0: [1, 2]}
   templateInstanceById: {
     'x00': {
       template_id: 3,
@@ -50,7 +57,9 @@
           template_id: 5,
           relationship: "located",
           required: true,
-          entity_id: null
+          entity_id: null // [ 2, 3 ]
+          limit:
+          // current:
         }
       ]
     },

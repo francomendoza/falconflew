@@ -21,9 +21,9 @@ export function submitEntityForm(new_node, templateInstanceId) {
   return { type: "SUBMIT_FORM", new_node, templateInstanceId };
 }
 
-export function autocompleteEntitiesByLabel(label, value){
+export function autocompleteEntitiesByLabel(label, match_type, value){
   return (dispatch, getState) => {
-    return fetch(`http://localhost:3000/entities/autocomplete?type=${label}&term=${value}`)
+    return fetch(`http://localhost:3000/entities/autocomplete?node_label=${label}&match_type=${match_type}&term=${value}`)
       .then(response => response.json())
       .then(data => dispatch(addEntitiesByLabel(data, label)))
   }
