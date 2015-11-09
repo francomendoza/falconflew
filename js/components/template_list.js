@@ -29,7 +29,7 @@ var TemplateList = React.createClass({
         <Autocomplete 
         onChange = { this.onChange } 
         onSelect = { this.onSelect }
-        getItemValue = { (item) => item._id["$oid"] }
+        getItemValue = { (item) => item.node_label[0] }
         items = { this.props.autocompleteItems } 
         renderItem={ (item, isHighlighted) => (
             <div

@@ -22,8 +22,10 @@ function entitiesByLabel(state = {}, action){
 
 function templateInstancesByInstanceId(state = {}, action){
   switch (action.type){
-    case 'ADD_TEMPLATES_BY_ID':
-      return Object.assign({}, state, generateTemplateInstancesByInstanceId(action.templatesById, action.currentTemplateId, 'x0', {}));
+    case 'ADD_TEMPLATES_BY_NODE_LABEL':
+      return Object.assign({}, state, generateTemplateInstancesByInstanceId(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', {}));
+    case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
+      return Object.assign({}, state, generateTemplateInstancesByInstanceId(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, {}));
     case 'UPDATE_PROPERTY_VALUE':
     case 'UPDATE_RELATIONSHIP_VALUE':
       return Object.assign({}, state, { [action.templateInstanceId]: templateInstance(state[action.templateInstanceId], action) });
@@ -84,8 +86,10 @@ function node_properties(state = [], action){
 
 function templateInstanceMap(state = {}, action){
   switch (action.type){
-    case 'ADD_TEMPLATES_BY_ID':
-      return Object.assign({}, state, generateTemplateInstanceMap(action.templatesById, action.currentTemplateId, 'x0', {}));   
+    case 'ADD_TEMPLATES_BY_NODE_LABEL':
+      return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', {}));
+    case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
+      return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, {}));
     case 'CLEAR_TEMPLATES':
       return {}
     default:
@@ -95,8 +99,10 @@ function templateInstanceMap(state = {}, action){
 
 function templateInstanceStateMap(state = {}, action){
   switch (action.type){
-    case 'ADD_TEMPLATES_BY_ID':
-      return Object.assign({}, state, generateTemplateInstanceState(action.templatesById, action.currentTemplateId, 'x0', { 'x0': { visible: true, submitted: false, related_node_counts: (action.templatesById[action.currentTemplateId].related_nodes || []).map((el) => { return 1; }) } }))
+    case 'ADD_TEMPLATES_BY_NODE_LABEL':
+      return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', { 'x0': { visible: true, submitted: false, related_node_counts: (action.templatesByNodeLabel[action.currentTemplateNodeLabel].related_nodes || []).map((el) => { return 1; }) } }))
+    case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
+      return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, { [action.templateInstanceId]: { visible: false, submitted: false, related_node_counts: (action.templatesByNodeLabel[action.node_label].related_nodes || []).map((el) => { return 1; }) } }))
     case 'SUBMIT_FORM':
     case 'TOGGLE_FORM_VISIBILITY':
     case 'INCREMENT_RELATED_NODE_COUNT':
@@ -122,46 +128,58 @@ function templateInstanceState(state = {}, action){
 }
 
 
-function generateTemplateInstancesByInstanceId(templatesById, currentTemplateId, instanceId, obj) {
-  obj[instanceId] = templatesById[currentTemplateId];
-  if(templatesById[currentTemplateId].related_nodes){
-    templatesById[currentTemplateId].related_nodes.forEach(function(el, index){
+function generateTemplateInstancesByInstanceId(templatesByNodeLabel, currentTemplateNodeLabel, instanceId, obj) {
+  obj[instanceId] = templatesByNodeLabel[currentTemplateNodeLabel];
+  if(templatesByNodeLabel[currentTemplateNodeLabel] && templatesByNodeLabel[currentTemplateNodeLabel].related_nodes){
+    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes.forEach(function(el, index){
       let thisInstanceId = `${instanceId}${index}`;
-      generateTemplateInstancesByInstanceId(templatesById, el.template_id, thisInstanceId, obj);
+      if(el.match_type !== 'child' && !el.children_templates){
+        generateTemplateInstancesByInstanceId(templatesByNodeLabel, el.template_label[0], thisInstanceId, obj);
+      }else {
+        obj[thisInstanceId] = null;
+      }
     });
   }
   return obj;
 }
 
-function generateTemplateInstanceMap(templatesById, currentTemplateId, instanceId, obj) {
+function generateTemplateInstanceMap(templatesByNodeLabel, currentTemplateNodeLabel, instanceId, obj) {
   if(obj[instanceId] !== undefined || obj[instanceId] !== null) {
     obj[instanceId] = [];
   }
-  if(templatesById[currentTemplateId].related_nodes){
-    templatesById[currentTemplateId].related_nodes.forEach(function(el, index){
-      let thisInstanceId = `${instanceId}${index}`;
-      obj[instanceId].push(thisInstanceId);
-      generateTemplateInstanceMap(templatesById, el.template_id, thisInstanceId, obj);
+  if(templatesByNodeLabel[currentTemplateNodeLabel] && templatesByNodeLabel[currentTemplateNodeLabel].related_nodes){
+    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes.forEach(function(el, index){
+      // if(el.match_type !== 'child' && !el.children_templates){
+        let thisInstanceId = `${instanceId}${index}`;
+        obj[instanceId].push(thisInstanceId);
+        generateTemplateInstanceMap(templatesByNodeLabel, el.template_label[0], thisInstanceId, obj);
+      // }else{
+        // obj[instanceId].push(null);
+      // }
     });
   }
   return obj;
 }
 
-function generateTemplateInstanceState(templatesById, currentTemplateId, instanceId, obj) {
-  if(templatesById[currentTemplateId].related_nodes){
-    templatesById[currentTemplateId].related_nodes.forEach(function(el, index){
+function generateTemplateInstanceState(templatesByNodeLabel, currentTemplateNodeLabel, instanceId, obj) {
+  if(templatesByNodeLabel[currentTemplateNodeLabel] && templatesByNodeLabel[currentTemplateNodeLabel].related_nodes){
+    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes.forEach(function(el, index){
       let thisInstanceId = `${instanceId}${index}`;
-      obj[thisInstanceId] = {visible: false, submitted: false, related_node_counts: (templatesById[el.template_id].related_nodes || []).map((el) => { return 1; })};
-      generateTemplateInstanceState(templatesById, el.template_id, thisInstanceId, obj);
+      //if(el.match_type !== 'child' && !el.children_templates){
+        obj[thisInstanceId] = {visible: false, submitted: false, related_node_counts: (templatesByNodeLabel[el.template_label[0]].related_nodes || []).map((el) => { return 1; })};
+        generateTemplateInstanceState(templatesByNodeLabel, el.template_label[0], thisInstanceId, obj);
+      //}else{
+      //  obj[thisInstanceId] = null;
+      //}
     });
   }
   return obj;
 }
 
-function templatesById(state = {}, action) {
+function templatesByNodeLabel(state = {}, action) {
   switch (action.type){
-    case 'ADD_TEMPLATES_BY_ID':
-      return Object.assign({}, state, action.templatesById);
+    case 'ADD_TEMPLATES_BY_NODE_LABEL':
+      return Object.assign({}, state, action.templatesByNodeLabel);
     default:
       return state;
    }
@@ -188,7 +206,7 @@ function autocompleteItems(state = [], action){
 const reducers = combineReducers({
   updateEntities,
   entitiesByLabel,
-  templatesById,
+  templatesByNodeLabel,
   router: routerStateReducer,
   templateInstancesByInstanceId,
   templateInstanceStateMap,

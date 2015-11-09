@@ -1,6 +1,6 @@
 import React from 'react';
 import Autocomplete from 'react-autocomplete';
-import { autocompleteEntitiesByLabel } from '../actions/actions';
+import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../actions/actions';
 import _ from 'lodash';
 
 var RelatedNodeElement = React.createClass({
@@ -15,6 +15,10 @@ var RelatedNodeElement = React.createClass({
 
   onSelect: function(entityIdIndex){
     return (value, item) => this.props.handleRelationshipChange(value, entityIdIndex);
+  },
+
+  onSelectChange: function(event){
+    this.props.dispatch(updateTemplateInstances(this.props.templateInstanceId, event.target.value));
   },
 
   render: function(){
@@ -33,10 +37,20 @@ var RelatedNodeElement = React.createClass({
       }
     }
 
-    let add_button = null;
+    let add_button = null,
+      select_template = null;
 
     if(this.props.related_node.count_limit === -1 || this.props.related_node.count_limit < this.props.relatedNodeCount) {
       add_button = <button onClick = { this.props.incrementRelatedNode }>Add</button>
+    }
+
+    if(this.props.related_node.match_type === "child" && this.props.related_node.children_templates){
+      select_template = <select defaultValue = "" onChange = { this.onSelectChange }>
+      <option key = { 'blank' } value = {''}></option>
+      { this.props.related_node.children_templates.map(function(template_label, index){
+        return <option key = { index } value = { template_label }>{ template_label }</option>
+      }) }
+      </select>
     }
 
     return (
@@ -44,13 +58,13 @@ var RelatedNodeElement = React.createClass({
         <div style = { { padding: "10px" } }>
           { _.times(this.props.relatedNodeCount, (index) => {
           return  <div key = { index } style = { styles.autocomplete }>
-          <label>{ templateInstance.node_label[0] }: </label>
+          <label>{ this.props.related_node.template_label }: </label>
           <Autocomplete 
           initialValue = { this.props.related_node.entity_id ? this.props.related_node.entity_id[index] : null }
           onChange = { this.onChange } 
           onSelect = { this.onSelect(index) }
           getItemValue = { (item) => item.entity_id }
-          items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[templateInstance.node_label[0]] || []) : []  }
+          items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[this.props.related_node.template_label[0]] || []) : []  }
           renderItem={ (item, isHighlighted) => (
               <div
                 style = {isHighlighted ? styles.highlightedItem : styles.item}
@@ -63,6 +77,7 @@ var RelatedNodeElement = React.createClass({
             ) } />
           </div>
          }) }
+          { select_template }
           <button onClick = { this.clickDammit }>Create New</button>
           { add_button }
         </div>

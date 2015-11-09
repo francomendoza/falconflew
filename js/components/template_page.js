@@ -94,7 +94,7 @@ var TemplatePage = React.createClass({
       var nextTemplateInstanceId = this.props.templateInstanceMap[templateInstanceId][index];
       var nextTemplate = <Empty/>
 
-      if(this.props.templateInstanceStateMap[nextTemplateInstanceId].visible){
+      if(nextTemplateInstanceId && this.props.templateInstanceStateMap[nextTemplateInstanceId].visible){
         nextTemplate = this.recursive(nextTemplateInstanceId, array);
       }
     });

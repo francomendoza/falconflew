@@ -57,23 +57,23 @@ export function clearTemplates(){
   return { type: 'CLEAR_TEMPLATES' }
 }
 
-export function retrieveTemplates(currentTemplateId){
+export function retrieveTemplates(currentTemplateNodeLabel){
   return (dispatch, getState) => {
     // dispatch() a syncronous action that tells state we are going to fetch data
     dispatch(clearTemplates())
-    return fetch('http://localhost:3000/templates/'+currentTemplateId)
+    return fetch('http://localhost:3000/templates/'+currentTemplateNodeLabel)
       .then(response => response.json())
       .then(data => {
-        dispatch(addTemplatesById(data, currentTemplateId));
+        dispatch(addTemplatesByNodeLabel(data, currentTemplateNodeLabel));
       })
-      .then(() => dispatch(pushState(null, '/template_form/'+currentTemplateId)));
+      .then(() => dispatch(pushState(null, '/template_form/'+currentTemplateNodeLabel)));
   };
 };
 
-export function addTemplatesById(templates, currentTemplateId){
-  let templatesById = {};
-  templates.forEach((template) => { templatesById[template._id["$oid"]] = template });
-  return { type: "ADD_TEMPLATES_BY_ID", templatesById, currentTemplateId };
+export function addTemplatesByNodeLabel(templates, currentTemplateNodeLabel){
+  let templatesByNodeLabel = {};
+  templates.forEach((template) => { templatesByNodeLabel[template.node_label[0]] = template });
+  return { type: "ADD_TEMPLATES_BY_NODE_LABEL", templatesByNodeLabel, currentTemplateNodeLabel };
 };
 
 export function requestTemplateByName(name){
@@ -90,4 +90,14 @@ export function addItemsToAutocomplete(items){
 
 export function incrementRelatedNodeCount(templateInstanceId, index){
   return { type: 'INCREMENT_RELATED_NODE_COUNT', templateInstanceId, index };
+}
+
+export function updateTemplateInstances(templateInstanceId, node_label) {
+  return (dispatch, getState) => {
+    dispatch(changeChildRelatedNodeTemplate(templateInstanceId, node_label, getState().templatesByNodeLabel));
+  }
+}
+
+export function changeChildRelatedNodeTemplate(templateInstanceId, node_label, templatesByNodeLabel){
+  return { type: 'CHANGE_CHILD_RELATED_NODE_TEMPLATE', templateInstanceId, node_label, templatesByNodeLabel}
 }
