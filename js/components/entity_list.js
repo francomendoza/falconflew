@@ -13,6 +13,8 @@ var EntityList = React.createClass({
            return <EntityCard 
             key = { entity.entity_id }
             entity = { entity } 
+            dispatch = { this.props.dispatch }
+            available_actions = { this.props.childTemplatesByEntityId[entity.entity_id] || [] } 
             onClickHandler = { () => { this.props.dispatch(selectEntityCard(entity.entity_id)) } }/>
         })}
     </div>;
@@ -21,7 +23,8 @@ var EntityList = React.createClass({
 
 function mapStateToProps(state){
   return {
-    entities: state.updateEntities
+    entities: state.updateEntities,
+    childTemplatesByEntityId: state.childTemplatesByEntityId
   }
 }
 
