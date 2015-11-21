@@ -20,11 +20,10 @@ var TemplatePage = React.createClass({
     }
   },
 
-  clickHandler: function(templateInstanceId){
-    var that = this;
-    return function(event){
-      event.stopPropagation()
-      that.props.dispatch(setActiveTemplate(templateInstanceId));
+  clickDivHandler: function(templateInstanceId){
+    return (event) => {
+      event.stopPropagation();
+      this.props.dispatch(setActiveTemplate(templateInstanceId));
     }
   },
 
@@ -57,7 +56,6 @@ var TemplatePage = React.createClass({
     };
 
     let containerStyles = { 
-      outline: "black solid 1px", 
       opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3"
     }
 
@@ -70,7 +68,7 @@ var TemplatePage = React.createClass({
         key = { node_property._id['$oid'] }
         property = { node_property } 
         handlePropertyChange = { this.handlePropertyChange(templateInstanceId, index) } 
-        clickHandler = { this.clickHandler(templateInstanceId) } 
+        clickDivHandler = { this.clickDivHandler(templateInstanceId) } 
         style = { containerStyles }/>
 
       array.push(property_form_element);
@@ -88,7 +86,9 @@ var TemplatePage = React.createClass({
         templateInstancesByInstanceId = { this.props.templateInstancesByInstanceId } 
         handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) } 
         incrementRelatedNode = { this.incrementRelatedNode(templateInstanceId, index) }
-        relatedNodeCount = { this.props.templateInstanceStateMap[templateInstanceId].related_node_counts[index] }/>
+        relatedNodeCount = { this.props.templateInstanceStateMap[templateInstanceId].related_node_counts[index] }
+        clickDivHandler = { this.clickDivHandler(templateInstanceId) }
+        style = { containerStyles }/>
 
       array.push(related_node_element);
       var nextTemplateInstanceId = this.props.templateInstanceMap[templateInstanceId][index];

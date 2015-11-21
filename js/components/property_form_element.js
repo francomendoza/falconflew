@@ -8,13 +8,13 @@ var PropertyFormElement = React.createClass({
 
   render: function(){
     var property = this.props.property;
-      return <div className="property_element">
+      return <div className="property_element" style={this.props.style}>
           <label>{ property.name }: </label>
           <input type = { property.type }
           name = { property.name }
           value = { property.value }
           onChange={ this.handlePropertyChange }
-          onClick = { this.props.clickHandler }/>
+          onClick = { this.props.clickDivHandler }/>
       </div>;
   }
 });

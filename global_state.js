@@ -55,6 +55,7 @@
       related_nodes: [
         {
           template_id: 5,
+          template_label: ["pH Probe",]
           relationship: "located",
           required: true,
           entity_id: null // [ 2, 3 ]

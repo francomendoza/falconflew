@@ -20,6 +20,15 @@ function entitiesByLabel(state = {}, action){
   }
 }
 
+function childTemplatesByEntityId(state = {}, action){
+  switch (action.type){
+    case 'SHOW_ENTITY_CARD_CHILD_TEMPLATES':
+      return Object.assign({}, state, { [action.entity_id]: action.data })
+    default:
+      return state;
+  }
+}
+
 function templateInstancesByInstanceId(state = {}, action){
   switch (action.type){
     case 'ADD_TEMPLATES_BY_NODE_LABEL':
@@ -212,7 +221,8 @@ const reducers = combineReducers({
   templateInstanceStateMap,
   templateInstanceMap,
   activeTemplate,
-  autocompleteItems
+  autocompleteItems,
+  childTemplatesByEntityId
 })
 
 export default reducers;

@@ -101,3 +101,15 @@ export function updateTemplateInstances(templateInstanceId, node_label) {
 export function changeChildRelatedNodeTemplate(templateInstanceId, node_label, templatesByNodeLabel){
   return { type: 'CHANGE_CHILD_RELATED_NODE_TEMPLATE', templateInstanceId, node_label, templatesByNodeLabel}
 }
+
+export function selectEntityCard(entity_id){
+  return (dispatch, getState) => {
+    return fetch('http://localhost:3000/entities/child_templates?entity_id='+entity_id)
+      .then(response => response.json())
+      .then(data => dispatch(showEntityCardChildTemplates(data, entity_id)))
+  }
+}
+
+export function showEntityCardChildTemplates(data, entity_id){
+  return { type: 'SHOW_ENTITY_CARD_CHILD_TEMPLATES', data, entity_id }
+;}

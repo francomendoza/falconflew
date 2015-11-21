@@ -1,17 +1,20 @@
 var React = require('react');
 import { connect } from 'react-redux';
+import EntityCard from './entity_card';
+import { selectEntityCard } from '../actions/actions';
 
 var EntityList = React.createClass({
 
   render: function() {
-    console.log(this.props);
+
     return <div>
       <h2>Entities</h2>
-      <ul>
-        {this.props.entities.map(function(entity) {
-           return <li key = { entity.entity_id } >{entity.node_properties[0].value} ({entity.node_label[0]})</li>
+        {this.props.entities.map((entity) => {
+           return <EntityCard 
+            key = { entity.entity_id }
+            entity = { entity } 
+            onClickHandler = { () => { this.props.dispatch(selectEntityCard(entity.entity_id)) } }/>
         })}
-      </ul>
     </div>;
   }
 });
