@@ -20711,6 +20711,17 @@
 	  }
 	}
 
+	function entitySearchAutocomplete(state, action) {
+	  if (state === undefined) state = [];
+
+	  switch (action.type) {
+	    case 'ENTITY_SEARCH_INPUT':
+	      return action.data;
+	    default:
+	      return state;
+	  }
+	}
+
 	function childTemplatesByEntityId(state, action) {
 	  if (state === undefined) state = {};
 
@@ -20944,7 +20955,8 @@
 	  templateInstanceMap: templateInstanceMap,
 	  activeTemplate: activeTemplate,
 	  autocompleteItems: autocompleteItems,
-	  childTemplatesByEntityId: childTemplatesByEntityId
+	  childTemplatesByEntityId: childTemplatesByEntityId,
+	  entitySearchAutocomplete: entitySearchAutocomplete
 	});
 
 	exports['default'] = reducers;
@@ -20962,6 +20974,8 @@
 	exports.submitForm = submitForm;
 	exports.submitEntityForm = submitEntityForm;
 	exports.autocompleteEntitiesByLabel = autocompleteEntitiesByLabel;
+	exports.entitySearch = entitySearch;
+	exports.entitySearchInput = entitySearchInput;
 	exports.addEntitiesByLabel = addEntitiesByLabel;
 	exports.updatePropertyValue = updatePropertyValue;
 	exports.updateRelationshipEntityIdArray = updateRelationshipEntityIdArray;
@@ -21019,6 +21033,20 @@
 	      return dispatch(addEntitiesByLabel(data, label));
 	    });
 	  };
+	}
+
+	function entitySearch(search_term) {
+	  return function (dispatch, getState) {
+	    return (0, _isomorphicFetch2['default'])('http://localhost:3000/entities/autocomplete?term=' + search_term).then(function (response) {
+	      return response.json();
+	    }).then(function (data) {
+	      return dispatch(entitySearchInput(data));
+	    });
+	  };
+	}
+
+	function entitySearchInput(data) {
+	  return { type: 'ENTITY_SEARCH_INPUT', data: data };
 	}
 
 	function addEntitiesByLabel(entities, label) {
@@ -26224,6 +26252,10 @@
 
 	var _componentsEntity_list2 = _interopRequireDefault(_componentsEntity_list);
 
+	var _componentsEntity_search = __webpack_require__(461);
+
+	var _componentsEntity_search2 = _interopRequireDefault(_componentsEntity_search);
+
 	var _componentsTemplate_list = __webpack_require__(242);
 
 	var _componentsTemplate_list2 = _interopRequireDefault(_componentsTemplate_list);
@@ -26237,6 +26269,7 @@
 	      null,
 	      _react2['default'].createElement(_componentsTemplate_list2['default'], { autocompleteItems: this.props.autocompleteItems, dispatch: this.props.dispatch }),
 	      _react2['default'].createElement(_componentsEntity_list2['default'], null),
+	      _react2['default'].createElement(_componentsEntity_search2['default'], null),
 	      this.props.children
 	    );
 	  }
@@ -46519,6 +46552,72 @@
 	});
 
 	module.exports = EntityCard;
+
+/***/ },
+/* 461 */
+/***/ function(module, exports, __webpack_require__) {
+
+	'use strict';
+
+	Object.defineProperty(exports, '__esModule', {
+	  value: true
+	});
+
+	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { 'default': obj }; }
+
+	var _react = __webpack_require__(1);
+
+	var _react2 = _interopRequireDefault(_react);
+
+	var _reactRedux = __webpack_require__(166);
+
+	var _reactAutocomplete = __webpack_require__(243);
+
+	var _reactAutocomplete2 = _interopRequireDefault(_reactAutocomplete);
+
+	var _actionsActions = __webpack_require__(177);
+
+	var EntitySearch = _react2['default'].createClass({
+	  displayName: 'EntitySearch',
+
+	  onChange: function onChange(e) {
+	    this.props.dispatch((0, _actionsActions.entitySearch)(e.target.value));
+	  },
+
+	  onSelect: function onSelect(value, item) {
+	    console.log('selected ' + value);
+	  },
+	  render: function render() {
+	    var styles = {
+	      highlightedItem: { backgroundColor: 'blue' },
+	      item: { backgroundColor: 'white' }
+	    };
+	    return _react2['default'].createElement(_reactAutocomplete2['default'], {
+	      onChange: this.onChange,
+	      onSelect: this.onSelect,
+	      getItemValue: function (item) {
+	        return item.node_properties[0].value;
+	      },
+	      items: this.props.entitySearchAutocomplete || [],
+	      renderItem: function (item, isHighlighted) {
+	        return _react2['default'].createElement(
+	          'div',
+	          { style: isHighlighted ? styles.highlightedItem : styles.item },
+	          item.node_properties[0].value
+	        );
+	      }
+	    });
+	  }
+	});
+
+	function mapStateToProps(state) {
+	  return {
+	    entitySearchAutocomplete: state.entitySearchAutocomplete
+	  };
+	}
+
+	exports['default'] = (0, _reactRedux.connect)(mapStateToProps)(EntitySearch);
+	module.exports = exports['default'];
 
 /***/ }
 /******/ ]);

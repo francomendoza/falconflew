@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import EntityList from './components/entity_list';
+import EntitySearch from './components/entity_search';
 import TemplateList from './components/template_list';
 
 var App = React.createClass({
@@ -9,6 +10,7 @@ var App = React.createClass({
    return (<div>
              <TemplateList autocompleteItems = {this.props.autocompleteItems} dispatch = {this.props.dispatch} />
              <EntityList />
+             <EntitySearch />
              {this.props.children}
            </div>);
   }

@@ -29,6 +29,18 @@ export function autocompleteEntitiesByLabel(label, match_type, value){
   }
 }
 
+export function entitySearch(search_term) {
+  return (dispatch, getState) => {
+    return fetch(`http://localhost:3000/entities/autocomplete?term=${search_term}`)
+        .then(response => response.json())
+        .then(data => dispatch(entitySearchInput(data)))
+  }
+}
+
+export function entitySearchInput(data) {
+  return {type: 'ENTITY_SEARCH_INPUT', data}
+}
+
 export function addEntitiesByLabel(entities, label){
   return { type: "ADD_ENTITIES_BY_LABEL", entities, label }
 }

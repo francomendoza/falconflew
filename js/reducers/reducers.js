@@ -20,6 +20,15 @@ function entitiesByLabel(state = {}, action){
   }
 }
 
+function entitySearchAutocomplete(state = [], action) {
+  switch (action.type) {
+    case 'ENTITY_SEARCH_INPUT':
+      return action.data
+    default:
+      return state
+  }
+}
+
 function childTemplatesByEntityId(state = {}, action){
   switch (action.type){
     case 'SHOW_ENTITY_CARD_CHILD_TEMPLATES':
@@ -222,7 +231,8 @@ const reducers = combineReducers({
   templateInstanceMap,
   activeTemplate,
   autocompleteItems,
-  childTemplatesByEntityId
+  childTemplatesByEntityId,
+  entitySearchAutocomplete
 })
 
 export default reducers;
