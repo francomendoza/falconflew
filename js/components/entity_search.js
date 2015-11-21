@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import Autocomplete from 'react-autocomplete';
-import {entitySearch} from '../actions/actions';
+import {showEntity, entitySearch} from '../actions/actions';
 
 var EntitySearch = React.createClass({
   onChange: function(e) {
@@ -10,6 +10,7 @@ var EntitySearch = React.createClass({
 
   onSelect: function(value, item) {
     console.log(`selected ${value}`)
+    this.props.dispatch(showEntity(item.entity_id, item.node_label))
   },
   render: function() {
     var styles = {

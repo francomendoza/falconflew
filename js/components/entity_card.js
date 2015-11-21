@@ -27,7 +27,7 @@ var EntityCard = React.createClass({
           return <div key = { node_property.name }>{ node_property.name }: { node_property.value }</div>
         }) }
         { this.props.available_actions.map((label) => {
-            return <a href='#' onClick={ this.chooseTemplate(label) }>Use in { label }</a>
+            return <li><a href='#' onClick={ this.chooseTemplate(label) }>Use in { label }</a></li>
         }) }
       </div>);
   }
