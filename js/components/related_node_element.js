@@ -25,7 +25,7 @@ var RelatedNodeElement = React.createClass({
   render: function(){
 
     let templateInstance = this.props.templateInstancesByInstanceId[this.props.templateInstanceId];
-    let add_button,
+    let autocomplete_field,
       select_template,
       selected_entities;
 
@@ -41,8 +41,22 @@ var RelatedNodeElement = React.createClass({
       }
     }
 
-    if(this.props.related_node.count_limit === -1 || this.props.related_node.count_limit < this.props.relatedNodeCount) {
-      add_button = <button onClick = { this.props.incrementRelatedNode }>Add</button>
+    if(this.props.related_node.count_limit === -1 || this.props.related_node.entity_id === null || this.props.related_node.entity_id.length < this.props.related_node.count_limit) {
+      autocomplete_field = <Autocomplete 
+        onChange = { this.onChange } 
+        onSelect = { this.onSelect(this.props.related_node.entity_id ? this.props.related_node.entity_id.length : 0) }
+        getItemValue = { (item) => item.entity_id }
+        items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[this.props.related_node.template_label[0]] || []) : []  }
+        renderItem = { (item, isHighlighted) => (
+          <div
+            style = {isHighlighted ? styles.highlightedItem : styles.item}
+            key = { item.entity_id }
+            id = { item.entity_id }
+          >{ item.node_properties.map(function(property, index){
+            return <div key = { index }>{ property.name }: { property.value }</div>
+          }) }
+          </div>
+        ) } />
     }
 
     if(this.props.related_node.match_type === "child" && this.props.related_node.children_templates){
@@ -61,38 +75,18 @@ var RelatedNodeElement = React.createClass({
         });
         return <EntityCard 
         entity = { entity }
-        key = { entity.id + 'card' }/>
+        key = { entity.entity_id + 'card' }/>
       });
     }
 
     return (
       <div className = "relationship_element" style = {this.props.style}>
         <div style = { { padding: "10px" } } onClick = { this.props.clickDivHandler }>
-          { _.times(this.props.relatedNodeCount, (index) => {
-            return  <div key = { index } style = { styles.autocomplete }>
-              <label>{ this.props.related_node.template_label }: </label>
-              <Autocomplete 
-                initialValue = { this.props.related_node.entity_id ? this.props.related_node.entity_id[index] : null }
-                onChange = { this.onChange } 
-                onSelect = { this.onSelect(index) }
-                getItemValue = { (item) => item.entity_id }
-                items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[this.props.related_node.template_label[0]] || []) : []  }
-                renderItem = { (item, isHighlighted) => (
-                  <div
-                    style = {isHighlighted ? styles.highlightedItem : styles.item}
-                    key = { item.entity_id }
-                    id = { item.entity_id }
-                  >{ item.node_properties.map(function(property, index){
-                    return <div key = { index }>{ property.name }: { property.value }</div>
-                  }) }
-                  </div>
-                ) } />
-              </div>
-          }) }
+          <label>{ this.props.related_node.template_label }: </label>
+          { autocomplete_field }
           { selected_entities }
           { select_template }
           <button onClick = { this.clickDammit }>Create New</button>
-          { add_button }
         </div>
       </div>
     );
