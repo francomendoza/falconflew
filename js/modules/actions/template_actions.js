@@ -29,40 +29,8 @@ export function autocompleteEntitiesByLabel(label, match_type, value){
   }
 }
 
-export function entitySearch(search_term) {
-  return (dispatch, getState) => {
-    return fetch(`http://localhost:3000/entities/autocomplete?term=${search_term}`)
-        .then(response => response.json())
-        .then(data => dispatch(entitySearchInput(data)))
-  }
-}
-
-export function showEntity(entity_id, label) {
-  return (dispatch, getState) => {
-    return fetch(`http://localhost:3000/entities/${entity_id}?node_label=${label}`)
-        .then(response => response.json())
-        .then(data => dispatch(setupShowEntityState(data)))
-  }
-}
-
-export function setupShowEntityState(data) {
-  return {type: 'SETUP_SHOW_ENTITY_STATE', data}
-}
-
-export function entitySearchInput(data) {
-  return {type: 'ENTITY_SEARCH_INPUT', data}
-}
-
 export function addEntitiesByLabel(entities, label){
   return { type: "ADD_ENTITIES_BY_LABEL", entities, label }
-}
-
-export function updatePropertyValue(templateInstanceId, index, value){
-  return { type: "UPDATE_PROPERTY_VALUE", templateInstanceId, index, value };
-}
-
-export function updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex){
-  return { type: "UPDATE_RELATIONSHIP_VALUE", templateInstanceId, relatedNodeIndex, value, entityIdIndex };
 }
 
 export function toggleFormVisibility(templateInstanceId){
@@ -108,6 +76,14 @@ export function requestTemplateByName(name){
   }
 }
 
+export function updatePropertyValue(templateInstanceId, index, value){
+  return { type: "UPDATE_PROPERTY_VALUE", templateInstanceId, index, value };
+}
+
+export function updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex){
+  return { type: "UPDATE_RELATIONSHIP_VALUE", templateInstanceId, relatedNodeIndex, value, entityIdIndex };
+}
+
 export function addItemsToAutocomplete(items){
   return { type: 'ADD_ITEMS_TO_AUTOCOMPLETE', items };
 }
@@ -125,15 +101,3 @@ export function updateTemplateInstances(templateInstanceId, node_label) {
 export function changeChildRelatedNodeTemplate(templateInstanceId, node_label, templatesByNodeLabel){
   return { type: 'CHANGE_CHILD_RELATED_NODE_TEMPLATE', templateInstanceId, node_label, templatesByNodeLabel}
 }
-
-export function selectEntityCard(entity_id){
-  return (dispatch, getState) => {
-    return fetch('http://localhost:3000/entities/child_templates?entity_id='+entity_id)
-      .then(response => response.json())
-      .then(data => dispatch(showEntityCardChildTemplates(data, entity_id)))
-  }
-}
-
-export function showEntityCardChildTemplates(data, entity_id){
-  return { type: 'SHOW_ENTITY_CARD_CHILD_TEMPLATES', data, entity_id }
-;}

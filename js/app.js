@@ -1,19 +1,15 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import EntityList from './components/entity_list';
-import EntitySearch from './components/entity_search';
 import TemplateList from './components/template_list';
-import EntityShowPage from './components/entity_show_page';
 
 var App = React.createClass({
 
   render: function() {
    return (<div>
-             <TemplateList autocompleteItems = {this.props.autocompleteItems} dispatch = {this.props.dispatch} />
+             <TemplateList autocompleteItems = { this.props.autocompleteItems } dispatch = { this.props.dispatch } />
              <EntityList />
-             <EntitySearch />
-             <EntityShowPage />
-             {this.props.children}
+             { this.props.children }
            </div>);
   }
 });

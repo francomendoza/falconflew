@@ -3,14 +3,13 @@ import { connect } from 'react-redux';
 import PropertyFormElement from './property_form_element';
 import Empty from './empty';
 import RelatedNodeElement from './related_node_element';
-import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, updateRelationshipEntityIdArray, incrementRelatedNodeCount } from '../actions/actions';
+import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, updateRelationshipEntityIdArray, incrementRelatedNodeCount } from '../modules/actions/template_actions';
 
 var TemplatePage = React.createClass({
 
   handlePropertyChange: function(templateInstanceId, index){
-    var that = this;
-    return function(value){
-      that.props.dispatch(updatePropertyValue(templateInstanceId, index, value));
+    return (value) => {
+      this.props.dispatch(updatePropertyValue(templateInstanceId, index, value));
     }
   },
 
@@ -32,9 +31,8 @@ var TemplatePage = React.createClass({
   },
 
   handleRelationshipChange: function(templateInstanceId, relatedNodeIndex) {
-    var that = this;
-    return function(value, entityIdIndex) {
-      that.props.dispatch(updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex));
+    return (value, entityIdIndex) => {
+      this.props.dispatch(updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex));
     }
   },
 

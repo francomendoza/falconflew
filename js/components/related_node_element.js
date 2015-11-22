@@ -1,6 +1,6 @@
 import React from 'react';
 import Autocomplete from 'react-autocomplete';
-import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../actions/actions';
+import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../modules/actions/template_actions';
 import _ from 'lodash';
 import EntityCard from './entity_card';
 

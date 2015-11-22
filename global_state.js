@@ -37,7 +37,7 @@
           template_id: 4, 
           relationship: "child_of",
           required: true,
-          entity_id: null,
+          entity_id: [50, 60],
           entity_template: 
         }
       ]

@@ -1,7 +1,7 @@
-import React from 'react'
-import {connect} from 'react-redux'
-import EntityCard from './entity_card'
-import { selectEntityCard } from '../actions/actions'
+import React from 'react';
+import {connect} from 'react-redux';
+import EntityCard from './entity_card';
+import { selectEntityCard } from '../modules/actions/entity_actions';
 
 var EntityShowPage = React.createClass({
   render: function(){
@@ -13,13 +13,13 @@ var EntityShowPage = React.createClass({
             dispatch = {this.props.dispatch}
             available_actions = { this.props.childTemplatesByEntityId[entity.entity_id] || [] } 
             onClickHandler = { () => { this.props.dispatch(selectEntityCard(entity.entity_id)) } }/>
-          { this.props.shownEntity.related_entities.map((details) => {
-              return <div>
+          { this.props.shownEntity.related_entities.map((details, index) => {
+              return <div key = { index }>
               <h3>{details.relationship}</h3>
               { details.entities.map((entity) => {
                   return <EntityCard entity={entity}
-                    key={entity.entity_id}
-                    dispatch = {this.props.dispatch}
+                    key = { entity.entity_id }
+                    dispatch = { this.props.dispatch }
                     available_actions = { this.props.childTemplatesByEntityId[entity.entity_id] || [] } 
                     onClickHandler = { () => { this.props.dispatch(selectEntityCard(entity.entity_id)) } }/>
                })}

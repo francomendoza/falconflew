@@ -1,53 +1,4 @@
-import { combineReducers } from 'redux';
-import * as actions from '../actions/actions';
-import { routerStateReducer } from 'redux-router';
-
-function updateEntities(state = [], action){
-  switch (action.type){
-    case 'SUBMIT_FORM':
-      return [...state, action.new_node];
-    default:
-      return state;
-  }
-}
-
-function entitiesByLabel(state = {}, action){
-  switch (action.type){
-    case 'ADD_ENTITIES_BY_LABEL':
-      return Object.assign({}, state, { [action.label]: action.entities });
-    default:
-      return state;
-  }
-}
-
-function shownEntity(state = {}, action) {
-  switch(action.type) {
-    case 'SETUP_SHOW_ENTITY_STATE':
-      return action.data
-    default:
-      return state;
-  }
-}
-
-function entitySearchAutocomplete(state = [], action) {
-  switch (action.type) {
-    case 'ENTITY_SEARCH_INPUT':
-      return action.data
-    default:
-      return state
-  }
-}
-
-function childTemplatesByEntityId(state = {}, action){
-  switch (action.type){
-    case 'SHOW_ENTITY_CARD_CHILD_TEMPLATES':
-      return Object.assign({}, state, { [action.entity_id]: action.data })
-    default:
-      return state;
-  }
-}
-
-function templateInstancesByInstanceId(state = {}, action){
+export function templateInstancesByInstanceId(state = {}, action){
   switch (action.type){
     case 'ADD_TEMPLATES_BY_NODE_LABEL':
       return Object.assign({}, state, generateTemplateInstancesByInstanceId(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', {}));
@@ -111,7 +62,7 @@ function node_properties(state = [], action){
   }
 }
 
-function templateInstanceMap(state = {}, action){
+export function templateInstanceMap(state = {}, action){
   switch (action.type){
     case 'ADD_TEMPLATES_BY_NODE_LABEL':
       return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', {}));
@@ -124,7 +75,7 @@ function templateInstanceMap(state = {}, action){
   }
 }
 
-function templateInstanceStateMap(state = {}, action){
+export function templateInstanceStateMap(state = {}, action){
   switch (action.type){
     case 'ADD_TEMPLATES_BY_NODE_LABEL':
       return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', { 'x0': { visible: true, submitted: false, related_node_counts: (action.templatesByNodeLabel[action.currentTemplateNodeLabel].related_nodes || []).map((el) => { return 1; }) } }))
@@ -203,7 +154,7 @@ function generateTemplateInstanceState(templatesByNodeLabel, currentTemplateNode
   return obj;
 }
 
-function templatesByNodeLabel(state = {}, action) {
+export function templatesByNodeLabel(state = {}, action) {
   switch (action.type){
     case 'ADD_TEMPLATES_BY_NODE_LABEL':
       return Object.assign({}, state, action.templatesByNodeLabel);
@@ -212,7 +163,7 @@ function templatesByNodeLabel(state = {}, action) {
    }
 }
 
-function activeTemplate(state = 'x0', action){
+export function activeTemplate(state = 'x0', action){
   switch (action.type){
     case 'SET_ACTIVE_TEMPLATE':
       return action.templateInstanceId;
@@ -221,7 +172,7 @@ function activeTemplate(state = 'x0', action){
   }
 }
 
-function autocompleteItems(state = [], action){
+export function autocompleteItems(state = [], action){
   switch (action.type){
     case 'ADD_ITEMS_TO_AUTOCOMPLETE':
       return [...action.items]
@@ -229,20 +180,3 @@ function autocompleteItems(state = [], action){
       return state;
   }
 }
-
-const reducers = combineReducers({
-  updateEntities,
-  entitiesByLabel,
-  templatesByNodeLabel,
-  router: routerStateReducer,
-  templateInstancesByInstanceId,
-  templateInstanceStateMap,
-  templateInstanceMap,
-  activeTemplate,
-  autocompleteItems,
-  childTemplatesByEntityId,
-  entitySearchAutocomplete,
-  shownEntity
-})
-
-export default reducers;
