@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router';
 import { pushState } from 'redux-router';
 import { retrieveTemplates } from '../modules/actions/template_actions';
+import { showEntity } from '../modules/actions/entity_actions';
 
 var EntityCard = React.createClass({
 
@@ -9,8 +10,12 @@ var EntityCard = React.createClass({
     return (e) => {
       e.preventDefault();
       //this.props.dispatch(pushState(null, `/template_form/${label}`))
-      this.props.dispatch(retrieveTemplates(label))
+      this.props.dispatch(retrieveTemplates(label));
     }
+  },
+
+  onClickHandler: function(event){
+    this.props.dispatch(showEntity(this.props.entity.entity_id, this.props.entity.node_label));
   },
 
   render: function(){
@@ -24,8 +29,9 @@ var EntityCard = React.createClass({
     }
 
     return(
-      <div style = {styles} onClick = { this.props.onClickHandler }>
+      <div style = {styles} onClick = { this.onClickHandler }>
         <div>{ this.props.entity.node_label }</div>
+        <br/>
         { this.props.entity.node_properties.map(function(node_property){
           return <div key = { node_property.name }>{ node_property.name }: { node_property.value }</div>
         }) }

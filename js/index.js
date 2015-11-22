@@ -16,6 +16,8 @@ const store = compose(
 
 ReactDOM.render(
   <Provider store = { store }>
-    <ReduxRouter />
+    <ReduxRouter>
+      { routes }
+    </ReduxRouter>
   </Provider>, 
   document.getElementById('main'));
