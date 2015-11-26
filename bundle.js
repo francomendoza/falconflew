@@ -25866,6 +25866,19 @@
 	      boxShadow: "2px 2px 5px #888888"
 	    };
 
+	    var links = (this.props.available_actions || []).map(function (label, index) {
+	      return _react2['default'].createElement(
+	        'li',
+	        { key: index },
+	        _react2['default'].createElement(
+	          'a',
+	          { href: '#', onClick: _this2.chooseTemplate(label) },
+	          'Use in ',
+	          label
+	        )
+	      );
+	    });
+
 	    return _react2['default'].createElement(
 	      'div',
 	      { style: styles, onClick: this.onClickHandler },
@@ -25884,18 +25897,7 @@
 	          node_property.value
 	        );
 	      }),
-	      this.props.available_actions.map(function (label, index) {
-	        return _react2['default'].createElement(
-	          'li',
-	          { key: index },
-	          _react2['default'].createElement(
-	            'a',
-	            { href: '#', onClick: _this2.chooseTemplate(label) },
-	            'Use in ',
-	            label
-	          )
-	        );
-	      })
+	      links
 	    );
 	  }
 
