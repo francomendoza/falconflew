@@ -9,6 +9,8 @@ import createHistory from 'history/lib/createBrowserHistory';
 import thunk from 'redux-thunk';
 import 'babel-core/polyfill';
 
+window.loggedSubmissions = {};
+
 const store = compose(
   applyMiddleware(thunk),
   reduxReactRouter({ routes, createHistory })

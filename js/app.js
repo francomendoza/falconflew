@@ -8,7 +8,7 @@ var App = React.createClass({
 
   render: function() {
    return (<div>
-    <NavBar/>          
+    <NavBar/>
     <TemplateList autocompleteItems = { this.props.autocompleteItems } dispatch = { this.props.dispatch } />
     <EntityList />
     { this.props.children }

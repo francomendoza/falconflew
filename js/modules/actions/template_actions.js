@@ -11,6 +11,8 @@ export function submitForm(templateInstanceId){
       body: JSON.stringify(getState().templateInstancesByInstanceId[templateInstanceId])
     }).then(response => response.json())
       .then(data => {
+        console.log(data);
+        Object.assign(window.loggedSubmissions, {[data.entity_id]: getState().templateInstancesByInstanceId[templateInstanceId]})
         dispatch(submitEntityForm(data, templateInstanceId));
     })
       .then(() => { if(templateInstanceId === 'x0') { dispatch(pushState(null, '/', null))  }});
