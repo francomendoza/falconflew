@@ -23,7 +23,6 @@ var EntityCard = React.createClass({
     let styles = {
       border: "black solid 1px",
       padding: "5px",
-      width: "20%",
       borderRadius: "4px",
       boxShadow: "2px 2px 5px #888888"
     }

@@ -14,7 +14,7 @@ var EntityShowPage = React.createClass({
             available_actions = { this.props.childTemplatesByEntityId[entity.entity_id] || [] } 
             onClickHandler = { () => { this.props.dispatch(selectEntityCard(entity.entity_id)) } }/>
           { this.props.shownEntity.related_entities.map((details, index) => {
-              return <div key = { index }>
+              return <div key = { index } style={{float: "left"}}>
               <h3>{details.relationship}</h3>
               { details.entities.map((entity) => {
                   return <EntityCard entity={entity}
