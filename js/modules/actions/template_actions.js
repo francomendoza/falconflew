@@ -10,12 +10,22 @@ export function submitForm(templateInstanceId){
       method: "post",
       body: JSON.stringify(getState().templateInstancesByInstanceId[templateInstanceId])
     }).then(response => response.json())
-      .then(data => {
-        console.log(data);
-        Object.assign(window.loggedSubmissions, {[data.entity_id]: getState().templateInstancesByInstanceId[templateInstanceId]})
-        dispatch(submitEntityForm(data, templateInstanceId));
+    .then(data => {
+      Object.assign(window.loggedSubmissions, {[data.entity_id]: getState().templateInstancesByInstanceId[templateInstanceId]})
+      dispatch(submitEntityForm(data, templateInstanceId));
+      dispatch(addEntitiesByLabel([data], data.node_label[0]));
+      if(templateInstanceId !== 'x0') {
+        let parentTemplateId = templateInstanceId.substring(0, templateInstanceId.length - 1);
+        let relatedNodeIndex = parseInt(templateInstanceId.substring(templateInstanceId.length - 1));
+        let entityIdIndex = (getState().templateInstancesByInstanceId[parentTemplateId].related_nodes[relatedNodeIndex].entity_id || []).length
+        dispatch(updateRelationshipEntityIdArray(parentTemplateId, relatedNodeIndex, data.entity_id, entityIdIndex));
+      }
     })
-      .then(() => { if(templateInstanceId === 'x0') { dispatch(pushState(null, '/', null))  }});
+    .then(() => { 
+      if(templateInstanceId === 'x0') { 
+        dispatch(pushState(null, '/', null)) 
+      } 
+    });
   }
 }
 
