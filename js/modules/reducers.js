@@ -11,6 +11,15 @@ function updateEntities(state = [], action){
   }
 }
 
+function displayedTokens(state = [], action) {
+  switch (action.type){
+    case 'DISPLAY_TOKEN':
+      return [...state, action.data.entity]
+    default:
+      return state;
+  }
+}
+
 function entitiesByLabel(state = {}, action){
   switch (action.type){
     case 'ADD_ENTITIES_BY_LABEL':
@@ -59,7 +68,8 @@ const reducers = combineReducers({
   autocompleteItems,
   childTemplatesByEntityId,
   entitySearchAutocomplete,
-  shownEntity
+  shownEntity,
+  displayedTokens
 })
 
 export default reducers;
