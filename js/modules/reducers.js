@@ -20,6 +20,15 @@ function displayedTokens(state = [], action) {
   }
 }
 
+function entitySearchResults(state = [], action) {
+  switch (action.type) {
+    case 'SHOW_SHORTEST_PATH_RESULTS':
+      return action.data;
+    default:
+      return state;
+  }
+}
+
 function entitiesByLabel(state = {}, action){
   switch (action.type){
     case 'ADD_ENTITIES_BY_LABEL':
@@ -69,7 +78,8 @@ const reducers = combineReducers({
   childTemplatesByEntityId,
   entitySearchAutocomplete,
   shownEntity,
-  displayedTokens
+  displayedTokens,
+  entitySearchResults
 })
 
 export default reducers;

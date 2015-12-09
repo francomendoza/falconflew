@@ -2,6 +2,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Autocomplete from 'react-autocomplete';
 import SearchTokens from './search_tokens';
+import EntitySearchResults from './entity_search_results';
 import { addToken, shortestPathSearch, entitySearch, showEntity } from '../modules/actions/entity_actions';
 
 var EntitySearch = React.createClass({
@@ -36,6 +37,7 @@ var EntitySearch = React.createClass({
       } }/>
       <button onClick={this.search}>Search</button>
       <SearchTokens displayedTokens = {this.props.displayedTokens} />
+      <EntitySearchResults entitySearchResults = {this.props.entitySearchResults}/>
     </div>
   }
 });
@@ -43,7 +45,8 @@ var EntitySearch = React.createClass({
 function mapStateToProps(state){
   return {
     entitySearchAutocomplete: state.entitySearchAutocomplete,
-    displayedTokens: state.displayedTokens
+    displayedTokens: state.displayedTokens,
+    entitySearchResults: state.entitySearchResults
   };
 }
 

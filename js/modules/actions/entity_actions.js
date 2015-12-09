@@ -9,21 +9,27 @@ export function entitySearch(search_term) {
   }
 }
 
+export function entitySearchInput(data) {
+  return { type: 'ENTITY_SEARCH_INPUT', data }
+}
+
 export function shortestPathSearch() {
   return (dispatch, getState) => {
     var ids = getState().displayedTokens.map((entity) => {return entity.entity_id})
     return fetch('http://localhost:3000/entities/shortest_path', {
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      method: "post",
-      body: JSON.stringify({ids: ids})
-    })
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: "post",
+        body: JSON.stringify({ids: ids})
+      })
+      .then(response => response.json())
+      .then(data => dispatch(showShortestPathResults(data)))
   }
 }
 
-export function entitySearchInput(data) {
-  return {type: 'ENTITY_SEARCH_INPUT', data}
+export function showShortestPathResults(data){
+  return { type: 'SHOW_SHORTEST_PATH_RESULTS', data };
 }
 
 export function showEntity(entity_id, label) {
