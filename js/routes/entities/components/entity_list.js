@@ -1,7 +1,7 @@
 var React = require('react');
 import { connect } from 'react-redux';
 import EntityCard from './entity_card';
-import { selectEntityCard } from '../modules/actions/entity_actions';
+import { selectEntityCard } from '../../../modules/entities/actions/entity_actions';
 
 var EntityList = React.createClass({
 

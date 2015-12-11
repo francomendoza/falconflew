@@ -1,8 +1,7 @@
 import React from 'react';
-import { Link } from 'react-router';
 import { pushState } from 'redux-router';
-import { retrieveTemplates } from '../modules/actions/template_actions';
-import { showEntity } from '../modules/actions/entity_actions';
+import { retrieveTemplates } from '../../../modules/templates/actions/template_actions';
+import { showEntity } from '../../../modules/entities/actions/entity_actions';
 
 var EntityCard = React.createClass({
 

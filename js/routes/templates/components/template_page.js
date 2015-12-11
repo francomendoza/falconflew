@@ -1,9 +1,9 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropertyFormElement from './property_form_element';
-import Empty from './empty';
+import Empty from '../../entities/components/empty';
 import RelatedNodeElement from './related_node_element';
-import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, updateRelationshipEntityIdArray, incrementRelatedNodeCount } from '../modules/actions/template_actions';
+import { submitForm, updatePropertyValue, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, updateRelationshipEntityIdArray, incrementRelatedNodeCount } from '../../../modules/templates/actions/template_actions';
 
 var TemplatePage = React.createClass({
 

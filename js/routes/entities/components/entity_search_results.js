@@ -8,7 +8,7 @@ var EntitySearchResults = React.createClass({
       {this.props.entitySearchResults.map((entity) => {
         return <EntityCard entity = {entity} 
                   key={entity.entity_id}
-                  onClickHandler={ ()=>{ return null } } />
+                  onClickHandler={ () => { return null } } />
       })}
     </div>
   }

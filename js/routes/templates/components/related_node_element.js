@@ -1,8 +1,8 @@
 import React from 'react';
 import Autocomplete from 'react-autocomplete';
-import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../modules/actions/template_actions';
+import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../../../modules/templates/actions/template_actions';
 import _ from 'lodash';
-import EntityCard from './entity_card';
+import EntityCard from '../../entities/components/entity_card';
 
 var RelatedNodeElement = React.createClass({
 

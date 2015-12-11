@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import Autocomplete from 'react-autocomplete';
 import SearchTokens from './search_tokens';
 import EntitySearchResults from './entity_search_results';
-import { addToken, shortestPathSearch, entitySearch, showEntity } from '../modules/actions/entity_actions';
+import { addToken, shortestPathSearch, entitySearch, showEntity } from '../../../modules/entities/actions/entity_actions';
 
 var EntitySearch = React.createClass({
   onChange: function(e) {

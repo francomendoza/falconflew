@@ -1,6 +1,6 @@
 var React = require('react');
 var Autocomplete = require('react-autocomplete');
-import { requestTemplateByName, retrieveTemplates } from '../modules/actions/template_actions';
+import { requestTemplateByName, retrieveTemplates } from '../../../modules/templates/actions/template_actions';
 import { pushState } from 'redux-router';
 
 var TemplateList = React.createClass({
