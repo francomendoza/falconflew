@@ -1,23 +1,25 @@
 import { combineReducers } from 'redux';
 import { routerStateReducer } from 'redux-router';
 import * as entities from './entities/reducers';
-import { autocompleteItems, activeTemplate, templatesByNodeLabel, templateInstanceStateMap, templateInstanceMap, templateInstancesByInstanceId } from './templates/reducers/template';
+import * as templates from './templates/reducers';
 
 const reducers = combineReducers({
+  router: routerStateReducer,
+
   updateEntities: entities.updateEntities,
   entitiesByLabel: entities.entitiesByLabel,
-  templatesByNodeLabel,
-  router: routerStateReducer,
-  templateInstancesByInstanceId,
-  templateInstanceStateMap,
-  templateInstanceMap,
-  activeTemplate,
-  autocompleteItems,
   childTemplatesByEntityId: entities.childTemplatesByEntityId,
   entitySearchAutocomplete: entities.entitySearchAutocomplete,
   shownEntity: entities.shownEntity,
   displayedTokens: entities.displayedTokens,
-  entitySearchResults: entities.entitySearchResults
+  entitySearchResults: entities.entitySearchResults,
+
+  templateInstancesByInstanceId: templates.templateInstancesByInstanceId,
+  templateInstanceStateMap: templates.templateInstanceStateMap,
+  templateInstanceMap: templates.templateInstanceMap,
+  activeTemplate: templates.activeTemplate,
+  autocompleteItems: templates.autocompleteItems,
+  templatesByNodeLabel: templates.templatesByNodeLabel
 })
 
 export default reducers;
