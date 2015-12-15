@@ -106,13 +106,18 @@ function templateInstanceState(state = {}, action){
 }
 
 
-function generateTemplateInstancesByInstanceId(templatesByNodeLabel, currentTemplateNodeLabel, instanceId, obj) {
-  obj[instanceId] = templatesByNodeLabel[currentTemplateNodeLabel];
+function generateTemplateInstancesByInstanceId(templatesByNodeLabel, currentTemplateNodeLabel, instanceId, obj, instructions = []) {
+  obj[instanceId] = Object.assign({}, templatesByNodeLabel[currentTemplateNodeLabel]);
+
+  //why do we check if the template exists?
   if(templatesByNodeLabel[currentTemplateNodeLabel] && templatesByNodeLabel[currentTemplateNodeLabel].related_nodes){
-    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes.forEach(function(el, index){
+    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes.forEach(function(related_node, index){
       let thisInstanceId = `${instanceId}${index}`;
-      if(el.match_type !== 'child' && !el.children_templates){
-        generateTemplateInstancesByInstanceId(templatesByNodeLabel, el.template_label[0], thisInstanceId, obj);
+      if(related_node.match_type !== 'child' && !related_node.children_templates){
+        //if related_node.instructions
+        // generateTemplateInstancesByInstanceId(templatesByNodeLabel, related_node.template_label[0], thisInstanceId, obj, related_node.instructions);
+        //else
+        generateTemplateInstancesByInstanceId(templatesByNodeLabel, related_node.template_label[0], thisInstanceId, obj);
       }else {
         obj[thisInstanceId] = null;
       }

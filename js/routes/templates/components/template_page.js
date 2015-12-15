@@ -63,7 +63,7 @@ var TemplatePage = React.createClass({
 
     this.props.templateInstancesByInstanceId[templateInstanceId].node_properties.map((node_property, index) => {
       var property_form_element = <PropertyFormElement
-        key = { node_property._id['$oid'] }
+        key = { node_property._id['$oid'] + templateInstanceId }
         property = { node_property } 
         handlePropertyChange = { this.handlePropertyChange(templateInstanceId, index) } 
         clickDivHandler = { this.clickDivHandler(templateInstanceId) } 
@@ -74,7 +74,7 @@ var TemplatePage = React.createClass({
 
     (this.props.templateInstancesByInstanceId[templateInstanceId].related_nodes || []).map((related_node, index) => {
       var related_node_element = <RelatedNodeElement
-        key = { related_node._id['$oid'] }
+        key = { related_node._id['$oid'] + templateInstanceId }
         related_node = { related_node }
         templateInstanceId = { templateInstanceId + index }
         toggleShow = { this.toggleTemplateFormVisibility } 
