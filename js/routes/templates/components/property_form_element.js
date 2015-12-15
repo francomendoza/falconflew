@@ -11,10 +11,11 @@ var PropertyFormElement = React.createClass({
       return <div className="property_element" style={this.props.style}>
           <label>{ property.name }: </label>
           <input type = { property.type }
-          name = { property.name }
-          value = { property.value }
-          onChange={ this.handlePropertyChange }
-          onClick = { this.props.clickDivHandler }/>
+                 name = { property.name }
+                 value = { property.value }
+                 disabled = {property.readonly ? true : false}
+                 onChange={ this.handlePropertyChange }
+                 onClick = { this.props.clickDivHandler }/>
       </div>;
   }
 });

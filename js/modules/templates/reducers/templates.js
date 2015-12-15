@@ -105,19 +105,58 @@ function templateInstanceState(state = {}, action){
   }
 }
 
+function parseBoundValue(binding_string) {
+  //parent.related_nodes[0].related_nodes[0].entity_id => obj['x00'].related_nodes[0].entity_id
+  let segments = binding_string.split('.')
+  let ref_string = 'x0'
+  segments.slice(0, -2).forEach((segment) =>{
+    if(segment.includes('related_nodes')){
+      ref_string += segment.match(/\d+/)[0]
+    } else {
+      console.log('i pooped my pants');
+    }
+  });
+
+  return `['${ref_string}'].${segments.slice(-1)}`
+}
+
 
 function generateTemplateInstancesByInstanceId(templatesByNodeLabel, currentTemplateNodeLabel, instanceId, obj, instructions = []) {
+  let parent = obj['x0']
+      // parent.related_nodes[0].related_nodes[0].entity_id => obj['x00'].related_nodes[0].entity_id
+    //obj['x00'].related_nodes[0]['bound_listeners'] = [{'x201', related_node[0].entity_id}]
+    //much mutate, so wow
   obj[instanceId] = Object.assign({}, templatesByNodeLabel[currentTemplateNodeLabel]);
+
+  instructions.forEach((instruction)=> {
+    //TODO: THIS ONLY WORKS FOR BINDING TO THINGS THAT ALREADY EXIST IN OBJ
+    if(instruction.binding){
+      let bind_source = parseBoundValue(instruction.bind_to);
+      let bind_source_template_instance = eval(`obj${bind_source}`)
+      if(bind_source_template_instance['bound_listeners']){
+        bind_source_template_instance['bound_listeners'].push({instance_id: instanceId, type: instruction.type, key: instruction.key, index: instruction.index })
+      } else {
+        bind_source_template_instance['bound_listeners'] = [{instance_id: instanceId, type: instruction.type, key: instruction.key, index: instruction.index}]
+      }
+    } else if(instruction.type == 'node_property'){
+        let current_node_property = obj[instanceId].node_properties[instruction.index]
+        obj[instanceId].node_properties[instruction.index] = Object.assign({}, current_node_property, instruction.replace_with)
+    } else if (instruction.type == 'related_node'){
+        let current_related_node = obj[instanceId].related_nodes[instruction.index]
+        obj[instanceId].related_nodes[instruction.index] = Object.assign({}, current_related_node, instruction.replace_with)
+    }
+  });
 
   //why do we check if the template exists?
   if(templatesByNodeLabel[currentTemplateNodeLabel] && templatesByNodeLabel[currentTemplateNodeLabel].related_nodes){
     templatesByNodeLabel[currentTemplateNodeLabel].related_nodes.forEach(function(related_node, index){
       let thisInstanceId = `${instanceId}${index}`;
       if(related_node.match_type !== 'child' && !related_node.children_templates){
-        //if related_node.instructions
-        // generateTemplateInstancesByInstanceId(templatesByNodeLabel, related_node.template_label[0], thisInstanceId, obj, related_node.instructions);
-        //else
-        generateTemplateInstancesByInstanceId(templatesByNodeLabel, related_node.template_label[0], thisInstanceId, obj);
+        if(related_node.instructions){
+          generateTemplateInstancesByInstanceId(templatesByNodeLabel, related_node.template_label[0], thisInstanceId, obj, related_node.instructions);
+        } else {
+          generateTemplateInstancesByInstanceId(templatesByNodeLabel, related_node.template_label[0], thisInstanceId, obj);
+        }
       }else {
         obj[thisInstanceId] = null;
       }
