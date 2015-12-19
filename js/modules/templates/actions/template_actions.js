@@ -18,7 +18,7 @@ export function submitForm(templateInstanceId){
         let parentTemplateId = templateInstanceId.substring(0, templateInstanceId.length - 1);
         let relatedNodeIndex = parseInt(templateInstanceId.substring(templateInstanceId.length - 1));
         let entityIdIndex = (getState().templateInstancesByInstanceId[parentTemplateId].related_nodes[relatedNodeIndex].entity_id || []).length
-        dispatch(updateRelationshipEntityIdArray(parentTemplateId, relatedNodeIndex, data.entity_id, entityIdIndex));
+        dispatch(relationshipEntityChanged(parentTemplateId, relatedNodeIndex, data.entity_id, entityIdIndex));
       }
     })
     .then(() => { 
@@ -88,8 +88,26 @@ export function requestTemplateByName(name){
   }
 }
 
+export function propertyChanged(templateInstanceId, index, value){
+  return (dispatch, getState) => {
+    getState().templateInstancesByInstanceId[templateInstanceId].node_properties[index].observers.forEach((observer) => {
+      dispatch(updatePropertyValue(observer.instance_id, observer.index, value))
+    });
+    dispatch(updatePropertyValue(templateInstanceId, index, value))
+  }
+}
+
 export function updatePropertyValue(templateInstanceId, index, value){
   return { type: "UPDATE_PROPERTY_VALUE", templateInstanceId, index, value };
+}
+
+export function relationshipEntityChanged(templateInstanceId, relatedNodeIndex, value, entityIdIndex){
+  return (dispatch, getState) => {
+    getState().templateInstancesByInstanceId[templateInstanceId].related_nodes[relatedNodeIndex].observers.forEach((observer) => {
+      dispatch(updateRelationshipEntityIdArray(observer.instance_id, observer.index, value, entityIdIndex))
+    });
+    dispatch(updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex))
+  }
 }
 
 export function updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex){

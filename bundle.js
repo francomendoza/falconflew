@@ -25708,7 +25708,7 @@
 
 	  var parent = obj['x0'];
 	  // parent.related_nodes[0].related_nodes[0].entity_id => obj['x00'].related_nodes[0].entity_id
-	  //obj['x00'].related_nodes[0]['bound_listeners'] = [{'x201', related_node[0].entity_id}]
+	  //obj['x00'].related_nodes[0]['observers'] = [{'x201', related_node[0].entity_id}]
 	  //much mutate, so wow
 	  obj[instanceId] = Object.assign({}, templatesByNodeLabel[currentTemplateNodeLabel]);
 
@@ -25716,13 +25716,15 @@
 	    //TODO: THIS ONLY WORKS FOR BINDING TO THINGS THAT ALREADY EXIST IN OBJ
 	    if (instruction.binding) {
 	      var bind_source = parseBoundValue(instruction.bind_to);
-	      var bind_source_template_instance = eval('obj' + bind_source);
-	      if (bind_source_template_instance['bound_listeners']) {
-	        bind_source_template_instance['bound_listeners'].push({ instance_id: instanceId, type: instruction.type, key: instruction.key, index: instruction.index });
+	      // attribute is either .node_properties[observable_index] or .related_nodes[observable_index]
+	      var bind_source_attribute = eval('obj' + bind_source);
+	      if (bind_source_attribute['observers']) {
+	        bind_source_attribute['observers'].push({ instance_id: instanceId, key: instruction.key, index: instruction.index });
 	      } else {
-	        bind_source_template_instance['bound_listeners'] = [{ instance_id: instanceId, type: instruction.type, key: instruction.key, index: instruction.index }];
+	        bind_source_attribute['observers'] = [{ instance_id: instanceId, type: instruction.type, key: instruction.key, index: instruction.index }];
 	      }
-	    } else if (instruction.type == 'node_property') {
+	    }
+	    if (instruction.type == 'node_property') {
 	      var current_node_property = obj[instanceId].node_properties[instruction.index];
 	      obj[instanceId].node_properties[instruction.index] = Object.assign({}, current_node_property, instruction.replace_with);
 	    } else if (instruction.type == 'related_node') {
@@ -26084,7 +26086,9 @@
 	exports.retrieveTemplates = retrieveTemplates;
 	exports.addTemplatesByNodeLabel = addTemplatesByNodeLabel;
 	exports.requestTemplateByName = requestTemplateByName;
+	exports.propertyChanged = propertyChanged;
 	exports.updatePropertyValue = updatePropertyValue;
+	exports.relationshipEntityChanged = relationshipEntityChanged;
 	exports.updateRelationshipEntityIdArray = updateRelationshipEntityIdArray;
 	exports.addItemsToAutocomplete = addItemsToAutocomplete;
 	exports.incrementRelatedNodeCount = incrementRelatedNodeCount;
@@ -26119,7 +26123,7 @@
 	        var parentTemplateId = templateInstanceId.substring(0, templateInstanceId.length - 1);
 	        var relatedNodeIndex = parseInt(templateInstanceId.substring(templateInstanceId.length - 1));
 	        var entityIdIndex = (getState().templateInstancesByInstanceId[parentTemplateId].related_nodes[relatedNodeIndex].entity_id || []).length;
-	        dispatch(updateRelationshipEntityIdArray(parentTemplateId, relatedNodeIndex, data.entity_id, entityIdIndex));
+	        dispatch(relationshipEntityChanged(parentTemplateId, relatedNodeIndex, data.entity_id, entityIdIndex));
 	      }
 	    }).then(function () {
 	      if (templateInstanceId === 'x0') {
@@ -26199,8 +26203,26 @@
 	  };
 	}
 
+	function propertyChanged(templateInstanceId, index, value) {
+	  return function (dispatch, getState) {
+	    getState().templateInstancesByInstanceId[templateInstanceId].node_properties[index].observers.forEach(function (observer) {
+	      dispatch(updatePropertyValue(observer.instance_id, observer.index, value));
+	    });
+	    dispatch(updatePropertyValue(templateInstanceId, index, value));
+	  };
+	}
+
 	function updatePropertyValue(templateInstanceId, index, value) {
 	  return { type: "UPDATE_PROPERTY_VALUE", templateInstanceId: templateInstanceId, index: index, value: value };
+	}
+
+	function relationshipEntityChanged(templateInstanceId, relatedNodeIndex, value, entityIdIndex) {
+	  return function (dispatch, getState) {
+	    getState().templateInstancesByInstanceId[templateInstanceId].related_nodes[relatedNodeIndex].observers.forEach(function (observer) {
+	      dispatch(updateRelationshipEntityIdArray(observer.instance_id, observer.index, value, entityIdIndex));
+	    });
+	    dispatch(updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex));
+	  };
 	}
 
 	function updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex) {
@@ -27753,7 +27775,7 @@
 	    var _this = this;
 
 	    return function (value) {
-	      _this.props.dispatch((0, _modulesTemplatesActionsTemplate_actions.updatePropertyValue)(templateInstanceId, index, value));
+	      _this.props.dispatch((0, _modulesTemplatesActionsTemplate_actions.propertyChanged)(templateInstanceId, index, value));
 	    };
 	  },
 
@@ -27782,7 +27804,7 @@
 	    var _this4 = this;
 
 	    return function (value, entityIdIndex) {
-	      _this4.props.dispatch((0, _modulesTemplatesActionsTemplate_actions.updateRelationshipEntityIdArray)(templateInstanceId, relatedNodeIndex, value, entityIdIndex));
+	      _this4.props.dispatch((0, _modulesTemplatesActionsTemplate_actions.relationshipEntityChanged)(templateInstanceId, relatedNodeIndex, value, entityIdIndex));
 	    };
 	  },
 

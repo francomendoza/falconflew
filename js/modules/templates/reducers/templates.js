@@ -124,7 +124,7 @@ function parseBoundValue(binding_string) {
 function generateTemplateInstancesByInstanceId(templatesByNodeLabel, currentTemplateNodeLabel, instanceId, obj, instructions = []) {
   let parent = obj['x0']
       // parent.related_nodes[0].related_nodes[0].entity_id => obj['x00'].related_nodes[0].entity_id
-    //obj['x00'].related_nodes[0]['bound_listeners'] = [{'x201', related_node[0].entity_id}]
+    //obj['x00'].related_nodes[0]['observers'] = [{'x201', related_node[0].entity_id}]
     //much mutate, so wow
   obj[instanceId] = Object.assign({}, templatesByNodeLabel[currentTemplateNodeLabel]);
 
@@ -132,13 +132,15 @@ function generateTemplateInstancesByInstanceId(templatesByNodeLabel, currentTemp
     //TODO: THIS ONLY WORKS FOR BINDING TO THINGS THAT ALREADY EXIST IN OBJ
     if(instruction.binding){
       let bind_source = parseBoundValue(instruction.bind_to);
-      let bind_source_template_instance = eval(`obj${bind_source}`)
-      if(bind_source_template_instance['bound_listeners']){
-        bind_source_template_instance['bound_listeners'].push({instance_id: instanceId, type: instruction.type, key: instruction.key, index: instruction.index })
+      // attribute is either .node_properties[observable_index] or .related_nodes[observable_index]
+      let bind_source_attribute = eval(`obj${bind_source}`)
+      if(bind_source_attribute['observers']){
+        bind_source_attribute['observers'].push({instance_id: instanceId, key: instruction.key, index: instruction.index })
       } else {
-        bind_source_template_instance['bound_listeners'] = [{instance_id: instanceId, type: instruction.type, key: instruction.key, index: instruction.index}]
+        bind_source_attribute['observers'] = [{instance_id: instanceId, type: instruction.type, key: instruction.key, index: instruction.index}]
       }
-    } else if(instruction.type == 'node_property'){
+    } 
+    if(instruction.type == 'node_property'){
         let current_node_property = obj[instanceId].node_properties[instruction.index]
         obj[instanceId].node_properties[instruction.index] = Object.assign({}, current_node_property, instruction.replace_with)
     } else if (instruction.type == 'related_node'){
