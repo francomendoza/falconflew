@@ -6,10 +6,6 @@ import EntityCard from '../../entities/components/entity_card';
 
 var RelatedNodeElement = React.createClass({
 
-  clickDammit: function() {
-    this.props.toggleShow(this.props.templateInstanceId);
-  },
-
   onChange: function(event, value){
     this.props.dispatch(autocompleteEntitiesByLabel(this.props.related_node.template_label[0], this.props.related_node.match_type, value));
   },
@@ -86,7 +82,7 @@ var RelatedNodeElement = React.createClass({
           { autocomplete_field }
           { selected_entities }
           { select_template }
-          <button onClick = { this.clickDammit }>Create New</button>
+          <button onClick = { this.props.toggleShow }>Create New</button>
         </div>
       </div>
     );

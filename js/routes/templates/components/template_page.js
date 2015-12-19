@@ -27,7 +27,9 @@ var TemplatePage = React.createClass({
   },
 
   toggleTemplateFormVisibility: function(templateInstanceId){
-    this.props.dispatch(toggleFormVisibility(templateInstanceId));
+    return () => {
+      this.props.dispatch(toggleFormVisibility(templateInstanceId));
+    }
   },
 
   handleRelationshipChange: function(templateInstanceId, relatedNodeIndex) {
@@ -77,7 +79,7 @@ var TemplatePage = React.createClass({
         key = { related_node._id['$oid'] + templateInstanceId }
         related_node = { related_node }
         templateInstanceId = { templateInstanceId + index }
-        toggleShow = { this.toggleTemplateFormVisibility } 
+        toggleShow = { this.toggleTemplateFormVisibility(templateInstanceId + index) } 
         dispatch = { this.props.dispatch }
         activeTemplate = { this.props.activeTemplate } 
         entitiesByLabel = { this.props.entitiesByLabel }
