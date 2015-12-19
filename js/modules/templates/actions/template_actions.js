@@ -90,7 +90,7 @@ export function requestTemplateByName(name){
 
 export function propertyChanged(templateInstanceId, index, value){
   return (dispatch, getState) => {
-    getState().templateInstancesByInstanceId[templateInstanceId].node_properties[index].observers.forEach((observer) => {
+    (getState().templateInstancesByInstanceId[templateInstanceId].node_properties[index].observers || []).forEach((observer) => {
       dispatch(updatePropertyValue(observer.instance_id, observer.index, value))
     });
     dispatch(updatePropertyValue(templateInstanceId, index, value))
@@ -103,7 +103,7 @@ export function updatePropertyValue(templateInstanceId, index, value){
 
 export function relationshipEntityChanged(templateInstanceId, relatedNodeIndex, value, entityIdIndex){
   return (dispatch, getState) => {
-    getState().templateInstancesByInstanceId[templateInstanceId].related_nodes[relatedNodeIndex].observers.forEach((observer) => {
+    (getState().templateInstancesByInstanceId[templateInstanceId].related_nodes[relatedNodeIndex].observers || []).forEach((observer) => {
       dispatch(updateRelationshipEntityIdArray(observer.instance_id, observer.index, value, entityIdIndex))
     });
     dispatch(updateRelationshipEntityIdArray(templateInstanceId, relatedNodeIndex, value, entityIdIndex))

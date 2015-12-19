@@ -1,3 +1,4 @@
+import 'babel-core/polyfill';
 import React from 'react';
 import { createStore, compose, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
@@ -7,7 +8,6 @@ import { reduxReactRouter, ReduxRouter } from 'redux-router';
 import routes from './routes';
 import createHistory from 'history/lib/createBrowserHistory';
 import thunk from 'redux-thunk';
-import 'babel-core/polyfill';
 
 window.loggedSubmissions = {};
 
