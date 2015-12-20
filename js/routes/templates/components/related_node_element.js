@@ -20,7 +20,6 @@ var RelatedNodeElement = React.createClass({
 
   render: function(){
 
-    let templateInstance = this.props.templateInstancesByInstanceId[this.props.templateInstanceId];
     let autocomplete_field,
       select_template,
       selected_entities;

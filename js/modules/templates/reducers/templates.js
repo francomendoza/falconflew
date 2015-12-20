@@ -1,3 +1,5 @@
+import clone from 'clone';
+
 export function templateInstancesByInstanceId(state = {}, action){
   switch (action.type){
     case 'ADD_TEMPLATES_BY_NODE_LABEL':
@@ -109,7 +111,7 @@ function parseBoundValue(binding_string) {
   //parent.related_nodes[0].related_nodes[0].entity_id => obj['x00'].related_nodes[0].entity_id
   let segments = binding_string.split('.')
   let ref_string = 'x0'
-  segments.slice(0, -2).forEach((segment) =>{
+  segments.slice(0, -1).forEach((segment) =>{
     if(segment.includes('related_nodes')){
       ref_string += segment.match(/\d+/)[0]
     } else {
@@ -122,13 +124,13 @@ function parseBoundValue(binding_string) {
 
 
 function generateTemplateInstancesByInstanceId(templatesByNodeLabel, currentTemplateNodeLabel, instanceId, obj, instructions = []) {
-  let parent = obj['x0']
+  // let parent = obj['x0']
       // parent.related_nodes[0].related_nodes[0].entity_id => obj['x00'].related_nodes[0].entity_id
     //obj['x00'].related_nodes[0]['observers'] = [{'x201', related_node[0].entity_id}]
     //much mutate, so wow
-  obj[instanceId] = Object.assign({}, templatesByNodeLabel[currentTemplateNodeLabel]);
+  obj[instanceId] = clone(templatesByNodeLabel[currentTemplateNodeLabel]);
 
-  instructions.forEach((instruction)=> {
+  instructions.forEach((instruction) => {
     //TODO: THIS ONLY WORKS FOR BINDING TO THINGS THAT ALREADY EXIST IN OBJ
     if(instruction.binding){
       let bind_source = parseBoundValue(instruction.bind_to);

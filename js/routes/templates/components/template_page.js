@@ -38,11 +38,11 @@ var TemplatePage = React.createClass({
     }
   },
 
-  incrementRelatedNode: function(templateInstanceId, index) {
-    return () => {
-      this.props.dispatch(incrementRelatedNodeCount(templateInstanceId, index));
-    }
-  },
+  // incrementRelatedNode: function(templateInstanceId, index) {
+  //   return () => {
+  //     this.props.dispatch(incrementRelatedNodeCount(templateInstanceId, index));
+  //   }
+  // },
 
   recursive: function(templateInstanceId, array){
 
@@ -55,40 +55,44 @@ var TemplatePage = React.createClass({
       color: "white"
     };
 
-    let containerStyles = { 
-      opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3"
+    let propertyContainerStyles = { 
+      opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3",
+      width: (100 - 20)/templateInstance.node_properties.length + "%",
+      float: "left"
+    }
+
+    let relationshipContainerStyles = { 
+      opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3",
+      clear: "both"
     }
 
     array.push(<div style = { header_style }
       key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0" } }>New { templateInstance.node_label[0] }</h3></div>
     );
 
-    this.props.templateInstancesByInstanceId[templateInstanceId].node_properties.map((node_property, index) => {
+    templateInstance.node_properties.map((node_property, index) => {
       var property_form_element = <PropertyFormElement
         key = { node_property._id['$oid'] + templateInstanceId }
         property = { node_property } 
         handlePropertyChange = { this.handlePropertyChange(templateInstanceId, index) } 
         clickDivHandler = { this.clickDivHandler(templateInstanceId) } 
-        style = { containerStyles }/>
+        style = { propertyContainerStyles }/>
 
       array.push(property_form_element);
     });
 
-    (this.props.templateInstancesByInstanceId[templateInstanceId].related_nodes || []).map((related_node, index) => {
+    (templateInstance.related_nodes || []).map((related_node, index) => {
       var related_node_element = <RelatedNodeElement
         key = { related_node._id['$oid'] + templateInstanceId }
         related_node = { related_node }
         templateInstanceId = { templateInstanceId + index }
-        toggleShow = { this.toggleTemplateFormVisibility(templateInstanceId + index) } 
+        toggleShow = { this.toggleTemplateFormVisibility(templateInstanceId + index) }
         dispatch = { this.props.dispatch }
-        activeTemplate = { this.props.activeTemplate } 
         entitiesByLabel = { this.props.entitiesByLabel }
-        templateInstancesByInstanceId = { this.props.templateInstancesByInstanceId } 
         handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) } 
-        incrementRelatedNode = { this.incrementRelatedNode(templateInstanceId, index) }
         relatedNodeCount = { this.props.templateInstanceStateMap[templateInstanceId].related_node_counts[index] }
         clickDivHandler = { this.clickDivHandler(templateInstanceId) }
-        style = { containerStyles }/>
+        style = { relationshipContainerStyles }/>
 
       array.push(related_node_element);
       var nextTemplateInstanceId = this.props.templateInstanceMap[templateInstanceId][index];
