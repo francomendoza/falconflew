@@ -57,7 +57,7 @@ var TemplatePage = React.createClass({
 
     let propertyContainerStyles = { 
       opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3",
-      width: (100 - 20)/templateInstance.node_properties.length + "%",
+      width: (100 - 5)/(templateInstance.node_properties || []).length + "%",
       float: "left"
     }
 
