@@ -68,17 +68,22 @@ export function retrieveTemplates(currentTemplateNodeLabel){
     return fetch('http://localhost:3000/templates/'+currentTemplateNodeLabel)
       .then(response => response.json())
       .then(data => {
-        dispatch(addTemplatesByNodeLabel(data, currentTemplateNodeLabel));
+        dispatch(addTemplatesByNodeLabel(data));
+        dispatch(parseTemplates(getState().templatesByNodeLabel, currentTemplateNodeLabel));
       })
       .then(() => dispatch(pushState(null, '/template_form/'+currentTemplateNodeLabel)));
   };
 };
 
-export function addTemplatesByNodeLabel(templates, currentTemplateNodeLabel){
+function addTemplatesByNodeLabel(templates){
   let templatesByNodeLabel = {};
   templates.forEach((template) => { templatesByNodeLabel[template.node_label[0]] = template });
-  return { type: "ADD_TEMPLATES_BY_NODE_LABEL", templatesByNodeLabel, currentTemplateNodeLabel };
+  return { type: "ADD_TEMPLATES_BY_NODE_LABEL", templatesByNodeLabel };
 };
+
+function parseTemplates(templatesByNodeLabel, currentTemplateNodeLabel){
+  return { type: "PARSE_TEMPLATES", templatesByNodeLabel, currentTemplateNodeLabel }
+}
 
 export function requestTemplateByName(name){
   return (dispatch, getState) => {
@@ -124,10 +129,19 @@ export function incrementRelatedNodeCount(templateInstanceId, index){
 
 export function updateTemplateInstances(templateInstanceId, node_label) {
   return (dispatch, getState) => {
-    dispatch(changeChildRelatedNodeTemplate(templateInstanceId, node_label, getState().templatesByNodeLabel));
+    fetch('http://localhost:3000/templates/'+node_label)
+      .then(response => response.json())
+      .then(data => {
+        dispatch(addTemplatesByNodeLabel(data));
+        dispatch(changeChildRelatedNodeTemplate(templateInstanceId, node_label, getState().templatesByNodeLabel));
+      })
   }
 }
 
 export function changeChildRelatedNodeTemplate(templateInstanceId, node_label, templatesByNodeLabel){
-  return { type: 'CHANGE_CHILD_RELATED_NODE_TEMPLATE', templateInstanceId, node_label, templatesByNodeLabel}
+  return (dispatch, getState) => {
+    //pass down potential instructions from the related node
+    let instructions = getState().templateInstancesByInstanceId[templateInstanceId.substr(0, templateInstanceId.length - 1)].related_nodes[templateInstanceId.substr(-1)].instructions
+    dispatch({ type: 'CHANGE_CHILD_RELATED_NODE_TEMPLATE', templateInstanceId, node_label, templatesByNodeLabel, instructions });
+  }
 }

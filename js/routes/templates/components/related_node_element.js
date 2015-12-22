@@ -6,6 +6,13 @@ import EntityCard from '../../entities/components/entity_card';
 
 var RelatedNodeElement = React.createClass({
 
+  componentWillMount: function(){
+    // hacky for sure but we need to make the server call for this template, cant make call in generateTemplate function, and cant do logic on backend
+    if(this.props.related_node.default_child){
+      this.props.dispatch(updateTemplateInstances(this.props.templateInstanceId, this.props.related_node.default_child))
+    }
+  },
+
   onChange: function(event, value){
     this.props.dispatch(autocompleteEntitiesByLabel(this.props.related_node.template_label[0], this.props.related_node.match_type, value));
   },
@@ -55,7 +62,7 @@ var RelatedNodeElement = React.createClass({
     }
 
     if(this.props.related_node.match_type === "child" && this.props.related_node.children_templates){
-      select_template = <select defaultValue = "" onChange = { this.onSelectChange }>
+      select_template = <select defaultValue = { this.props.related_node.default_child || "" } onChange = { this.onSelectChange }>
         <option key = { 'blank' } value = {''}></option>
         { this.props.related_node.children_templates.map(function(template_label, index){
           return <option key = { index } value = { template_label }>{ template_label }</option>

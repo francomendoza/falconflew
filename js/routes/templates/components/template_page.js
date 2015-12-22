@@ -50,9 +50,11 @@ var TemplatePage = React.createClass({
 
     let header_style = {
       height: "40px",
-      textAlign: "center",
-      background: "linear-gradient(#002c6b 0%, #3971bd 100%)",
-      color: "white"
+      opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3",
+      // textAlign: "center",
+      // background: "linear-gradient(#002c6b 0%, #3971bd 100%)",
+      // color: "white"
+      borderBottom: "#002c6b 4px solid"
     };
 
     let propertyContainerStyles = { 
@@ -67,7 +69,7 @@ var TemplatePage = React.createClass({
     }
 
     array.push(<div style = { header_style }
-      key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0" } }>New { templateInstance.node_label[0] }</h3></div>
+      key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0", float: "left" } }>New { templateInstance.node_label[0] }</h3></div>
     );
 
     templateInstance.node_properties.map((node_property, index) => {
@@ -90,7 +92,6 @@ var TemplatePage = React.createClass({
         dispatch = { this.props.dispatch }
         entitiesByLabel = { this.props.entitiesByLabel }
         handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) } 
-        relatedNodeCount = { this.props.templateInstanceStateMap[templateInstanceId].related_node_counts[index] }
         clickDivHandler = { this.clickDivHandler(templateInstanceId) }
         style = { relationshipContainerStyles }/>
 
@@ -104,7 +105,7 @@ var TemplatePage = React.createClass({
     });
 
     array.push(<div style = { { padding: "10px" } }
-      key = { templateInstanceId + 'submit' }><button onClick = { this.submitHandler(templateInstanceId) }> Submit </button></div>)
+      key = { templateInstanceId + 'submit' }><button onClick = { this.submitHandler(templateInstanceId) }> Submit { templateInstance.node_label[0] }</button></div>)
     
     return array;
   },
@@ -113,8 +114,8 @@ var TemplatePage = React.createClass({
 
     let container_styles = {
       marginLeft: '100px',
-      marginRight: '100px',
-      outline: "black solid 1px"
+      marginRight: '100px'
+      // outline: "black solid 1px"
     };
 
     var mega_array = this.recursive('x0', []);
