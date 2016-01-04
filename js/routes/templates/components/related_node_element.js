@@ -84,7 +84,7 @@ var RelatedNodeElement = React.createClass({
     return (
       <div className = "relationship_element" style = {this.props.style}>
         <div style = { { padding: "10px" } } onClick = { this.props.clickDivHandler }>
-          <label>{ this.props.related_node.template_label }: </label>
+          <label>{ this.props.related_node.view_label || this.props.related_node.template_label }: </label>
           { autocomplete_field }
           { selected_entities }
           { select_template }

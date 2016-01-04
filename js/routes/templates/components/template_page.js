@@ -85,7 +85,7 @@ var TemplatePage = React.createClass({
 
     (templateInstance.related_nodes || []).map((related_node, index) => {
       var related_node_element = <RelatedNodeElement
-        key = { related_node._id['$oid'] + templateInstanceId }
+        key = { (related_node._id ? related_node._id['$oid'] : index) + templateInstanceId }
         related_node = { related_node }
         templateInstanceId = { templateInstanceId + index }
         toggleShow = { this.toggleTemplateFormVisibility(templateInstanceId + index) }

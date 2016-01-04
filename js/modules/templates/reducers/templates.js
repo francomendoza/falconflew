@@ -66,8 +66,10 @@ function node_properties(state = [], action){
 
 export function templateInstanceMap(state = {}, action){
   switch (action.type){
-    case 'PARSE_TEMPLATES':
-      return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', {}));
+    // case 'PARSE_TEMPLATES':
+    //   return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', {}));
+    case 'MAP_TEMPLATE_INSTANCES':
+      return Object.assign({}, state, action.templateInstanceMap);
     case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
       return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, {}));
     case 'CLEAR_TEMPLATES':
@@ -79,10 +81,12 @@ export function templateInstanceMap(state = {}, action){
 
 export function templateInstanceStateMap(state = {}, action){
   switch (action.type){
-    case 'PARSE_TEMPLATES':
-      return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', { 'x0': { visible: true, submitted: false//, 
-        // related_node_counts: (action.templatesByNodeLabel[action.currentTemplateNodeLabel].related_nodes || []).map((el) => { return 1; }) 
-      } }))
+    // case 'PARSE_TEMPLATES':
+    //   return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', { 'x0': { visible: true, submitted: false//, 
+    //     // related_node_counts: (action.templatesByNodeLabel[action.currentTemplateNodeLabel].related_nodes || []).map((el) => { return 1; }) 
+    //   } }))
+    case 'MAP_TEMPLATE_INSTANCES_STATE':
+      return Object.assign({}, state, action.templateInstanceStateMap)
     case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
       return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, { [action.templateInstanceId]: { visible: false, submitted: false//, 
         //related_node_counts: (action.templatesByNodeLabel[action.node_label].related_nodes || []).map((el) => { return 1; }) 
@@ -150,7 +154,7 @@ function generateTemplateInstancesByInstanceId(templatesByNodeLabel, currentTemp
         let current_node_property = obj[instanceId].node_properties[instruction.index]
         obj[instanceId].node_properties[instruction.index] = Object.assign({}, current_node_property, instruction.replace_with)
     } else if (instruction.type == 'related_node'){
-        let current_related_node = obj[instanceId].related_nodes[instruction.index]
+        let current_related_node = obj[instanceId].related_nodes[instruction.index] || {}
         obj[instanceId].related_nodes[instruction.index] = Object.assign({}, current_related_node, instruction.replace_with)
     }
   });

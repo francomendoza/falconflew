@@ -31402,8 +31402,10 @@
 	  if (state === undefined) state = {};
 
 	  switch (action.type) {
-	    case 'PARSE_TEMPLATES':
-	      return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', {}));
+	    // case 'PARSE_TEMPLATES':
+	    //   return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', {}));
+	    case 'MAP_TEMPLATE_INSTANCES':
+	      return Object.assign({}, state, action.templateInstanceMap);
 	    case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
 	      return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, {}));
 	    case 'CLEAR_TEMPLATES':
@@ -31417,10 +31419,12 @@
 	  if (state === undefined) state = {};
 
 	  switch (action.type) {
-	    case 'PARSE_TEMPLATES':
-	      return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', { 'x0': { visible: true, submitted: false //,
-	          // related_node_counts: (action.templatesByNodeLabel[action.currentTemplateNodeLabel].related_nodes || []).map((el) => { return 1; })
-	        } }));
+	    // case 'PARSE_TEMPLATES':
+	    //   return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', { 'x0': { visible: true, submitted: false//,
+	    //     // related_node_counts: (action.templatesByNodeLabel[action.currentTemplateNodeLabel].related_nodes || []).map((el) => { return 1; })
+	    //   } }))
+	    case 'MAP_TEMPLATE_INSTANCES_STATE':
+	      return Object.assign({}, state, action.templateInstanceStateMap);
 	    case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
 	      return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, _defineProperty({}, action.templateInstanceId, { visible: false, submitted: false //,
 	        //related_node_counts: (action.templatesByNodeLabel[action.node_label].related_nodes || []).map((el) => { return 1; })
@@ -31491,7 +31495,7 @@
 	      var current_node_property = obj[instanceId].node_properties[instruction.index];
 	      obj[instanceId].node_properties[instruction.index] = Object.assign({}, current_node_property, instruction.replace_with);
 	    } else if (instruction.type == 'related_node') {
-	      var current_related_node = obj[instanceId].related_nodes[instruction.index];
+	      var current_related_node = obj[instanceId].related_nodes[instruction.index] || {};
 	      obj[instanceId].related_nodes[instruction.index] = Object.assign({}, current_related_node, instruction.replace_with);
 	    }
 	  });
@@ -33887,6 +33891,8 @@
 	    }).then(function (data) {
 	      dispatch(addTemplatesByNodeLabel(data));
 	      dispatch(parseTemplates(getState().templatesByNodeLabel, currentTemplateNodeLabel));
+	      dispatch(addTemplateInstanceMap(getState().templateInstancesByInstanceId));
+	      dispatch(addTemplateInstanceStateMap(getState().templateInstancesByInstanceId));
 	    }).then(function () {
 	      return dispatch((0, _reduxRouter.pushState)(null, '/template_form/' + currentTemplateNodeLabel));
 	    });
@@ -33905,6 +33911,56 @@
 
 	function parseTemplates(templatesByNodeLabel, currentTemplateNodeLabel) {
 	  return { type: "PARSE_TEMPLATES", templatesByNodeLabel: templatesByNodeLabel, currentTemplateNodeLabel: currentTemplateNodeLabel };
+	}
+
+	function addTemplateInstanceMap(templateInstancesByInstanceId) {
+	  var templateInstanceMap = generateTemplateInstanceMap(templateInstancesByInstanceId, 'x0', {});
+	  return { type: 'MAP_TEMPLATE_INSTANCES', templateInstanceMap: templateInstanceMap };
+	}
+
+	function generateTemplateInstanceMap(templateInstancesByInstanceId, instanceId, obj) {
+	  if (obj[instanceId] !== undefined || obj[instanceId] !== null) {
+	    obj[instanceId] = [];
+	  }
+
+	  var templateInstance = templateInstancesByInstanceId[instanceId];
+
+	  if (templateInstance && templateInstance.related_nodes) {
+	    templateInstance.related_nodes.forEach(function (el, index) {
+	      // if(el.match_type !== 'child' && !el.children_templates){
+	      var thisInstanceId = '' + instanceId + index;
+	      obj[instanceId].push(thisInstanceId);
+	      generateTemplateInstanceMap(templateInstancesByInstanceId, thisInstanceId, obj);
+	      // }else{
+	      // obj[instanceId].push(null);
+	      // }
+	    });
+	  }
+	  return obj;
+	}
+
+	function addTemplateInstanceStateMap(templateInstancesByInstanceId) {
+	  var templateInstanceStateMap = generateTemplateInstanceStateMap(templateInstancesByInstanceId, 'x0', { 'x0': { visible: true, submitted: false } });
+	  return { type: 'MAP_TEMPLATE_INSTANCES_STATE', templateInstanceStateMap: templateInstanceStateMap };
+	}
+
+	function generateTemplateInstanceStateMap(templateInstancesByInstanceId, instanceId, obj) {
+	  var templateInstance = templateInstancesByInstanceId[instanceId];
+
+	  if (templateInstance && templateInstance.related_nodes) {
+	    templateInstance.related_nodes.forEach(function (el, index) {
+	      var thisInstanceId = '' + instanceId + index;
+	      //if(el.match_type !== 'child' && !el.children_templates){
+	      obj[thisInstanceId] = { visible: false, submitted: false //,
+	        //related_node_counts: (templatesByNodeLabel[el.template_label[0]].related_nodes || []).map((el) => { return 1; })
+	      };
+	      generateTemplateInstanceStateMap(templateInstancesByInstanceId, thisInstanceId, obj);
+	      //}else{
+	      //  obj[thisInstanceId] = null;
+	      //}
+	    });
+	  }
+	  return obj;
 	}
 
 	function requestTemplateByName(name) {
@@ -35637,7 +35693,7 @@
 
 	    (templateInstance.related_nodes || []).map(function (related_node, index) {
 	      var related_node_element = _react2['default'].createElement(_related_node_element2['default'], {
-	        key: related_node._id['$oid'] + templateInstanceId,
+	        key: (related_node._id ? related_node._id['$oid'] : index) + templateInstanceId,
 	        related_node: related_node,
 	        templateInstanceId: templateInstanceId + index,
 	        toggleShow: _this6.toggleTemplateFormVisibility(templateInstanceId + index),
@@ -35733,7 +35789,7 @@
 	      React.createElement("input", { type: property.type,
 	        name: property.name,
 	        value: property.value,
-	        disabled: property.readonly ? true : false,
+	        disabled: !!property.readonly,
 	        onChange: this.handlePropertyChange,
 	        onClick: this.props.clickDivHandler })
 	    );
@@ -35895,7 +35951,7 @@
 	        _react2['default'].createElement(
 	          'label',
 	          null,
-	          this.props.related_node.template_label,
+	          this.props.related_node.view_label || this.props.related_node.template_label,
 	          ': '
 	        ),
 	        autocomplete_field,

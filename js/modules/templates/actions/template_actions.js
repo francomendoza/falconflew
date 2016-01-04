@@ -70,6 +70,8 @@ export function retrieveTemplates(currentTemplateNodeLabel){
       .then(data => {
         dispatch(addTemplatesByNodeLabel(data));
         dispatch(parseTemplates(getState().templatesByNodeLabel, currentTemplateNodeLabel));
+        dispatch(addTemplateInstanceMap(getState().templateInstancesByInstanceId));
+        dispatch(addTemplateInstanceStateMap(getState().templateInstancesByInstanceId));
       })
       .then(() => dispatch(pushState(null, '/template_form/'+currentTemplateNodeLabel)));
   };
@@ -83,6 +85,56 @@ function addTemplatesByNodeLabel(templates){
 
 function parseTemplates(templatesByNodeLabel, currentTemplateNodeLabel){
   return { type: "PARSE_TEMPLATES", templatesByNodeLabel, currentTemplateNodeLabel }
+}
+
+function addTemplateInstanceMap(templateInstancesByInstanceId){
+  let templateInstanceMap = generateTemplateInstanceMap(templateInstancesByInstanceId, 'x0', {})
+  return { type: 'MAP_TEMPLATE_INSTANCES', templateInstanceMap }
+}
+
+function generateTemplateInstanceMap(templateInstancesByInstanceId, instanceId, obj) {
+  if(obj[instanceId] !== undefined || obj[instanceId] !== null) {
+    obj[instanceId] = [];
+  }
+
+  let templateInstance = templateInstancesByInstanceId[instanceId]
+
+  if(templateInstance && templateInstance.related_nodes){
+    templateInstance.related_nodes.forEach((el, index) => {
+      // if(el.match_type !== 'child' && !el.children_templates){
+        let thisInstanceId = `${instanceId}${index}`;
+        obj[instanceId].push(thisInstanceId);
+        generateTemplateInstanceMap(templateInstancesByInstanceId, thisInstanceId, obj);
+      // }else{
+        // obj[instanceId].push(null);
+      // }
+    });
+  }
+  return obj;
+}
+
+function addTemplateInstanceStateMap(templateInstancesByInstanceId){
+  let templateInstanceStateMap = generateTemplateInstanceStateMap(templateInstancesByInstanceId, 'x0', { 'x0': { visible: true, submitted: false } })
+  return { type: 'MAP_TEMPLATE_INSTANCES_STATE', templateInstanceStateMap }
+}
+
+function generateTemplateInstanceStateMap(templateInstancesByInstanceId, instanceId, obj) {
+  let templateInstance = templateInstancesByInstanceId[instanceId]
+
+  if(templateInstance && templateInstance.related_nodes){
+    templateInstance.related_nodes.forEach((el, index) => {
+      let thisInstanceId = `${instanceId}${index}`;
+      //if(el.match_type !== 'child' && !el.children_templates){
+        obj[thisInstanceId] = {visible: false, submitted: false//, 
+          //related_node_counts: (templatesByNodeLabel[el.template_label[0]].related_nodes || []).map((el) => { return 1; })
+        };
+        generateTemplateInstanceStateMap(templateInstancesByInstanceId, thisInstanceId, obj);
+      //}else{
+      //  obj[thisInstanceId] = null;
+      //}
+    });
+  }
+  return obj;
 }
 
 export function requestTemplateByName(name){
