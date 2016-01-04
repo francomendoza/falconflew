@@ -57,13 +57,13 @@ var TemplatePage = React.createClass({
       borderBottom: "#002c6b 4px solid"
     };
 
-    let propertyContainerStyles = { 
+    let propertyContainerStyles = {
       opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3",
       width: (100 - 5)/(templateInstance.node_properties || []).length + "%",
       float: "left"
     }
 
-    let relationshipContainerStyles = { 
+    let relationshipContainerStyles = {
       opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3",
       clear: "both"
     }
@@ -75,27 +75,28 @@ var TemplatePage = React.createClass({
     templateInstance.node_properties.map((node_property, index) => {
       var property_form_element = <PropertyFormElement
         key = { node_property._id['$oid'] + templateInstanceId }
-        property = { node_property } 
-        handlePropertyChange = { this.handlePropertyChange(templateInstanceId, index) } 
-        clickDivHandler = { this.clickDivHandler(templateInstanceId) } 
+        property = { node_property }
+        handlePropertyChange = { this.handlePropertyChange(templateInstanceId, index) }
+        clickDivHandler = { this.clickDivHandler(templateInstanceId) }
         style = { propertyContainerStyles }/>
 
       array.push(property_form_element);
     });
 
     (templateInstance.related_nodes || []).map((related_node, index) => {
-      var related_node_element = <RelatedNodeElement
-        key = { (related_node._id ? related_node._id['$oid'] : index) + templateInstanceId }
-        related_node = { related_node }
-        templateInstanceId = { templateInstanceId + index }
-        toggleShow = { this.toggleTemplateFormVisibility(templateInstanceId + index) }
-        dispatch = { this.props.dispatch }
-        entitiesByLabel = { this.props.entitiesByLabel }
-        handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) } 
-        clickDivHandler = { this.clickDivHandler(templateInstanceId) }
-        style = { relationshipContainerStyles }/>
-
-      array.push(related_node_element);
+      if(related_node.visible) {
+        var related_node_element = <RelatedNodeElement
+          key = { (related_node._id ? related_node._id['$oid'] : index) + templateInstanceId }
+          related_node = { related_node }
+          templateInstanceId = { templateInstanceId + index }
+          toggleShow = { this.toggleTemplateFormVisibility(templateInstanceId + index) }
+          dispatch = { this.props.dispatch }
+          entitiesByLabel = { this.props.entitiesByLabel }
+          handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) }
+          clickDivHandler = { this.clickDivHandler(templateInstanceId) }
+          style = { relationshipContainerStyles }/>
+        array.push(related_node_element);
+      }
       var nextTemplateInstanceId = this.props.templateInstanceMap[templateInstanceId][index];
       var nextTemplate = <Empty/>
 
@@ -106,7 +107,7 @@ var TemplatePage = React.createClass({
 
     array.push(<div style = { { padding: "10px" } }
       key = { templateInstanceId + 'submit' }><button onClick = { this.submitHandler(templateInstanceId) }> Submit { templateInstance.node_label[0] }</button></div>)
-    
+
     return array;
   },
 
@@ -119,7 +120,7 @@ var TemplatePage = React.createClass({
     };
 
     var mega_array = this.recursive('x0', []);
- 
+
     return <div style = { container_styles } >{ mega_array }</div>
   }
 
@@ -132,7 +133,7 @@ function mapStateToProps(state){
     templateInstanceStateMap: state.templateInstanceStateMap,
     templateInstanceMap: state.templateInstanceMap,
     activeTemplate: state.activeTemplate,
-    entitiesByLabel: state.entitiesByLabel 
+    entitiesByLabel: state.entitiesByLabel
   }
 }
 
