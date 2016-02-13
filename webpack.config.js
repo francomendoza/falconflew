@@ -1,9 +1,18 @@
+var webpack = require('webpack');
+
 module.exports = {
-    entry: "./js/index.js",
+    entry: [
+      'webpack-dev-server/client?http://localhost:8080',
+      'webpack/hot/dev-server',
+      './js/index.js'
+    ],
     output: {
       path: __dirname,
       filename: "bundle.js"
     },
+    plugins: [
+      new webpack.HotModuleReplacementPlugin()
+    ],
     module: {
       loaders: [
         {
@@ -12,5 +21,8 @@ module.exports = {
           loader: 'babel'
         }
       ]
+    },
+    devServer: {
+      hot: true
     }
 };

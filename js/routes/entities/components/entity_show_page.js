@@ -11,7 +11,7 @@ var EntityShowPage = React.createClass({
           <EntityCard entity={entity}
             key={entity.entity_id}
             dispatch = {this.props.dispatch}
-            available_actions = { this.props.childTemplatesByEntityId[entity.entity_id] || [] } 
+            available_actions = { this.props.childTemplatesByEntityId[entity.entity_id] || [] }
             onClickHandler = { () => { this.props.dispatch(selectEntityCard(entity.entity_id)) } }/>
           { this.props.shownEntity.related_entities.map((details, index) => {
               return <div key = { index } style={{float: "left"}}>
@@ -20,7 +20,7 @@ var EntityShowPage = React.createClass({
                   return <EntityCard entity={entity}
                     key = { entity.entity_id }
                     dispatch = { this.props.dispatch }
-                    available_actions = { this.props.childTemplatesByEntityId[entity.entity_id] || [] } 
+                    available_actions = { this.props.childTemplatesByEntityId[entity.entity_id] || [] }
                     onClickHandler = { () => { this.props.dispatch(selectEntityCard(entity.entity_id)) } }/>
                })}
               </div>;

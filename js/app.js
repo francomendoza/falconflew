@@ -7,12 +7,14 @@ import NavBar from './routes/entities/components/nav_bar';
 var App = React.createClass({
 
   render: function() {
-   return (<div>
-    <NavBar/>
-    <TemplateList autocompleteItems = { this.props.autocompleteItems } dispatch = { this.props.dispatch } />
-    <EntityList />
-    { this.props.children }
-  </div>);
+    return (
+      <div>
+        <NavBar/>
+        <TemplateList autocompleteItems = { this.props.autocompleteItems } dispatch = { this.props.dispatch } />
+        <EntityList />
+        { this.props.children }
+      </div>
+    );
   }
 });
 
@@ -24,5 +26,3 @@ function mapStateToProps(state){
 
 export default connect(mapStateToProps)(App);
 // module.exports = App;
-
-

@@ -5,7 +5,8 @@ var NavBar = React.createClass({
 
   render: function() {
     return <div>
-      <Link to = { '/entities' }>Entities</Link>
+      <Link to = { '/entities' } style = { { padding: "10px" } }>Entities</Link>
+      <Link to = { '/grid' }>Grid</Link>
     </div>
   }
 });
