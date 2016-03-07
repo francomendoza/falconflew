@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch';
-import { pushState } from 'redux-router';
+import { routeActions } from 'react-router-redux';
 
 export function submitForm(templateInstanceId){
   return (dispatch, getState) => {
@@ -21,10 +21,10 @@ export function submitForm(templateInstanceId){
         dispatch(relationshipEntityChanged(parentTemplateId, relatedNodeIndex, data.entity_id, entityIdIndex));
       }
     })
-    .then(() => { 
-      if(templateInstanceId === 'x0') { 
-        dispatch(pushState(null, '/', null)) 
-      } 
+    .then(() => {
+      if(templateInstanceId === 'x0') {
+        dispatch(routeActions.push('/'))
+      }
     });
   }
 }
@@ -73,7 +73,7 @@ export function retrieveTemplates(currentTemplateNodeLabel){
         dispatch(addTemplateInstanceMap(getState().templateInstancesByInstanceId));
         dispatch(addTemplateInstanceStateMap(getState().templateInstancesByInstanceId));
       })
-      .then(() => dispatch(pushState(null, '/template_form/'+currentTemplateNodeLabel)));
+      .then(() => dispatch(routeActions.push('/template_form/' + currentTemplateNodeLabel)));
   };
 };
 
@@ -125,7 +125,7 @@ function generateTemplateInstanceStateMap(templateInstancesByInstanceId, instanc
     templateInstance.related_nodes.forEach((el, index) => {
       let thisInstanceId = `${instanceId}${index}`;
       //if(el.match_type !== 'child' && !el.children_templates){
-        obj[thisInstanceId] = {visible: false, submitted: false//, 
+        obj[thisInstanceId] = {visible: false, submitted: false//,
           //related_node_counts: (templatesByNodeLabel[el.template_label[0]].related_nodes || []).map((el) => { return 1; })
         };
         generateTemplateInstanceStateMap(templateInstancesByInstanceId, thisInstanceId, obj);

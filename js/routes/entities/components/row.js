@@ -37,7 +37,7 @@ var Row = React.createClass({
     }
 
     return <tr>
-      { this.props.columnHeaders.map((columnHeader, index) => {
+      { this.props.nodeSections.map((columnHeader, index) => {
         if (columnHeader.node) {
           if (this.props.rowData[columnHeader.node].value) {
             return <td key = { index + columnHeader.node }>{ this.props.rowData[columnHeader.node].value }</td>

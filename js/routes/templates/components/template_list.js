@@ -1,7 +1,6 @@
 var React = require('react');
 var Autocomplete = require('react-autocomplete');
 import { requestTemplateByName, retrieveTemplates } from '../../../modules/templates/actions/template_actions';
-import { pushState } from 'redux-router';
 
 var TemplateList = React.createClass({
 
@@ -23,14 +22,14 @@ var TemplateList = React.createClass({
         backgroundColor: "white"
       }
     }
-    
+
     return <div>
         <h2>Search Templates</h2>
-        <Autocomplete 
-        onChange = { this.onChange } 
+        <Autocomplete
+        onChange = { this.onChange }
         onSelect = { this.onSelect }
         getItemValue = { (item) => item.node_label[0] }
-        items = { this.props.autocompleteItems } 
+        items = { this.props.autocompleteItems }
         renderItem={ (item, isHighlighted) => (
             <div
               style = {isHighlighted ? styles.highlightedItem : styles.item}

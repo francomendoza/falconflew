@@ -5,37 +5,60 @@ import fetch from 'isomorphic-fetch';
 import SearchHeaderCell from './search_header_cell';
 import ColumnAdder from './ColumnAdder';
 import ColumnHeader from './ColumnHeader';
+import SearchRow from './SearchRow';
+import StaticSearchHeaderCell from './StaticSearchHeaderCell';
 
 var Table = React.createClass({
 
   render: function() {
 
-    return <table>
+    let node_header = [],
+      details_header = [],
+      search_header_cell;
+
+    this.props.nodeSections.forEach((nodeSection, nodeSectionIndex) => {
+      node_header.push(<ColumnHeader
+        key = { nodeSectionIndex }
+        title = { nodeSection.node }
+        colspan = { nodeSection.properties.length }/>)
+      nodeSection.properties.forEach((property, index) => {
+        details_header.push(<ColumnHeader
+          key = { nodeSectionIndex + "" + index }
+          title = { property.displayName } />)
+      })
+    })
+
+    if(this.props.headerAutocompleteOptions.length == 0){
+      search_header_cell = <SearchHeaderCell
+        endpoint = { "http://localhost:3000/templates/templates_by_name?name=" }
+        onSelect = { this.props.onHeaderSelect(this.props.nodeSections.length) }
+        nodeSections = { this.props.nodeSections }/>
+    } else {
+      search_header_cell = <StaticSearchHeaderCell
+        dataSource = { this.props.headerAutocompleteOptions }
+        onSelect = { this.props.onRelatedNodeSelect }
+        nodeSections = { this.props.nodeSections }/>
+    }
+
+    return <table className = { "table" }>
       <thead>
-        <tr>{ this.props.columnHeaders.map((columnHeader, index) => {
-          if (columnHeader.type === "node_model_search") {
-            return <SearchHeaderCell
-              key = { index }
-              endpoint = { "http://localhost:3000/templates/templates_by_name?name=" }
-              onSelect = { this.props.onHeaderSelect(index) } />
-          } else if (columnHeader.type === "new_column") {
-            return <ColumnAdder
-              key = { index }
-              onClick = { this.props.addHeader }/>
-          } else if (columnHeader.type === "node") {
-            return <ColumnHeader
-              key = { index }
-              column = { columnHeader }/>
-          }
-        }) }</tr>
+        <tr>
+          { node_header }
+          { search_header_cell }
+        </tr>
+        <tr>{ details_header }</tr>
       </thead>
       <tbody>
         { this.props.tableData.map((row, index) => {
-          return <Row
-            key = { index }
-            columnHeaders = { this.props.columnHeaders }
-            rowData = { row }/>
+          return <tr key = { index }>{ this.props.nodeSections.map((nodeSection) => {
+            return nodeSection.properties.map((property, index) => {
+              return <td key = { index }>{ row[nodeSection.node] ? row[nodeSection.node][property.propertyKey] : "" }</td>
+            })
+          })}</tr>
         }) }
+        <SearchRow
+          nodeSections = { this.props.nodeSections }
+          onSearchCellSelect = { this.props.onSearchCellSelect }/>
       </tbody>
     </table>
   }

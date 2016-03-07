@@ -11,7 +11,6 @@ var App = React.createClass({
       <div>
         <NavBar/>
         <TemplateList autocompleteItems = { this.props.autocompleteItems } dispatch = { this.props.dispatch } />
-        <EntityList />
         { this.props.children }
       </div>
     );

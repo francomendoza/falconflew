@@ -1,5 +1,5 @@
 import React from 'react';
-import { pushState } from 'redux-router';
+import { routeActions } from 'react-router-redux';
 import { retrieveTemplates } from '../../../modules/templates/actions/template_actions';
 import { showEntity } from '../../../modules/entities/actions/entity_actions';
 
@@ -8,7 +8,7 @@ var EntityCard = React.createClass({
   chooseTemplate: function(label) {
     return (e) => {
       e.preventDefault();
-      //this.props.dispatch(pushState(null, `/template_form/${label}`))
+      //this.props.dispatch(routeActions.push(`/template_form/${label}`))
       this.props.dispatch(retrieveTemplates(label));
     }
   },

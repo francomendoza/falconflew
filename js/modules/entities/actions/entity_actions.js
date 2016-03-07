@@ -1,5 +1,4 @@
 import fetch from 'isomorphic-fetch';
-import { pushState } from 'redux-router';
 
 export function entitySearch(search_term) {
   return (dispatch, getState) => {

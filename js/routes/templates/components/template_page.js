@@ -128,7 +128,6 @@ var TemplatePage = React.createClass({
 
 function mapStateToProps(state){
   return {
-    currentTemplateId: state.router.params.currentTemplateId,
     templateInstancesByInstanceId: state.templateInstancesByInstanceId,
     templateInstanceStateMap: state.templateInstanceStateMap,
     templateInstanceMap: state.templateInstanceMap,
