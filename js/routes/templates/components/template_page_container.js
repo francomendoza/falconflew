@@ -1,5 +1,5 @@
 import React from 'react';
-import EntityList from './entity_list';
+import EntityList from '../../entities/components/entity_list';
 import TemplateList from './template_list';
 import TemplatePage from './template_page';
 import { connect } from 'react-redux';

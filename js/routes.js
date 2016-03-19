@@ -4,6 +4,8 @@ import App from './app';
 import TemplatePage from './routes/templates/components/template_page';
 import EntityPage from './routes/entities/components/entity_page';
 import GridPage from './routes/entities/components/grid_page';
+import GraphPage from './routes/graph/GraphPage';
+import TemplateContainer from './routes/templates/containers/TemplateContainer';
 
 let enter = function(){
 }
@@ -12,8 +14,10 @@ export default (store) => {
   return (
     <Route path = '/' component = { App }>
       <Route path = 'template_form/:currentTemplateId' component = { TemplatePage } />
+      <Route path = 'template' component = { TemplateContainer } />
       <Route path = 'entities' component = { EntityPage } />
       <Route path = 'grid' component = { GridPage } onEnter = { enter(store) }/>
+      <Route path = 'graph' component = { GraphPage } />
     </Route>
   );
 };
