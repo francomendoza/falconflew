@@ -7,8 +7,13 @@ export default React.createClass({
 
   render: function () {
 
+    let styles = {
+      container: {
+        textAlign: "center"
+      }
+    }
     return (
-      <div>
+      <div style = { styles.container }>
         {
           (this.props.template.node_instances || []).map((node_instance, index) => {
             return <NodeInstance
@@ -21,6 +26,8 @@ export default React.createClass({
             return <GraphInstance
               key = { index }
               instance = { graph_instance }
+              graphInstanceIndex = { index }
+              parentTemplateInstanceId = { this.props.template.templateInstanceId }
               onAddNewButtonClick = { this.props.onAddNewButtonClick } />
           })
         }

@@ -62,31 +62,35 @@ export default React.createClass({
           property = { property } />
       })
     } else {
-      nodeSearch = <Autocomplete
-        onChange = { this.onChange }
-        onSelect = { this.onSelect }
-        items = { this.state.autocompleteResults }
-        getItemValue = { (item) => { return item } }
-        renderItem = { (item, isHighlighted) => {
-          return (
-            <div
-              style = { isHighlighted ? styles.highlightedItem : styles.item }>
-              { item }
-            </div>
-          )
-        } }
-      />
+      nodeSearch = (
+        <div>
+          <Autocomplete
+            onChange = { this.onChange }
+            onSelect = { this.onSelect }
+            items = { this.state.autocompleteResults }
+            getItemValue = { (item) => { return item } }
+            renderItem = { (item, isHighlighted) => {
+              return (
+                <div
+                  style = { isHighlighted ? styles.highlightedItem : styles.item }>
+                  { item }
+                </div>
+              )
+            } }
+          />
+          <div
+            style = { styles.newButton }
+            onClick = { this.onNewButtonClick }>
+            +
+          </div>
+        </div>
+      )
     }
 
     return (
       <div className = "property_element">
         <label>{ this.props.instance.label || this.props.instance.type }:</label>
         { nodeSearch }
-        <div
-          style = { styles.newButton }
-          onClick = { this.onNewButtonClick }>
-          +
-        </div>
         { newNodeTemplate }
       </div>
     )

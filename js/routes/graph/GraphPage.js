@@ -4,6 +4,7 @@ import fetch from 'isomorphic-fetch';
 import PropertyFormElement from '../templates/components/property_form_element';
 import GraphInstance from './GraphInstance';
 import GraphTemplate from './GraphTemplate';
+import clone from 'clone';
 
 export default React.createClass({
 
@@ -11,6 +12,8 @@ export default React.createClass({
     return {
       autocompleteResults: [],
       template: {},
+      currentTemplateInstanceId: null,
+      templateInstancesByInstanceId: {},
       templates: []
     }
   },
@@ -22,29 +25,40 @@ export default React.createClass({
   },
 
   onSelect: function (value, item) {
-    let templates = this.state.templates
+    let templates = this.state.templates,
+    templateInstancesByInstanceId = this.state.templateInstancesByInstanceId,
+    currentTemplateInstanceId;
     fetch("http://localhost:3000/graph_models/template?label="+value)
     .then(response => response.json())
     .then(data => {
       templates.push(data)
-      this.setState({ templates: templates })
+      let newTemplateInstance = clone(data),
+      newTemplateInstanceId = "x0";
+      newTemplateInstance.templateInstanceId = newTemplateInstanceId;
+      currentTemplateInstanceId = newTemplateInstanceId;
+      templateInstancesByInstanceId[newTemplateInstanceId] = newTemplateInstance;
+      this.setState({ templates, templateInstancesByInstanceId, currentTemplateInstanceId })
     })
   },
 
-  // recursive: function () {
-  //   this.state.templates.map((template) => {
-  //
-  //   })
-  // },
-
-  onAddNewButtonClick: function (label) {
+  onAddNewButtonClick: function (graphInstanceLabel, graphInstanceIndex, parentTemplateInstanceId) {
     return (event) => {
-      let templates = this.state.templates;
-      fetch("http://localhost:3000/graph_models/template?label=" + label)
+      let templates = this.state.templates,
+      templateInstancesByInstanceId = this.state.templateInstancesByInstanceId,
+      currentTemplateInstanceId;
+      // check if template is already in cache, if so dont make new request
+      fetch("http://localhost:3000/graph_models/template?label=" + graphInstanceLabel)
       .then(response => response.json())
       .then(data => {
         templates.push(data)
-        this.setState({ templates })
+        // instanceIdGenerator() x0+0
+        let newTemplateInstance = clone(data);
+        let newTemplateInstanceId = graphInstanceLabel;
+        currentTemplateInstanceId = newTemplateInstanceId;
+        newTemplateInstance.templateInstanceId = newTemplateInstanceId;
+        templateInstancesByInstanceId[newTemplateInstanceId] = newTemplateInstance;
+        templateInstancesByInstanceId[parentTemplateInstanceId].graph_instances[graphInstanceIndex]["templateInstanceId"] = newTemplateInstanceId;
+        this.setState({ templates, templateInstancesByInstanceId, currentTemplateInstanceId })
       })
     }
   },
@@ -60,13 +74,19 @@ export default React.createClass({
     },
     templates;
 
-    if (this.state.templates.length > 0) {
-      templates = this.state.templates.map((template, index) => {
-        return <GraphTemplate
-          key = { index }
-          template = { template }
-          onAddNewButtonClick = { this.onAddNewButtonClick }/>
-      })
+    // if (this.state.templates.length > 0) {
+    //   templates = this.state.templates.map((template, index) => {
+    //     return <GraphTemplate
+    //       key = { index }
+    //       template = { template }
+    //       onAddNewButtonClick = { this.onAddNewButtonClick }/>
+    //   })
+    // }
+
+    if (this.state.currentTemplateInstanceId) {
+      templates = <GraphTemplate
+        template = { this.state.templateInstancesByInstanceId[this.state.currentTemplateInstanceId] }
+        onAddNewButtonClick = { this.onAddNewButtonClick }/>
     }
 
     return (
