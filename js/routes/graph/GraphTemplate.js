@@ -12,8 +12,10 @@ export default React.createClass({
         textAlign: "center"
       }
     }
+    
     return (
       <div style = { styles.container }>
+        <div>New { this.props.template.label }</div>
         {
           (this.props.template.node_instances || []).map((node_instance, index) => {
             return <NodeInstance
@@ -28,6 +30,7 @@ export default React.createClass({
               instance = { graph_instance }
               graphInstanceIndex = { index }
               parentTemplateInstanceId = { this.props.template.templateInstanceId }
+              onAddNewButtonClickType = { this.props.onAddNewButtonClickType }
               onAddNewButtonClick = { this.props.onAddNewButtonClick } />
           })
         }

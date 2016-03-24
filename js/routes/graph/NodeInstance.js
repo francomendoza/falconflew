@@ -89,7 +89,6 @@ export default React.createClass({
 
     return (
       <div className = "property_element">
-        <label>{ this.props.instance.label || this.props.instance.type }:</label>
         { nodeSearch }
         { newNodeTemplate }
       </div>

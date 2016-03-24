@@ -4,6 +4,7 @@ import fetch from 'isomorphic-fetch';
 import PropertyFormElement from '../templates/components/property_form_element';
 import GraphInstance from './GraphInstance';
 import GraphTemplate from './GraphTemplate';
+import GraphChooser from './GraphChooser';
 import clone from 'clone';
 
 export default React.createClass({
@@ -14,7 +15,9 @@ export default React.createClass({
       template: {},
       currentTemplateInstanceId: null,
       templateInstancesByInstanceId: {},
-      templates: []
+      templates: [],
+      hiddenTemplates: [],
+      graphChooser: null
     }
   },
 
@@ -45,7 +48,10 @@ export default React.createClass({
     return (event) => {
       let templates = this.state.templates,
       templateInstancesByInstanceId = this.state.templateInstancesByInstanceId,
-      currentTemplateInstanceId;
+      currentTemplateInstanceId,
+      hiddenTemplates = this.state.hiddenTemplates;
+      hiddenTemplates.push(templateInstancesByInstanceId[parentTemplateInstanceId].label)
+      this.setState({ hiddenTemplates })
       // check if template is already in cache, if so dont make new request
       fetch("http://localhost:3000/graph_models/template?label=" + graphInstanceLabel)
       .then(response => response.json())
@@ -63,6 +69,16 @@ export default React.createClass({
     }
   },
 
+  onAddNewButtonClickType: function (type, graphInstanceIndex, parentTemplateInstanceId) {
+    this.setState({ graphChooser: { type, graphInstanceIndex, parentTemplateInstanceId }, currentTemplateInstanceId: null });
+  },
+
+  onGraphChooserSelect: function (graphInstanceIndex, parentTemplateInstanceId) {
+    return (event) => {
+      this.onAddNewButtonClick(event.target.value, graphInstanceIndex, parentTemplateInstanceId)()
+    }
+  },
+
   render: function () {
     let styles = {
       highlightedItem: {
@@ -70,23 +86,38 @@ export default React.createClass({
       },
       item: {
         backgroundColor: "white"
+      },
+      hiddenTemplateBar: {
+        height: "50px",
+        padding: "15px",
+        backgroundColor: "aquamarine"
       }
     },
-    templates;
-
-    // if (this.state.templates.length > 0) {
-    //   templates = this.state.templates.map((template, index) => {
-    //     return <GraphTemplate
-    //       key = { index }
-    //       template = { template }
-    //       onAddNewButtonClick = { this.onAddNewButtonClick }/>
-    //   })
-    // }
+    template, hiddenTemplates, graphChooser;
 
     if (this.state.currentTemplateInstanceId) {
-      templates = <GraphTemplate
+      template = <GraphTemplate
         template = { this.state.templateInstancesByInstanceId[this.state.currentTemplateInstanceId] }
+        onAddNewButtonClickType = { this.onAddNewButtonClickType }
         onAddNewButtonClick = { this.onAddNewButtonClick }/>
+    }
+
+    if (this.state.graphChooser) {
+      graphChooser = <GraphChooser
+        graphChooser = { this.state.graphChooser }
+        onGraphChooserSelect = { this.onGraphChooserSelect } />
+    }
+
+    if (this.state.hiddenTemplates.length > 0) {
+      hiddenTemplates = this.state.hiddenTemplates.map((hiddenTemplate, index) => {
+        return (
+          <div
+            key = { index }
+            style = { styles.hiddenTemplateBar }>
+            { /*this.state.templateInstancesByInstanceId[hiddenTemplate].label*/ hiddenTemplate }
+          </div>
+        )
+      })
     }
 
     return (
@@ -105,7 +136,9 @@ export default React.createClass({
             )
           } }
         />
-        { templates }
+        { hiddenTemplates }
+        { graphChooser }
+        { template }
       </div>
     )
   }

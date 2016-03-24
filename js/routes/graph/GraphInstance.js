@@ -7,21 +7,9 @@ import GraphTemplate from './GraphTemplate';
 
 export default React.createClass({
 
-  componentWillMount: function () {
-    if (this.props.instance.type) {
-      fetch("http://localhost:3000/graph_models/templates_by_type?type=" + this.props.instance.type)
-      .then(response => response.json())
-      .then(data => this.setState({ types: data }))
-    }
-  },
-
   getInitialState: function () {
     return {
-      autocompleteResults: [],
-      template: {},
-      types: [],
-      specificTypeLabel: null,
-      graphChooser: false
+      autocompleteResults: []
     }
   },
 
@@ -34,26 +22,18 @@ export default React.createClass({
   onSelect: function (value, item) {
     fetch("http://localhost:3000/graph_models/template?label=" + value)
     .then(response => response.json())
-    .then(data => this.setState({ template: data }))
+  //  .then(data => this.setState({ template: data }))
   },
 
   onNewButtonClick: function () {
     if (this.props.instance.type) {
       // render graph chooser
-      this.toggleGraphChooser();
+      this.props.onAddNewButtonClickType(this.props.instance.type, this.props.graphInstanceIndex, this.props.parentTemplateInstanceId)
     } else if (this.props.instance.label) {
       // render template
+      this.props.onAddNewButtonClick(this.props.instance.label, this.props.graphInstanceIndex, this.props.parentTemplateInstanceId)()
     }
-  },
 
-  toggleGraphChooser: function () {
-    let graphChooserState = this.state.graphChooser;
-    this.setState({ graphChooser: !graphChooserState })
-  },
-
-  onGraphChooserSelectChange: function (event) {
-    //only sets value after a change, we need to initialize?  maybe use "all" as initial value
-    this.setState({ specificTypeLabel: event.target.value })
   },
 
   render: function () {
@@ -69,42 +49,11 @@ export default React.createClass({
         display: "inline-block",
         fontSize: "20px",
         fontWeight: "bold"
-      },
-      graphChooser: {
-        display: "inline-block"
-      },
-      graphChooser_select: {
-        width: "100px"
-      },
-      graphChooser_exit: {
-        display: "inline-block",
-        fontSize: "20px",
-        fontWeight: "bold",
-        margin: "5px"
       }
     }
 
-    let graphChooser, template;
-    if (this.state.graphChooser) {
-    // if (this.props.instance.type) {
-      graphChooser = (
-        <div style = { styles.graphChooser }>
-          <select
-            style = { styles.graphChooser_select }
-            onChange = { this.onGraphChooserSelectChange }>
-            { this.state.types.map((type_label, index) => {
-              return <option key = { index }>{ type_label }</option>
-            }) }
-          </select>
-          <div
-            style = { styles.graphChooser_exit }
-            onClick = { this.toggleGraphChooser }>
-            x
-          </div>
-        </div>
-      )
-    } else {
-      graphChooser = <div className = "property_element">
+    return (
+      <div className = "property_element">
         <label>{ this.props.instance.label || this.props.instance.type }:</label>
         <Autocomplete
           onChange = { this.onChange }
@@ -125,17 +74,6 @@ export default React.createClass({
           onClick = { this.onNewButtonClick }>
           +
         </div>
-      </div>
-    }
-
-    // if (this.state.template) {
-    //   template = <GraphTemplate template = { this.state.template }/>
-    // }
-    // this.props.onAddNewButtonClick(this.props.label || this.state.specificTypeLabel, this.props.graphInstanceIndex, this.props.parentTemplateInstanceId)
-
-    return (
-      <div>
-        { graphChooser }
       </div>
     )
   }
