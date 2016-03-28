@@ -44,14 +44,15 @@ export default React.createClass({
     })
   },
 
-  onAddNewButtonClick: function (graphInstanceLabel, graphInstanceIndex, parentTemplateInstanceId) {
-    return (event) => {
+  onAddNewButtonClick: function (graphInstanceLabel, graphInstanceIndex, parentTemplateInstanceId, templateInstanceId) {
       let templates = this.state.templates,
       templateInstancesByInstanceId = this.state.templateInstancesByInstanceId,
       currentTemplateInstanceId,
       hiddenTemplates = this.state.hiddenTemplates;
-      hiddenTemplates.push(templateInstancesByInstanceId[parentTemplateInstanceId].label)
-      this.setState({ hiddenTemplates })
+      if (!templateInstanceId) {
+        hiddenTemplates.push(templateInstancesByInstanceId[parentTemplateInstanceId].label)
+        this.setState({ hiddenTemplates })
+      }
       // check if template is already in cache, if so dont make new request
       fetch("http://localhost:3000/graph_models/template?label=" + graphInstanceLabel)
       .then(response => response.json())
@@ -59,23 +60,28 @@ export default React.createClass({
         templates.push(data)
         // instanceIdGenerator() x0+0
         let newTemplateInstance = clone(data);
-        let newTemplateInstanceId = graphInstanceLabel;
+        let newTemplateInstanceId = templateInstanceId ? templateInstanceId : graphInstanceLabel;
         currentTemplateInstanceId = newTemplateInstanceId;
         newTemplateInstance.templateInstanceId = newTemplateInstanceId;
         templateInstancesByInstanceId[newTemplateInstanceId] = newTemplateInstance;
         templateInstancesByInstanceId[parentTemplateInstanceId].graph_instances[graphInstanceIndex]["templateInstanceId"] = newTemplateInstanceId;
         this.setState({ templates, templateInstancesByInstanceId, currentTemplateInstanceId })
       })
-    }
   },
 
   onAddNewButtonClickType: function (type, graphInstanceIndex, parentTemplateInstanceId) {
     this.setState({ graphChooser: { type, graphInstanceIndex, parentTemplateInstanceId }, currentTemplateInstanceId: null });
   },
 
-  onGraphChooserSelect: function (graphInstanceIndex, parentTemplateInstanceId) {
+  onGraphChooserSelect: function (graphInstanceIndex, parentTemplateInstanceId, currentTemplateInstanceId) {
     return (event) => {
-      this.onAddNewButtonClick(event.target.value, graphInstanceIndex, parentTemplateInstanceId)()
+      // check if template is in cache, otherwise request it
+      // replace whatever the current instance is with this new instance
+      if (currentTemplateInstanceId) {
+        this.onAddNewButtonClick(event.target.value, graphInstanceIndex, parentTemplateInstanceId, currentTemplateInstanceId)
+      } else {
+        this.onAddNewButtonClick(event.target.value, graphInstanceIndex, parentTemplateInstanceId)
+      }
     }
   },
 
@@ -105,6 +111,7 @@ export default React.createClass({
     if (this.state.graphChooser) {
       graphChooser = <GraphChooser
         graphChooser = { this.state.graphChooser }
+        currentTemplateInstanceId = { this.state.currentTemplateInstanceId }
         onGraphChooserSelect = { this.onGraphChooserSelect } />
     }
 

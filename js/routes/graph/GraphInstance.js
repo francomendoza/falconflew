@@ -31,7 +31,7 @@ export default React.createClass({
       this.props.onAddNewButtonClickType(this.props.instance.type, this.props.graphInstanceIndex, this.props.parentTemplateInstanceId)
     } else if (this.props.instance.label) {
       // render template
-      this.props.onAddNewButtonClick(this.props.instance.label, this.props.graphInstanceIndex, this.props.parentTemplateInstanceId)()
+      this.props.onAddNewButtonClick(this.props.instance.label, this.props.graphInstanceIndex, this.props.parentTemplateInstanceId)
     }
 
   },

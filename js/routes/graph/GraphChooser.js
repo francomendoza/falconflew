@@ -40,7 +40,7 @@ export default React.createClass({
       <div style = { styles.graphChooser }>
         <select
           style = { styles.graphChooser_select }
-          onChange = { this.props.onGraphChooserSelect(this.props.graphChooser.graphInstanceIndex, this.props.graphChooser.parentTemplateInstanceId) }>
+          onChange = { this.props.onGraphChooserSelect(this.props.graphChooser.graphInstanceIndex, this.props.graphChooser.parentTemplateInstanceId, this.props.currentTemplateInstanceId) }>
           <option></option>
           { this.state.types.map((type_label, index) => {
             return <option key = { index }>{ type_label }</option>
