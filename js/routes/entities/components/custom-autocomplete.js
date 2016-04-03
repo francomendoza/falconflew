@@ -1,5 +1,6 @@
 const React = require('react')
 const scrollIntoView = require('dom-scroll-into-view')
+import { TextField } from 'material-ui';
 
 let _debugStates = []
 
@@ -297,8 +298,59 @@ export default React.createClass({
         state: this.state
       })
     }
+    let materialUiStyles = {
+      container: {
+        fontSize: "16px",
+        lineHeight: "24px",
+        width: "256px",
+        height: "72px",
+        display: "inline-block",
+        position: "relative",
+        backgroundColor: "transparent",
+        fontFamily: "Roboto, sans-serif",
+        transition: "height 200ms cubic-bezier(0.23, 1, 0.32, 1) 0ms"
+      },
+      input: {
+        WebkitTapHighlightColor: "rgba(0,0,0,0)",
+        padding: "0",
+        position: "relative",
+        width: "100%",
+        height: "100%",
+        border: "none",
+        outline: "none",
+        backgroundColor: "rgba(0,0,0,0)",
+        color: "rgba(0, 0, 0, 0.87)",
+        font: "inherit",
+        boxSizing: "border-box",
+        marginTop: "14px"
+      },
+      bottomBorder: {
+        top: {
+          border: "none",
+          borderBottom: "solid 1px",
+          borderColor: "#e0e0e0",
+          bottom: "8px",
+          boxSizing: "content-box",
+          margin: "0",
+          position: "absolute",
+          width: "100%"
+        },
+        bottom: {
+          borderStyle: "none none solid",
+          borderBottomWidth: "2px",
+          borderColor: "rgb(0, 188, 212)",
+          bottom: "8px",
+          boxSizing: "content-box",
+          margin: "0px",
+          position: "absolute",
+          width: "100%",
+          transform: "scaleX(0)",
+          transition: "all 450ms cubic-bezier(0.23, 1, 0.32, 1) 0ms"
+        }
+      }
+    }
     return (
-      <div style={{display: 'inline-block'}}>
+      <div style={ materialUiStyles.container }>
         <input
           {...this.props.inputProps}
           role="combobox"
@@ -311,7 +363,12 @@ export default React.createClass({
           onKeyUp={(event) => this.handleKeyUp(event)}
           onClick={this.handleInputClick}
           value={this.state.value}
+          style = { materialUiStyles.input }
         />
+        <div>
+          <hr style= { materialUiStyles.bottomBorder.top }/>
+          <hr style= { materialUiStyles.bottomBorder.bottom }/>
+        </div>
         {this.state.isOpen && this.renderMenu()}
         {this.props.debug && (
           <pre style={{marginLeft: 300}}>

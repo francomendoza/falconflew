@@ -59,7 +59,8 @@ export default React.createClass({
       newNodeTemplate = this.props.instance.node_properties.map((property, index) => {
         return <PropertyFormElement
           key = { index }
-          property = { property } />
+          property = { property }
+          handlePropertyChange = { this.props.handlePropertyChange(index) }/>
       })
     } else {
       nodeSearch = (

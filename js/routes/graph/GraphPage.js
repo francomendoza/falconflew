@@ -50,7 +50,7 @@ export default React.createClass({
       currentTemplateInstanceId,
       hiddenTemplates = this.state.hiddenTemplates;
       if (!templateInstanceId) {
-        hiddenTemplates.push(templateInstancesByInstanceId[parentTemplateInstanceId].label)
+        hiddenTemplates.push(parentTemplateInstanceId)
         this.setState({ hiddenTemplates })
       }
       // check if template is already in cache, if so dont make new request
@@ -85,6 +85,36 @@ export default React.createClass({
     }
   },
 
+  switchCurrentTemplateInstance: function (hiddenTemplateInstanceId) {
+    return () => {
+      let hiddenTemplates = this.state.hiddenTemplates;
+      hiddenTemplates.pop();
+      this.setState({ currentTemplateInstanceId: hiddenTemplateInstanceId, graphChooser: null, hiddenTemplates })
+    }
+  },
+
+  handlePropertyChange: function (templateInstanceId) {
+    let templateInstancesByInstanceId = this.state.templateInstancesByInstanceId;
+    return (nodeInstanceIndex) => {
+      return (nodePropertyIndex) => {
+        return (value) => {
+          templateInstancesByInstanceId[templateInstanceId].node_instances[nodeInstanceIndex].node_properties[nodePropertyIndex].value = value;
+          this.setState(templateInstancesByInstanceId)
+        }
+      }
+    }
+  },
+
+  create: function () {
+    fetch('http://localhost:3000/graphs/', {
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      method: "post",
+      body: JSON.stringify(this.state.templateInstancesByInstanceId[this.state.currentTemplateInstanceId])
+    }).then(response => response.json())
+  },
+
   render: function () {
     let styles = {
       highlightedItem: {
@@ -105,7 +135,9 @@ export default React.createClass({
       template = <GraphTemplate
         template = { this.state.templateInstancesByInstanceId[this.state.currentTemplateInstanceId] }
         onAddNewButtonClickType = { this.onAddNewButtonClickType }
-        onAddNewButtonClick = { this.onAddNewButtonClick }/>
+        onAddNewButtonClick = { this.onAddNewButtonClick }
+        handlePropertyChange = { this.handlePropertyChange(this.state.currentTemplateInstanceId) }
+        onClickCreate = { this.create }/>
     }
 
     if (this.state.graphChooser) {
@@ -116,12 +148,14 @@ export default React.createClass({
     }
 
     if (this.state.hiddenTemplates.length > 0) {
-      hiddenTemplates = this.state.hiddenTemplates.map((hiddenTemplate, index) => {
+      hiddenTemplates = this.state.hiddenTemplates.map((hiddenTemplateInstanceId, index) => {
         return (
           <div
             key = { index }
             style = { styles.hiddenTemplateBar }>
-            { /*this.state.templateInstancesByInstanceId[hiddenTemplate].label*/ hiddenTemplate }
+            <div
+              onClick = { this.switchCurrentTemplateInstance(hiddenTemplateInstanceId) }> + </div>
+            { this.state.templateInstancesByInstanceId[hiddenTemplateInstanceId].label }
           </div>
         )
       })

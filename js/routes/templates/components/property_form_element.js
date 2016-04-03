@@ -1,4 +1,5 @@
 var React = require('react');
+import { TextField } from 'material-ui';
 
 var PropertyFormElement = React.createClass({
 
@@ -8,14 +9,15 @@ var PropertyFormElement = React.createClass({
 
   render: function(){
     var property = this.props.property;
-    return <div className = "property_element" style = { this.props.style }>
-        <label>{ property.name }: </label>
-        <input type = { property.type }
-               name = { property.name }
-               value = { property.value }
-               disabled = { !!property.readonly }
-               onChange={ this.handlePropertyChange }
-               onClick = { this.props.clickDivHandler }/>
+    return <div>
+        <TextField
+          floatingLabelText = { property.name }
+          type = { property.type }
+          name = { property.name }
+          value = { property.value }
+          disabled = { !!property.readonly }
+          onChange={ this.handlePropertyChange }
+          onClick = { this.props.clickDivHandler }/>
       </div>;
   }
 });

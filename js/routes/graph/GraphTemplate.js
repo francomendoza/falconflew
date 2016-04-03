@@ -2,6 +2,7 @@ import React from 'react';
 import PropertyFormElement from '../templates/components/property_form_element';
 import NodeInstance from './NodeInstance';
 import GraphInstance from './GraphInstance';
+import { RaisedButton } from 'material-ui';
 
 export default React.createClass({
 
@@ -12,7 +13,7 @@ export default React.createClass({
         textAlign: "center"
       }
     }
-    
+
     return (
       <div style = { styles.container }>
         <div>New { this.props.template.label }</div>
@@ -20,7 +21,8 @@ export default React.createClass({
           (this.props.template.node_instances || []).map((node_instance, index) => {
             return <NodeInstance
               key = { index }
-              instance = { node_instance } />
+              instance = { node_instance }
+              handlePropertyChange = { this.props.handlePropertyChange(index) }/>
           })
         }
         {
@@ -34,7 +36,8 @@ export default React.createClass({
               onAddNewButtonClick = { this.props.onAddNewButtonClick } />
           })
         }
-        <button>Create New { this.props.template.label }</button>
+        <RaisedButton
+          onClick = { this.props.onClickCreate }>Create New { this.props.template.label }</RaisedButton>
       </div>
     )
   }
