@@ -14,7 +14,13 @@ export default React.createClass({
   },
 
   onChange: function (event, value) {
-    fetch("http://localhost:3000/graph_models/templates_by_label?label=" + value)
+    let url;
+    if (this.props.instance.type) {
+      url = "http://localhost:3000/graphs/search?type=" + this.props.instance.type + "&term=" + value
+    } else if (this.props.instance.label) {
+      url = "http://localhost:3000/graphs/search?label=" + this.props.instance.label + "&term=" + value
+    }
+    fetch(url)
     .then(response => response.json())
     .then(data => this.setState({ autocompleteResults: data }))
   },
@@ -59,12 +65,15 @@ export default React.createClass({
           onChange = { this.onChange }
           onSelect = { this.onSelect }
           items = { this.state.autocompleteResults }
-          getItemValue = { (item) => { return item } }
+          getItemValue = { (item) => { return item.elastic_id } }
           renderItem = { (item, isHighlighted) => {
+            let properties = item.node_instances[0].properties
             return (
               <div
                 style = { isHighlighted ? styles.highlightedItem : styles.item }>
-                { item }
+                { Object.keys(properties).map((propertyKey, index) => {
+                  return <div key = { index }>{ propertyKey + ": " + properties[propertyKey] }</div>
+                }) }
               </div>
             )
           } }
