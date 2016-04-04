@@ -11,12 +11,16 @@ export default React.createClass({
     let styles = {
       container: {
         textAlign: "center"
+      },
+      header: {
+        fontSize: "20px",
+        margin: "10px"
       }
     }
 
     return (
       <div style = { styles.container }>
-        <div>New { this.props.template.label }</div>
+        <div style = { styles.header }>New { this.props.template.label }</div>
         {
           (this.props.template.node_instances || []).map((node_instance, index) => {
             return <NodeInstance
@@ -33,11 +37,13 @@ export default React.createClass({
               graphInstanceIndex = { index }
               parentTemplateInstanceId = { this.props.template.templateInstanceId }
               onAddNewButtonClickType = { this.props.onAddNewButtonClickType }
-              onAddNewButtonClick = { this.props.onAddNewButtonClick } />
+              onAddNewButtonClick = { this.props.onAddNewButtonClick }
+              onGraphInstanceSelect = { this.props.onGraphInstanceSelect(index) }/>
           })
         }
         <RaisedButton
-          onClick = { this.props.onClickCreate }>Create New { this.props.template.label }</RaisedButton>
+          onClick = { this.props.onClickCreate }
+          label = "Create" />
       </div>
     )
   }

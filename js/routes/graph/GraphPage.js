@@ -12,7 +12,6 @@ export default React.createClass({
   getInitialState: function () {
     return {
       autocompleteResults: [],
-      template: {},
       currentTemplateInstanceId: null,
       templateInstancesByInstanceId: {},
       templates: [],
@@ -105,6 +104,12 @@ export default React.createClass({
     }
   },
 
+  onGraphInstanceSelect: function (graphInstanceIndex) {
+    return (value, item) => {
+      this.state.templateInstancesByInstanceId[this.state.currentTemplateInstanceId].graph_instances[graphInstanceIndex].id = value
+    }
+  },
+
   create: function () {
     fetch('http://localhost:3000/graphs/', {
       headers: {
@@ -126,7 +131,9 @@ export default React.createClass({
       hiddenTemplateBar: {
         height: "50px",
         padding: "15px",
-        backgroundColor: "aquamarine"
+        border: "rgb(0,188,212) 2px solid",
+        width: "90%",
+        marginLeft: "5%"
       }
     },
     template, hiddenTemplates, graphChooser;
@@ -137,7 +144,8 @@ export default React.createClass({
         onAddNewButtonClickType = { this.onAddNewButtonClickType }
         onAddNewButtonClick = { this.onAddNewButtonClick }
         handlePropertyChange = { this.handlePropertyChange(this.state.currentTemplateInstanceId) }
-        onClickCreate = { this.create }/>
+        onClickCreate = { this.create }
+        onGraphInstanceSelect = { this.onGraphInstanceSelect }/>
     }
 
     if (this.state.graphChooser) {
@@ -154,6 +162,7 @@ export default React.createClass({
             key = { index }
             style = { styles.hiddenTemplateBar }>
             <div
+              style = { { display: "inline-block" } }
               onClick = { this.switchCurrentTemplateInstance(hiddenTemplateInstanceId) }> + </div>
             { this.state.templateInstancesByInstanceId[hiddenTemplateInstanceId].label }
           </div>
@@ -162,7 +171,7 @@ export default React.createClass({
     }
 
     return (
-      <div>
+      <div style = { { textAlign: "center" } }>
         <Autocomplete
           onChange = { this.onChange }
           onSelect = { this.onSelect }

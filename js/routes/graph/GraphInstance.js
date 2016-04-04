@@ -26,9 +26,7 @@ export default React.createClass({
   },
 
   onSelect: function (value, item) {
-    fetch("http://localhost:3000/graph_models/template?label=" + value)
-    .then(response => response.json())
-  //  .then(data => this.setState({ template: data }))
+
   },
 
   onNewButtonClick: function () {
@@ -63,7 +61,7 @@ export default React.createClass({
         <label>{ this.props.instance.label || this.props.instance.type }:</label>
         <Autocomplete
           onChange = { this.onChange }
-          onSelect = { this.onSelect }
+          onSelect = { this.props.onGraphInstanceSelect }
           items = { this.state.autocompleteResults }
           getItemValue = { (item) => { return item.elastic_id } }
           renderItem = { (item, isHighlighted) => {
