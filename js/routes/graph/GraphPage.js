@@ -27,13 +27,13 @@ export default React.createClass({
   },
 
   onSelect: function (value, item) {
-    let templates = this.state.templates,
-    templateInstancesByInstanceId = this.state.templateInstancesByInstanceId,
+    let templates,
+    templateInstancesByInstanceId = {},
     currentTemplateInstanceId;
     fetch("http://localhost:3000/graph_models/template?label="+value)
     .then(response => response.json())
     .then(data => {
-      templates.push(data)
+      templates = [data]
       let newTemplateInstance = clone(data),
       newTemplateInstanceId = "x0";
       newTemplateInstance.templateInstanceId = newTemplateInstanceId;
@@ -98,7 +98,7 @@ export default React.createClass({
       return (nodePropertyIndex) => {
         return (value) => {
           templateInstancesByInstanceId[templateInstanceId].node_instances[nodeInstanceIndex].node_properties[nodePropertyIndex].value = value;
-          this.setState(templateInstancesByInstanceId)
+          this.setState({ templateInstancesByInstanceId })
         }
       }
     }
@@ -118,6 +118,13 @@ export default React.createClass({
       method: "post",
       body: JSON.stringify(this.state.templateInstancesByInstanceId[this.state.currentTemplateInstanceId])
     }).then(response => response.json())
+    .then(data => {
+      // if (this.state.parentTemplateInstanceId) {
+      //   let templateInstancesByInstanceId = this.state.templateInstancesByInstanceId
+      //   templateInstancesByInstanceId[this.state.parentTemplateInstanceId].graph_instances[graphInstanceIndex].id = data.elastic_id
+      //   this.setState({ currentTemplateInstanceId: this.state.parentTemplateInstanceId, templateInstancesByInstanceId })
+      // }
+    })
   },
 
   render: function () {

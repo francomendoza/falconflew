@@ -34,6 +34,7 @@ export default React.createClass({
         position: 'fixed',
         overflow: 'auto',
         maxHeight: '50%', // TODO: don't cheat, let it flow to the bottom
+        zIndex: '1'
       }
     }
   },
