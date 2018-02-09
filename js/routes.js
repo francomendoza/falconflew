@@ -6,6 +6,7 @@ import EntityPage from './routes/entities/components/entity_page';
 import GridPage from './routes/entities/components/grid_page';
 import GraphPage from './routes/graph/GraphPage';
 import TemplateContainer from './routes/templates/containers/TemplateContainer';
+import NotebookPage from './routes/notebook/NotebookPage';
 
 let enter = function(){
 }
@@ -18,6 +19,7 @@ export default (store) => {
       <Route path = 'entities' component = { EntityPage } />
       <Route path = 'grid' component = { GridPage } onEnter = { enter(store) }/>
       <Route path = 'graph' component = { GraphPage } />
+      <Route path = 'notebook' component = { NotebookPage } />
     </Route>
   );
 };

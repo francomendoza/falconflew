@@ -6,6 +6,7 @@ import GraphInstance from './GraphInstance';
 import GraphTemplate from './GraphTemplate';
 import GraphChooser from './GraphChooser';
 import clone from 'clone';
+import GraphDisplay from './GraphDisplay';
 
 export default React.createClass({
 
@@ -16,7 +17,8 @@ export default React.createClass({
       templateInstancesByInstanceId: {},
       templates: [],
       hiddenTemplates: [],
-      graphChooser: null
+      graphChooser: null,
+      graph: null
     }
   },
 
@@ -119,6 +121,7 @@ export default React.createClass({
       body: JSON.stringify(this.state.templateInstancesByInstanceId[this.state.currentTemplateInstanceId])
     }).then(response => response.json())
     .then(data => {
+      this.setState({ graph: data })
       // if (this.state.parentTemplateInstanceId) {
       //   let templateInstancesByInstanceId = this.state.templateInstancesByInstanceId
       //   templateInstancesByInstanceId[this.state.parentTemplateInstanceId].graph_instances[graphInstanceIndex].id = data.elastic_id
@@ -143,9 +146,9 @@ export default React.createClass({
         marginLeft: "5%"
       }
     },
-    template, hiddenTemplates, graphChooser;
+    template, hiddenTemplates, graphChooser, graph;
 
-    if (this.state.currentTemplateInstanceId) {
+    if (this.state.currentTemplateInstanceId && !this.state.graph) {
       template = <GraphTemplate
         template = { this.state.templateInstancesByInstanceId[this.state.currentTemplateInstanceId] }
         onAddNewButtonClickType = { this.onAddNewButtonClickType }
@@ -177,6 +180,10 @@ export default React.createClass({
       })
     }
 
+    if (this.state.graph) {
+      graph = <GraphDisplay graph = { this.state.graph }/>
+    }
+
     return (
       <div style = { { textAlign: "center" } }>
         <Autocomplete
@@ -196,6 +203,7 @@ export default React.createClass({
         { hiddenTemplates }
         { graphChooser }
         { template }
+        { graph }
       </div>
     )
   }

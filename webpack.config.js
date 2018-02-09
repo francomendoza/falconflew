@@ -8,7 +8,8 @@ module.exports = {
     ],
     output: {
       path: __dirname,
-      filename: "bundle.js"
+      filename: 'bundle.js',
+      sourceMapFilename: '[file].map'
     },
     plugins: [
       new webpack.HotModuleReplacementPlugin()
@@ -22,6 +23,7 @@ module.exports = {
         }
       ]
     },
+    devTool: 'source-map',
     devServer: {
       hot: true
     }

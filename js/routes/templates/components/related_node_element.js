@@ -3,6 +3,7 @@ import Autocomplete from 'react-autocomplete';
 import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../../../modules/templates/actions/template_actions';
 import _ from 'lodash';
 import EntityCard from '../../entities/components/entity_card';
+import { RaisedButton } from 'material-ui';
 
 var RelatedNodeElement = React.createClass({
 
@@ -44,8 +45,8 @@ var RelatedNodeElement = React.createClass({
     }
 
     if(this.props.related_node.count_limit === -1 || this.props.related_node.entity_id === null || this.props.related_node.entity_id.length < this.props.related_node.count_limit) {
-      autocomplete_field = <Autocomplete 
-        onChange = { this.onChange } 
+      autocomplete_field = <Autocomplete
+        onChange = { this.onChange }
         onSelect = { this.onSelect(this.props.related_node.entity_id ? this.props.related_node.entity_id.length : 0) }
         getItemValue = { (item) => item.entity_id }
         items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[this.props.related_node.template_label[0]] || []) : []  }
@@ -75,7 +76,7 @@ var RelatedNodeElement = React.createClass({
         let entity = _.find(this.props.entitiesByLabel[this.props.related_node.template_label[0]], (entity) => {
           return entity.entity_id === entity_id;
         });
-        return <EntityCard 
+        return <EntityCard
         entity = { entity }
         key = { entity.entity_id + 'card' }/>
       });
@@ -88,7 +89,10 @@ var RelatedNodeElement = React.createClass({
           { autocomplete_field }
           { selected_entities }
           { select_template }
-          <button onClick = { this.props.toggleShow }>Create New</button>
+          <RaisedButton
+            onClick = { this.props.toggleShow }
+            label='Create New'
+          />
         </div>
       </div>
     );
