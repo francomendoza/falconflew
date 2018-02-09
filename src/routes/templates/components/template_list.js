@@ -1,6 +1,7 @@
 import React from 'react';
 import Autocomplete from 'react-autocomplete';
 import { requestTemplateByName, retrieveTemplates } from '../../../modules/templates/actions/template_actions';
+import { MenuItem } from 'material-ui/Menu';
 
 var TemplateList = React.createClass({
 
@@ -31,11 +32,11 @@ var TemplateList = React.createClass({
         getItemValue = { (item) => item.node_label[0] }
         items = { this.props.autocompleteItems }
         renderItem={ (item, isHighlighted) => (
-            <div
+            <MenuItem
               style = {isHighlighted ? styles.highlightedItem : styles.item}
               key = { item._id["$oid"] }
               id = { item._id["$oid"] }
-            >{ item.node_label[0] }</div>
+            >{ item.node_label[0] }</MenuItem>
           ) } />
       </div>;
   }
