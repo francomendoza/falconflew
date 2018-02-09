@@ -8,7 +8,9 @@ class App extends Component {
     return (
       <div>
         <NavBar/>
-        { this.props.children }
+        <div style={{marginTop: '64px'}}>
+          { this.props.children }
+        </div>
       </div>
     );
   }
