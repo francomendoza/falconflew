@@ -3,7 +3,9 @@ import Autocomplete from 'react-autocomplete';
 import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../../../modules/templates/actions/template_actions';
 import _ from 'lodash';
 import EntityCard from '../../entities/components/entity_card';
-import { Button } from 'material-ui';
+import Button from 'material-ui/Button';
+import Select from 'material-ui/Select';
+import { MenuItem } from 'material-ui/Menu';
 
 var RelatedNodeElement = React.createClass({
 
@@ -63,12 +65,14 @@ var RelatedNodeElement = React.createClass({
     }
 
     if(this.props.related_node.match_type === "child" && this.props.related_node.children_templates){
-      select_template = <select defaultValue = { this.props.related_node.default_child || "" } onChange = { this.onSelectChange }>
-        <option key = { 'blank' } value = {''}></option>
+      select_template = <Select
+      value = { this.props.related_node.default_child || "" }
+      onChange = { this.onSelectChange }>
+        <MenuItem key = { 'blank' } value = {''}></MenuItem>
         { this.props.related_node.children_templates.map(function(template_label, index){
-          return <option key = { index } value = { template_label }>{ template_label }</option>
+          return <MenuItem key = { index } value = { template_label }>{ template_label }</MenuItem>
         }) }
-      </select>
+      </Select>
     }
 
     if(this.props.related_node.entity_id){
