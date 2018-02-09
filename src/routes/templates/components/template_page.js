@@ -4,6 +4,7 @@ import PropertyFormElement from './property_form_element';
 import Empty from '../../entities/components/empty';
 import RelatedNodeElement from './related_node_element';
 import { submitForm, propertyChanged, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, relationshipEntityChanged, incrementRelatedNodeCount } from '../../../modules/templates/actions/template_actions';
+import Button from 'material-ui/Button';
 
 var TemplatePage = React.createClass({
 
@@ -105,8 +106,17 @@ var TemplatePage = React.createClass({
       }
     });
 
-    array.push(<div style = { { padding: "10px" } }
-      key = { templateInstanceId + 'submit' }><button onClick = { this.submitHandler(templateInstanceId) }> Submit { templateInstance.node_label[0] }</button></div>)
+    array.push(
+      <div style = { { padding: "10px" } }
+        key = { templateInstanceId + 'submit' }
+      >
+        <Button
+          onClick = { this.submitHandler(templateInstanceId) }
+          variant='raised'
+        > Submit { templateInstance.node_label[0] }
+        </Button>
+      </div>
+    )
 
     return array;
   },
