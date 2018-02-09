@@ -1,7 +1,6 @@
 import React from 'react';
 import {
-  RaisedButton,
-  Card, CardHeader, CardText, CardMedia, TextField, Toolbar, ToolbarTitle, ToolbarGroup
+  Card, CardHeader, CardContent, CardMedia, TextField, Toolbar, Typography,
 } from 'material-ui';
 
 export default React.createClass({
@@ -23,29 +22,29 @@ export default React.createClass({
       <div style = { styles.container }>
         <Card>
           <Toolbar>
-            <ToolbarGroup>
-              <ToolbarTitle text = "Introduction" />
-            </ToolbarGroup>
+            <Typography variant="title" color="inherit">
+              Introduction
+            </Typography>
           </Toolbar>
-          <CardText>
+          <CardContent>
             <TextField multiLine = { true } floatingLabelText = { "Introduction" } fullWidth = { true }/>
-          </CardText>
+          </CardContent>
         </Card>
         <Card>
           <Toolbar>
-            <ToolbarGroup>
-              <ToolbarTitle text = "AEX Chromatograpy Module" />
-            </ToolbarGroup>
+            <Typography variant="title" color="inherit">
+              AEX Chromatograpy Module
+            </Typography>
           </Toolbar>
           <div style = { { padding: "20px" } }>
             <Card>
               <CardHeader title = "General Information" />
-              <CardText>
+              <CardContent>
                 <TextField floatingLabelText = { "Alias" }/><br/>
                 <TextField floatingLabelText = { "Date Run" }/><br/>
                 <TextField floatingLabelText = { "System" }/><br/>
                 <TextField floatingLabelText = { "Column" }/><br/>
-              </CardText>
+              </CardContent>
             </Card>
           </div>
           <div style = { { padding: "20px" } }>

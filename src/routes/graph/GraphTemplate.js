@@ -2,7 +2,7 @@ import React from 'react';
 import PropertyFormElement from '../templates/components/property_form_element';
 import NodeInstance from './NodeInstance';
 import GraphInstance from './GraphInstance';
-import { RaisedButton, Card, CardText } from 'material-ui';
+import { Button, Card, CardContent } from 'material-ui';
 
 export default React.createClass({
 
@@ -23,7 +23,7 @@ export default React.createClass({
     return (
       <div style = { styles.container }>
         <Card>
-          <CardText>
+          <CardContent>
             <div style = { styles.header }>New { this.props.template.label }</div>
             {
               (this.props.template.node_instances || []).map((node_instance, index) => {
@@ -45,10 +45,11 @@ export default React.createClass({
                   onGraphInstanceSelect = { this.props.onGraphInstanceSelect(index) }/>
               })
             }
-            <RaisedButton
+            <Button
               onClick = { this.props.onClickCreate }
-              label = "Create" />
-          </CardText>
+              variant='raised'
+            >Create</Button>
+          </CardContent>
         </Card>
       </div>
     )

@@ -3,7 +3,7 @@ import Autocomplete from 'react-autocomplete';
 import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../../../modules/templates/actions/template_actions';
 import _ from 'lodash';
 import EntityCard from '../../entities/components/entity_card';
-import { RaisedButton } from 'material-ui';
+import { Button } from 'material-ui';
 
 var RelatedNodeElement = React.createClass({
 
@@ -89,10 +89,10 @@ var RelatedNodeElement = React.createClass({
           { autocomplete_field }
           { selected_entities }
           { select_template }
-          <RaisedButton
+          <Button
             onClick = { this.props.toggleShow }
-            label='Create New'
-          />
+            variant='raised'
+          >Create New</Button>
         </div>
       </div>
     );

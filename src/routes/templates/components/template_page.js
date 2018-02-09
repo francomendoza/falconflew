@@ -4,7 +4,6 @@ import PropertyFormElement from './property_form_element';
 import Empty from '../../entities/components/empty';
 import RelatedNodeElement from './related_node_element';
 import { submitForm, propertyChanged, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, relationshipEntityChanged, incrementRelatedNodeCount } from '../../../modules/templates/actions/template_actions';
-import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 
 var TemplatePage = React.createClass({
 
@@ -127,12 +126,6 @@ var TemplatePage = React.createClass({
 
 });
 
-const WrappedTemplatePage = (props) => {
-  return (<MuiThemeProvider>
-    <TemplatePage {...props}/>
-  </MuiThemeProvider>);
-}
-
 function mapStateToProps(state){
   return {
     templateInstancesByInstanceId: state.templateInstancesByInstanceId,
@@ -143,4 +136,4 @@ function mapStateToProps(state){
   }
 }
 
-export default connect(mapStateToProps)(WrappedTemplatePage);
+export default connect(mapStateToProps)(TemplatePage);

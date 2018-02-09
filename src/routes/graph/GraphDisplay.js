@@ -1,5 +1,5 @@
 import React from 'react';
-import { RaisedButton, Card, CardHeader, CardText, CardMedia, TextField, ClearFix, Toolbar, ToolbarTitle, ToolbarGroup } from 'material-ui';
+import { Card, CardContent } from 'material-ui';
 
 export default React.createClass({
 
@@ -8,7 +8,7 @@ export default React.createClass({
     return (
       <div style = { { textAlign: "center" } }>
         <Card>
-          <CardText>
+          <CardContent>
             { this.props.graph.node_instances[0].label }
             { Object.keys(this.props.graph.node_instances[0].properties).map((propertyKey) => {
               return (
@@ -17,7 +17,7 @@ export default React.createClass({
                 </div>
               )
             }) }
-          </CardText>
+          </CardContent>
         </Card>
       </div>
     )

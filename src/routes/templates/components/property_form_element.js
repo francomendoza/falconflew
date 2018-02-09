@@ -11,7 +11,7 @@ var PropertyFormElement = React.createClass({
     var property = this.props.property;
     return <div>
         <TextField
-          floatingLabelText = { property.name }
+          label = { property.name }
           type = { property.type }
           name = { property.name }
           value = { property.value }
