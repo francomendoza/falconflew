@@ -6,6 +6,7 @@ import EntityCard from '../../entities/components/entity_card';
 import Button from 'material-ui/Button';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
+import './relatedNodeElement.css';
 
 var RelatedNodeElement = React.createClass({
 
@@ -65,14 +66,21 @@ var RelatedNodeElement = React.createClass({
     }
 
     if(this.props.related_node.match_type === "child" && this.props.related_node.children_templates){
-      select_template = <Select
-      value = { this.props.related_node.default_child || "" }
-      onChange = { this.onSelectChange }>
-        <MenuItem key = { 'blank' } value = {''}></MenuItem>
-        { this.props.related_node.children_templates.map(function(template_label, index){
-          return <MenuItem key = { index } value = { template_label }>{ template_label }</MenuItem>
-        }) }
-      </Select>
+      select_template = <div className='select-template'>
+        <Select
+          value = { this.props.related_node.default_child || "" }
+          onChange = { this.onSelectChange }>
+          <MenuItem key = { 'blank' } value = {''}></MenuItem>
+          { this.props.related_node.children_templates.map(function(template_label, index){
+            return (
+              <MenuItem
+              key = { index }
+              value = { template_label }>{ template_label }
+              </MenuItem>
+            );
+          }) }
+        </Select>
+      </div>
     }
 
     if(this.props.related_node.entity_id){
@@ -88,7 +96,10 @@ var RelatedNodeElement = React.createClass({
 
     return (
       <div className = "relationship_element" style = {this.props.style}>
-        <div style = { { padding: "10px" } } onClick = { this.props.clickDivHandler }>
+        <div
+          className='relatedNodeElement-container'
+          onClick = { this.props.clickDivHandler }
+        >
           <label>{ this.props.related_node.view_label || this.props.related_node.template_label }: </label>
           { autocomplete_field }
           { selected_entities }
