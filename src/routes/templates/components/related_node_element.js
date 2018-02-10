@@ -7,6 +7,7 @@ import Button from 'material-ui/Button';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import './relatedNodeElement.css';
+import MatUiAutosuggest from './MatUiAutosuggest';
 
 var RelatedNodeElement = React.createClass({
 
@@ -17,7 +18,7 @@ var RelatedNodeElement = React.createClass({
     }
   },
 
-  onChange: function(event, value){
+  onChange: function(value){
     this.props.dispatch(autocompleteEntitiesByLabel(this.props.related_node.template_label[0], this.props.related_node.match_type, value));
   },
 
@@ -48,12 +49,13 @@ var RelatedNodeElement = React.createClass({
     }
 
     if(this.props.related_node.count_limit === -1 || this.props.related_node.entity_id === null || this.props.related_node.entity_id.length < this.props.related_node.count_limit) {
-      autocomplete_field = <Autocomplete
-        onChange = { this.onChange }
-        onSelect = { this.onSelect(this.props.related_node.entity_id ? this.props.related_node.entity_id.length : 0) }
-        getItemValue = { (item) => item.entity_id }
-        items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[this.props.related_node.template_label[0]] || []) : []  }
-        renderItem = { (item, isHighlighted) => (
+      autocomplete_field = <MatUiAutosuggest
+        onChange={this.onChange}
+        onSelect={this.onSelect(this.props.related_node.entity_id ? this.props.related_node.entity_id.length : 0)}
+        value={this.props.related_node.entity_id}
+        getSuggestionValue={(item) => item.entity_id}
+        suggestions={this.props.entitiesByLabel ? (this.props.entitiesByLabel[this.props.related_node.template_label[0]] || []) : []  }
+        renderItem={(item, isHighlighted) => (
           <div
             style = {isHighlighted ? styles.highlightedItem : styles.item}
             key = { item.entity_id }
