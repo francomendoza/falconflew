@@ -6,6 +6,7 @@
     "react-scripts": "1.1.0"
   },
   "dependencies": {
+    "autosuggest-highlight": "^3.1.1",
     "fixed-data-table": "^0.6.0",
     "history": "^1.11.1",
     "isomorphic-fetch": "^2.1.1",
@@ -14,7 +15,7 @@
     "node-sass-chokidar": "0.0.3",
     "react": "^15.0.0",
     "react-autocomplete": "^1.8.0",
-    "react-autosuggest": "^3.0.0",
+    "react-autosuggest": "^9.3.3",
     "react-dom": "^15.0.0",
     "react-redux": "^5.0.6",
     "react-router": "^2.0.0",

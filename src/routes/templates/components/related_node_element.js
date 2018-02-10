@@ -7,6 +7,7 @@ import Button from 'material-ui/Button';
 import Select from 'material-ui/Select';
 import { MenuItem } from 'material-ui/Menu';
 import './relatedNodeElement.css';
+import MatUiAutosuggest from './MatUiAutosuggest';
 
 var RelatedNodeElement = React.createClass({
 
@@ -17,12 +18,21 @@ var RelatedNodeElement = React.createClass({
     }
   },
 
-  onChange: function(event, value){
-    this.props.dispatch(autocompleteEntitiesByLabel(this.props.related_node.template_label[0], this.props.related_node.match_type, value));
+  onChange: function({value}){
+    this.props.dispatch(
+      autocompleteEntitiesByLabel(
+        this.props.related_node.template_label[0],
+        this.props.related_node.match_type,
+        value
+      )
+    );
   },
 
   onSelect: function(entityIdIndex){
-    return (value, item) => this.props.handleRelationshipChange(value, entityIdIndex);
+    return (evt, {suggestionValue}) => this.props.handleRelationshipChange(
+      suggestionValue,
+      entityIdIndex
+    );
   },
 
   onSelectChange: function(event){
@@ -50,20 +60,19 @@ var RelatedNodeElement = React.createClass({
     }
 
     if(this.props.related_node.count_limit === -1 || this.props.related_node.entity_id === null || this.props.related_node.entity_id.length < this.props.related_node.count_limit) {
-      autocomplete_field = <Autocomplete
-        onChange = { this.onChange }
-        onSelect = { this.onSelect(this.props.related_node.entity_id ? this.props.related_node.entity_id.length : 0) }
-        getItemValue = { (item) => item.entity_id }
-        items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[this.props.related_node.template_label[0]] || []) : []  }
-        renderItem = { (item, isHighlighted) => (
-          <MenuItem
-            style = {isHighlighted ? styles.highlightedItem : styles.item}
-            key = { item.entity_id }
-            id = { item.entity_id }
-          >{ item.node_properties.map(function(property, index){
+      autocomplete_field = <MatUiAutosuggest
+        handleSuggestionsFetchRequested={this.onChange}
+        onSuggestionSelected={this.onSelect(this.props.related_node.entity_id ? this.props.related_node.entity_id.length : 0)}
+        getSuggestionValue={(item) => item.entity_id}
+        suggestions={this.props.entitiesByLabel ? (this.props.entitiesByLabel[this.props.related_node.template_label[0]] || []) : []  }
+        renderMenuItem={(suggestion) => (
+          <div
+            key = { suggestion.entity_id }
+            id = { suggestion.entity_id }
+          >{ suggestion.node_properties.map(function(property, index){
             return <div key = { index }>{ property.name }: { property.value }</div>
           }) }
-          </MenuItem>
+          </div>
         ) } />
     }
 
