@@ -4,21 +4,17 @@ import './index.css';
 // import App from './App';
 import registerServiceWorker from './registerServiceWorker';
 
-import { createStore, compose, applyMiddleware, combineReducers } from 'redux';
+import { createStore, compose, applyMiddleware } from 'redux';
 import { Provider } from 'react-redux';
-import { Router, Route, browserHistory, hashHistory } from 'react-router'
-import { syncHistory, routeReducer } from 'react-router-redux'
+import { Router, hashHistory } from 'react-router'
+import { syncHistory } from 'react-router-redux'
 import thunk from 'redux-thunk';
 import routes from './routes';
 import reducers from './modules/reducers';
 
 window.loggedSubmissions = {};
 
-const reduxRouterMiddleware = syncHistory(hashHistory)
-
-const reducer = combineReducers(Object.assign({}, reducers, {
-  routing: routeReducer
-}))
+const reduxRouterMiddleware = syncHistory(hashHistory);
 
 const store = compose(
   applyMiddleware(thunk, reduxRouterMiddleware),
