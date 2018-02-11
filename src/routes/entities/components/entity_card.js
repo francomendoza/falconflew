@@ -2,6 +2,7 @@ import React from 'react';
 import { routeActions } from 'react-router-redux';
 import { retrieveTemplates } from '../../../modules/templates/actions/template_actions';
 import { showEntity } from '../../../modules/entities/actions/entity_actions';
+import Paper from 'material-ui/Paper';
 
 var EntityCard = React.createClass({
 
@@ -20,10 +21,8 @@ var EntityCard = React.createClass({
   render: function(){
 
     let styles = {
-      border: "black solid 1px",
-      padding: "5px",
-      borderRadius: "4px",
-      boxShadow: "2px 2px 5px #888888"
+      padding: '10px',
+      margin: '10px',
     }
 
     let links = (this.props.available_actions || []).map((label, index) => {
@@ -31,14 +30,18 @@ var EntityCard = React.createClass({
     })
 
     return(
-      <div style = {styles} onClick = { this.onClickHandler }>
+      <Paper
+        style={styles}
+        onClick={this.onClickHandler}
+      >
         <div>{ this.props.entity.node_label }</div>
         <br/>
         { this.props.entity.node_properties.map(function(node_property){
           return <div key = { node_property.name }>{ node_property.name }: { node_property.value }</div>
         }) }
         { links }
-      </div>);
+      </Paper>
+    );
   }
 
 });

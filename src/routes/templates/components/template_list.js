@@ -17,7 +17,7 @@ var TemplateList = React.createClass({
 
     var styles = {
       highlightedItem: {
-        backgroundColor: "blue"
+        backgroundColor: "lightgrey"
       },
       item: {
         backgroundColor: "white"

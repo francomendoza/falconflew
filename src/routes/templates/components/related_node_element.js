@@ -37,10 +37,12 @@ var RelatedNodeElement = React.createClass({
 
     var styles = {
       highlightedItem: {
-        backgroundColor: "gray"
+        backgroundColor: "gray",
+        zIndex: 100,
       },
       item: {
-        backgroundColor: "white"
+        backgroundColor: "white",
+        zIndex: 100,
       },
       autocomplete: {
         paddingBottom: "5px"
@@ -54,14 +56,14 @@ var RelatedNodeElement = React.createClass({
         getItemValue = { (item) => item.entity_id }
         items = { this.props.entitiesByLabel ? (this.props.entitiesByLabel[this.props.related_node.template_label[0]] || []) : []  }
         renderItem = { (item, isHighlighted) => (
-          <div
+          <MenuItem
             style = {isHighlighted ? styles.highlightedItem : styles.item}
             key = { item.entity_id }
             id = { item.entity_id }
           >{ item.node_properties.map(function(property, index){
             return <div key = { index }>{ property.name }: { property.value }</div>
           }) }
-          </div>
+          </MenuItem>
         ) } />
     }
 
