@@ -107,7 +107,7 @@ var TemplatePage = React.createClass({
     });
 
     array.push(
-      <div style = { { padding: "10px" } }
+      <div style={{padding: "10px", borderBottom: '4px solid rgb(0, 44, 107)'}}
         key = { templateInstanceId + 'submit' }
       >
         <Button
