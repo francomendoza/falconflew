@@ -3,34 +3,31 @@ import Autocomplete from '../entities/components/custom-autocomplete';
 import fetch from 'isomorphic-fetch';
 import PropertyFormElement from '../templates/components/property_form_element';
 
-export default React.createClass({
+export default class NodeInstance extends React.Component {
+  state = {
+    autocompleteResults: [],
+    mode: "new" // this will likely be passed down in props? or maybe even initialized?
+  }
 
-  getInitialState: function () {
-    return {
-      autocompleteResults: [],
-      mode: "new" // this will likely be passed down in props? or maybe even initialized?
-    }
-  },
-
-  onChange: function (event, value) {
+  onChange = (event, value) => {
     fetch("http://localhost:3000/graph_models/templates_by_label?label=" + value)
     .then(response => response.json())
     .then(data => this.setState({ autocompleteResults: data }))
-  },
+  }
 
-  onSelect: function (value, item) {
+  onSelect = (value, item) => {
     fetch("http://localhost:3000/graph_models/template?label=" + value)
     .then(response => response.json())
     .then(data => this.setState({ template: data }))
-  },
+  }
 
-  onNewButtonClick: function () {
+  onNewButtonClick = () => {
     fetch("http://localhost:3000/graph_models/template?label=" + (this.props.label || this.state.specificTypeLabel))
     .then(response => response.json())
     .then(data => this.setState({ template: data }))
-  },
+  }
 
-  render: function () {
+  render() {
 
     let styles = {
       highlightedItem: {
@@ -95,4 +92,4 @@ export default React.createClass({
       </div>
     )
   }
-})
+}

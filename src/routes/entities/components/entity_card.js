@@ -4,21 +4,21 @@ import { retrieveTemplates } from '../../../modules/templates/actions/template_a
 import { showEntity } from '../../../modules/entities/actions/entity_actions';
 import Paper from 'material-ui/Paper';
 
-var EntityCard = React.createClass({
+export default class EntityCard extends React.Component {
 
-  chooseTemplate: function(label) {
+  chooseTemplate = (label) => {
     return (e) => {
       e.preventDefault();
       //this.props.dispatch(routeActions.push(`/template_form/${label}`))
       this.props.dispatch(retrieveTemplates(label));
     }
-  },
+  }
 
-  onClickHandler: function(event){
+  onClickHandler = (event) => {
     this.props.dispatch(showEntity(this.props.entity.entity_id, this.props.entity.node_label));
-  },
+  }
 
-  render: function(){
+  render() {
 
     let styles = {
       padding: '10px',
@@ -43,7 +43,4 @@ var EntityCard = React.createClass({
       </Paper>
     );
   }
-
-});
-
-export default EntityCard;
+}

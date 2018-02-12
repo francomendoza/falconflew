@@ -3,9 +3,9 @@ import {
   Card, CardHeader, CardContent, CardMedia, TextField, Toolbar, Typography,
 } from 'material-ui';
 
-export default React.createClass({
+export default class NotebookPage extends React.Component {
 
-  render: function () {
+  render() {
 
     let styles = {
       container: {
@@ -92,4 +92,4 @@ export default React.createClass({
       </div>
     )
   }
-})
+}

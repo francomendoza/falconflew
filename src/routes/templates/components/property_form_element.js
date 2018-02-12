@@ -1,13 +1,12 @@
 import React from 'react';
 import { TextField } from 'material-ui';
 
-var PropertyFormElement = React.createClass({
-
-  handlePropertyChange: function(event){
+export default class PropertyFormElement extends React.Component {
+  handlePropertyChange = (event) => {
     this.props.handlePropertyChange(event.target.value);
-  },
+  }
 
-  render: function(){
+  render() {
     var property = this.props.property;
     return <div>
         <TextField
@@ -20,6 +19,4 @@ var PropertyFormElement = React.createClass({
           onClick = { this.props.clickDivHandler }/>
       </div>;
   }
-});
-
-export default PropertyFormElement;
+}
