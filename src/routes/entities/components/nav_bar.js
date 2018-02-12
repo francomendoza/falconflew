@@ -12,9 +12,8 @@ const styles = {
     padding: "10px",
   }
 }
-var NavBar = React.createClass({
-
-  render: function() {
+export default class NavBar extends React.Component {
+  render() {
     return (
       <AppBar>
         <Toolbar>
@@ -52,6 +51,4 @@ var NavBar = React.createClass({
       </AppBar>
     )
   }
-});
-
-export default NavBar;
+}

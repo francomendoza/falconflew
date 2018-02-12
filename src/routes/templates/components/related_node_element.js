@@ -1,5 +1,4 @@
 import React from 'react';
-import Autocomplete from 'react-autocomplete';
 import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../../../modules/templates/actions/template_actions';
 import _ from 'lodash';
 import EntityCard from '../../entities/components/entity_card';
@@ -9,16 +8,16 @@ import { MenuItem } from 'material-ui/Menu';
 import './relatedNodeElement.css';
 import MatUiAutosuggest from './MatUiAutosuggest';
 
-var RelatedNodeElement = React.createClass({
+export default class RelatedNodeElement extends React.Component {
 
-  componentWillMount: function(){
+  componentWillMount = () => {
     // hacky for sure but we need to make the server call for this template, cant make call in generateTemplate function, and cant do logic on backend
     if(this.props.related_node.default_child){
       this.props.dispatch(updateTemplateInstances(this.props.templateInstanceId, this.props.related_node.default_child))
     }
-  },
+  }
 
-  onChange: function({value}){
+  onChange = ({value}) => {
     this.props.dispatch(
       autocompleteEntitiesByLabel(
         this.props.related_node.template_label[0],
@@ -26,40 +25,27 @@ var RelatedNodeElement = React.createClass({
         value
       )
     );
-  },
+  }
 
-  onSelect: function(entityIdIndex){
+  onSelect = (entityIdIndex) => {
     return (evt, {suggestionValue}) => this.props.handleRelationshipChange(
       suggestionValue,
       entityIdIndex
     );
-  },
+  }
 
-  onSelectChange: function(event){
+  onSelectChange = (event) => {
     this.props.dispatch(updateTemplateInstances(this.props.templateInstanceId, event.target.value));
-  },
+  }
 
-  render: function(){
-
+  render() {
     let autocomplete_field,
       select_template,
       selected_entities;
 
-    var styles = {
-      highlightedItem: {
-        backgroundColor: "gray",
-        zIndex: 100,
-      },
-      item: {
-        backgroundColor: "white",
-        zIndex: 100,
-      },
-      autocomplete: {
-        paddingBottom: "5px"
-      }
-    }
-
-    if(this.props.related_node.count_limit === -1 || this.props.related_node.entity_id === null || this.props.related_node.entity_id.length < this.props.related_node.count_limit) {
+    if (this.props.related_node.count_limit === -1 ||
+      this.props.related_node.entity_id === null ||
+      this.props.related_node.entity_id.length < this.props.related_node.count_limit) {
       autocomplete_field = <MatUiAutosuggest
         handleSuggestionsFetchRequested={this.onChange}
         onSuggestionSelected={this.onSelect(this.props.related_node.entity_id ? this.props.related_node.entity_id.length : 0)}
@@ -123,6 +109,4 @@ var RelatedNodeElement = React.createClass({
       </div>
     );
   }
-});
-
-export default RelatedNodeElement;
+}

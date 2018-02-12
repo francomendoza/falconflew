@@ -1,10 +1,8 @@
 import React from 'react';
 import { Card, CardContent } from 'material-ui';
 
-export default React.createClass({
-
-  render: function () {
-
+export default class GraphDisplay extends React.Component {
+  render() {
     return (
       <div style = { { textAlign: "center" } }>
         <Card>
@@ -22,4 +20,4 @@ export default React.createClass({
       </div>
     )
   }
-})
+}
