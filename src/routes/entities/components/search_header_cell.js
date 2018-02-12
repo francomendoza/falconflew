@@ -1,6 +1,6 @@
 import React from 'react';
-import Autocomplete from './custom-autocomplete';
 import fetch from 'isomorphic-fetch';
+import MatUiAutosuggest from '../../templates/components/MatUiAutosuggest';
 
 export default class SearchHeaderCell extends React.Component {
   state = {
@@ -8,7 +8,7 @@ export default class SearchHeaderCell extends React.Component {
     queryString: ""
   }
 
-  onChange = (event, value) => {
+  onChange = ({value}) => {
     this.setState({ queryString: value }); //is this necessary?
     // allows Autocomplete to handle its own data including the API request
     // if (this.props.dataSource.length > 0) {
@@ -35,28 +35,18 @@ export default class SearchHeaderCell extends React.Component {
   }
 
   render() {
-    let styles = {
-      highlightedItem: {
-        backgroundColor: "lightgray"
-      },
-      item: {
-        backgroundColor: "white"
-      }
-    }
-
-    return <th>
-      <Autocomplete
-        onChange = { this.onChange }
-        onSelect = { this.props.onSelect }
-        getItemValue = { (item) => { return item.label } }
-        items = { this.state.searchResults }
-        renderItem = { (item, isHighlighted) => {
-          return <div
-            style = { isHighlighted ? styles.highlightedItem : styles.item }>
-            { item.label }
-          </div>
-        } }
-      />
-    </th>
+    return (
+      <th>
+        <MatUiAutosuggest
+          handleSuggestionsFetchRequested={this.onChange}
+          onSuggestionSelected={this.props.onSelect}
+          getSuggestionValue={(suggestion) => suggestion.label}
+          suggestions={this.state.searchResults}
+          renderMenuItem={(suggestion) => {
+            return <div>{suggestion.label}</div>
+          }}
+        />
+      </th>
+    );
   }
 }

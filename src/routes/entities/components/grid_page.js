@@ -38,8 +38,9 @@ var GridPage = React.createClass({
   },
 
   onHeaderSelect: function (columnIndex) {
-    return (value, item) => {
+    return (evt, {suggestionValue, suggestion}) => {
       let nodeSections = this.state.nodeSections
+      let item = suggestion;
       let properties = item.node_properties.map((node_property) => {
         return {
           displayName: node_property.name,
