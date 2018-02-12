@@ -1,9 +1,7 @@
-var React = require('react');
+import React from 'react';
 
-var Empty = React.createClass({
-  render: function() {
+export default class Empty extends React.Component {
+  render() {
     return <div></div>;
   }
-});
-
-export default Empty;
+}

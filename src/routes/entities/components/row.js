@@ -2,16 +2,13 @@ import React from 'react';
 import Autocomplete from 'react-autocomplete';
 import fetch from 'isomorphic-fetch';
 
-var Row = React.createClass({
+export default class Row extends React.Component {
+  state = {
+    searchResults: [],
+    queryString: ""
+  }
 
-  getInitialState: function () {
-    return {
-      searchResults: [],
-      queryString: ""
-    }
-  },
-
-  onChange: function (columnIndex) {
+  onChange = (columnIndex) => {
     return (event, value) => {
       this.setState({ queryString: value }); //is this necessary?
       // allows Autocomplete to handle its own data including the API request
@@ -19,13 +16,13 @@ var Row = React.createClass({
         .then(response => response.json())
         .then(data => this.setState({ searchResults: data }))
       }
-  },
+  }
 
-  onSelect: function () {
+  onSelect = () => {
 
-  },
+  }
 
-  render: function () {
+  render() {
 
     let styles = {
       highlightedItem: {
@@ -63,6 +60,4 @@ var Row = React.createClass({
       }) }
     </tr>
   }
-})
-
-export default Row;
+}

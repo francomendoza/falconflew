@@ -3,24 +3,24 @@ import { connect } from 'react-redux';
 import Autocomplete from 'react-autocomplete';
 import SearchTokens from './search_tokens';
 import EntitySearchResults from './entity_search_results';
-import { addToken, shortestPathSearch, entitySearch, showEntity } from '../../../modules/entities/actions/entity_actions';
+import { addToken, shortestPathSearch, entitySearch } from '../../../modules/entities/actions/entity_actions';
 
-var EntitySearch = React.createClass({
-  onChange: function(e) {
+class EntitySearch extends React.Component {
+  onChange = (e) => {
     this.props.dispatch(entitySearch(e.target.value))
-  },
+  }
 
-  onSelect: function(value, item) {
+  onSelect = (value, item) => {
     console.log(`selected ${value}`)
     //this.props.dispatch(showEntity(item.entity_id, item.node_label))
     this.props.dispatch(addToken(item.entity_id, item.node_label))
-  },
+  }
 
-  search: function(){
+  search = () => {
     this.props.dispatch(shortestPathSearch());
-  },
+  }
 
-  render: function() {
+  render() {
     var styles = {
         highlightedItem: { backgroundColor: 'blue' },
         item: { backgroundColor: 'white' }
@@ -40,7 +40,7 @@ var EntitySearch = React.createClass({
       <EntitySearchResults entitySearchResults = {this.props.entitySearchResults}/>
     </div>
   }
-});
+}
 
 function mapStateToProps(state){
   return {
@@ -50,4 +50,4 @@ function mapStateToProps(state){
   };
 }
 
-export default  connect(mapStateToProps)(EntitySearch);
+export default connect(mapStateToProps)(EntitySearch);

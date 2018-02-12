@@ -1,17 +1,15 @@
 import React from 'react';
 import Autocomplete from './custom-autocomplete';
-import fetch from 'isomorphic-fetch';
-import { filter } from 'lodash';
 
-export default  React.createClass({
+export default class StaticSearchCell extends React.Component {
 
-  matchItemToTerm: function (item, value) {
+  matchItemToTerm = (item, value) => {
     return (
       item.node.toLowerCase().indexOf(value.toLowerCase()) !== -1
     )
-  },
+  }
 
-  renderItems: function (renderedItems, items) {
+  renderItems = (renderedItems, items) => {
     let menuMappedItems = [],
       categories = [];
     items.forEach((item, index) => {
@@ -30,10 +28,9 @@ export default  React.createClass({
       }
     })
     return menuMappedItems;
-  },
+  }
 
-  render: function() {
-
+  render() {
     let styles = {
       highlightedItem: {
         backgroundColor: "lightgray"
@@ -68,5 +65,4 @@ export default  React.createClass({
       />
     </th>
   }
-
-})
+}

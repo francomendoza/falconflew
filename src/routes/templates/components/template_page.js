@@ -6,46 +6,46 @@ import RelatedNodeElement from './related_node_element';
 import { submitForm, propertyChanged, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, relationshipEntityChanged, incrementRelatedNodeCount } from '../../../modules/templates/actions/template_actions';
 import Button from 'material-ui/Button';
 
-var TemplatePage = React.createClass({
+class TemplatePage extends React.Component {
 
-  handlePropertyChange: function(templateInstanceId, index){
+  handlePropertyChange = (templateInstanceId, index) => {
     return (value) => {
       this.props.dispatch(propertyChanged(templateInstanceId, index, value));
     }
-  },
+  }
 
-  submitHandler: function(templateInstanceId) {
+  submitHandler = (templateInstanceId) => {
     return () => {
       this.props.dispatch(submitForm(templateInstanceId));
     }
-  },
+  }
 
-  clickDivHandler: function(templateInstanceId){
+  clickDivHandler = (templateInstanceId) => {
     return (event) => {
       event.stopPropagation();
       this.props.dispatch(setActiveTemplate(templateInstanceId));
     }
-  },
+  }
 
-  toggleTemplateFormVisibility: function(templateInstanceId){
+  toggleTemplateFormVisibility = (templateInstanceId) => {
     return () => {
       this.props.dispatch(toggleFormVisibility(templateInstanceId));
     }
-  },
+  }
 
-  handleRelationshipChange: function(templateInstanceId, relatedNodeIndex) {
+  handleRelationshipChange = (templateInstanceId, relatedNodeIndex) => {
     return (value, entityIdIndex) => {
       this.props.dispatch(relationshipEntityChanged(templateInstanceId, relatedNodeIndex, value, entityIdIndex));
     }
-  },
+  }
 
-  // incrementRelatedNode: function(templateInstanceId, index) {
+  // incrementRelatedNode = (templateInstanceId, index) => {
   //   return () => {
   //     this.props.dispatch(incrementRelatedNodeCount(templateInstanceId, index));
   //   }
-  // },
+  // }
 
-  recursive: function(templateInstanceId, array){
+  recursive = (templateInstanceId, array) => {
 
     var templateInstance = this.props.templateInstancesByInstanceId[templateInstanceId];
 
@@ -73,7 +73,7 @@ var TemplatePage = React.createClass({
       key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0", float: "left" } }>New { templateInstance.node_label[0] }</h3></div>
     );
 
-    templateInstance.node_properties.map((node_property, index) => {
+    templateInstance.node_properties.forEach((node_property, index) => {
       var property_form_element = <PropertyFormElement
         key = { node_property._id['$oid'] + templateInstanceId }
         property = { node_property }
@@ -84,7 +84,7 @@ var TemplatePage = React.createClass({
       array.push(property_form_element);
     });
 
-    (templateInstance.related_nodes || []).map((related_node, index) => {
+    (templateInstance.related_nodes || []).forEach((related_node, index) => {
       if(related_node.visible) {
         var related_node_element = <RelatedNodeElement
           key = { (related_node._id ? related_node._id['$oid'] : index) + templateInstanceId }
@@ -119,9 +119,9 @@ var TemplatePage = React.createClass({
     )
 
     return array;
-  },
+  }
 
-  render: function(){
+  render() {
 
     let container_styles = {
       marginLeft: '100px',
@@ -133,8 +133,7 @@ var TemplatePage = React.createClass({
 
     return <div style = { container_styles } >{ mega_array }</div>
   }
-
-});
+}
 
 function mapStateToProps(state){
   return {

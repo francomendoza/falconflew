@@ -1,18 +1,14 @@
 import React from 'react';
-import Autocomplete from 'react-autocomplete';
 import fetch from 'isomorphic-fetch';
 import SearchCell from './SearchCell';
 
-export default  React.createClass({
+export default class SearchRow extends React.Component {
+  state = {
+    searchResults: [],
+    queryString: ""
+  }
 
-  getInitialState: function(){
-    return {
-      searchResults: [],
-      queryString: ""
-    }
-  },
-
-  onChange: function (nodeLabel) {
+  onChange = (nodeLabel) => {
     return (event, value) => {
       this.setState({ queryString: value }); //is this necessary?
       // allows Autocomplete to handle its own data including the API request
@@ -20,10 +16,9 @@ export default  React.createClass({
         .then(response => response.json())
         .then(data => this.setState({ searchResults: data }))
     }
-  },
+  }
 
-  render: function() {
-
+  render() {
     let styles = {
       highlightedItem: {
         backgroundColor: "lightgray"
@@ -51,5 +46,4 @@ export default  React.createClass({
       }) }
     </tr>
   }
-
-})
+}

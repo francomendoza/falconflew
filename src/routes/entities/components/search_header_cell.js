@@ -1,18 +1,14 @@
 import React from 'react';
 import Autocomplete from './custom-autocomplete';
 import fetch from 'isomorphic-fetch';
-import { filter } from 'lodash';
 
-var SearchHeaderCell = React.createClass({
+export default class SearchHeaderCell extends React.Component {
+  state = {
+    searchResults: [],
+    queryString: ""
+  }
 
-  getInitialState: function(){
-    return {
-      searchResults: [],
-      queryString: ""
-    }
-  },
-
-  onChange: function(event, value) {
+  onChange = (event, value) => {
     this.setState({ queryString: value }); //is this necessary?
     // allows Autocomplete to handle its own data including the API request
     // if (this.props.dataSource.length > 0) {
@@ -36,10 +32,9 @@ var SearchHeaderCell = React.createClass({
       .then(response => response.json())
       .then(data => this.setState({ searchResults: data }))
     // }
-  },
+  }
 
-  render: function() {
-
+  render() {
     let styles = {
       highlightedItem: {
         backgroundColor: "lightgray"
@@ -64,7 +59,4 @@ var SearchHeaderCell = React.createClass({
       />
     </th>
   }
-
-})
-
-export default SearchHeaderCell;
+}

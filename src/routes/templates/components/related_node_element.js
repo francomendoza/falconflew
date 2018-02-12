@@ -1,6 +1,5 @@
 import React from 'react';
 import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../../../modules/templates/actions/template_actions';
-import _ from 'lodash';
 import EntityCard from '../../entities/components/entity_card';
 import Button from 'material-ui/Button';
 import Select from 'material-ui/Select';
@@ -80,9 +79,11 @@ export default class RelatedNodeElement extends React.Component {
       </div>
     }
 
-    if(this.props.related_node.entity_id){
+    if (this.props.related_node.entity_id) {
       selected_entities = this.props.related_node.entity_id.map((entity_id) => {
-        let entity = _.find(this.props.entitiesByLabel[this.props.related_node.template_label[0]], (entity) => {
+        let entity = this.props.entitiesByLabel[
+          this.props.related_node.template_label[0]
+        ].find((entity) => {
           return entity.entity_id === entity_id;
         });
         return <EntityCard
