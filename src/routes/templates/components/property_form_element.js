@@ -13,7 +13,7 @@ export default class PropertyFormElement extends React.Component {
           label = { property.name }
           type = { property.type }
           name = { property.name }
-          value = { property.value }
+          value = { property.value || '' }
           disabled = { !!property.readonly }
           onChange={ this.handlePropertyChange }
           onClick = { this.props.clickDivHandler }/>

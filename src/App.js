@@ -1,9 +1,7 @@
-import React, { Component } from 'react';
-import { connect } from 'react-redux';
-import TemplateList from './routes/templates/components/template_list';
+import React from 'react';
 import NavBar from './routes/entities/components/nav_bar';
 
-class App extends Component {
+export default class App extends React.Component {
   render() {
     return (
       <div>
@@ -15,5 +13,3 @@ class App extends Component {
     );
   }
 }
-
-export default App;

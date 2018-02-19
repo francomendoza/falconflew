@@ -1,9 +1,8 @@
 import React from 'react';
 import EntityCard from './entity_card';
 
-var SearchTokens = React.createClass({
-
-  render: function() {
+export default class SearchTokens extends React.Component {
+  render() {
     return <div>
       { this.props.displayedTokens.map((entity) => {
          return <EntityCard
@@ -14,6 +13,4 @@ var SearchTokens = React.createClass({
       }
     </div>
   }
-})
-
-export default SearchTokens;
+}

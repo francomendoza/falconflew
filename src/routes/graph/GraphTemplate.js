@@ -1,13 +1,10 @@
 import React from 'react';
-import PropertyFormElement from '../templates/components/property_form_element';
 import NodeInstance from './NodeInstance';
 import GraphInstance from './GraphInstance';
 import { Button, Card, CardContent } from 'material-ui';
 
-export default React.createClass({
-
-  render: function () {
-
+export default class GraphTemplate extends React.Component {
+  render() {
     let styles = {
       container: {
         textAlign: "center",
@@ -54,4 +51,4 @@ export default React.createClass({
       </div>
     )
   }
-})
+}

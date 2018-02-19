@@ -69,6 +69,12 @@ class TemplatePage extends React.Component {
       clear: "both"
     }
 
+    let submitContainerStyles = {
+      opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3",
+      padding: "10px",
+      borderBottom: '4px solid rgb(0, 44, 107)',
+    };
+
     array.push(<div style = { header_style }
       key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0", float: "left" } }>New { templateInstance.node_label[0] }</h3></div>
     );
@@ -107,7 +113,7 @@ class TemplatePage extends React.Component {
     });
 
     array.push(
-      <div style={{padding: "10px", borderBottom: '4px solid rgb(0, 44, 107)'}}
+      <div style={submitContainerStyles}
         key = { templateInstanceId + 'submit' }
       >
         <Button

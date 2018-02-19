@@ -1,5 +1,4 @@
 import React from 'react';
-import Autocomplete from '../entities/components/custom-autocomplete';
 import fetch from 'isomorphic-fetch';
 import PropertyFormElement from '../templates/components/property_form_element';
 import GraphInstance from './GraphInstance';
@@ -7,6 +6,7 @@ import GraphTemplate from './GraphTemplate';
 import GraphChooser from './GraphChooser';
 import clone from 'clone';
 import GraphDisplay from './GraphDisplay';
+import MatUiAutosuggest from '../templates/components/MatUiAutosuggest';
 
 export default React.createClass({
 
@@ -22,17 +22,17 @@ export default React.createClass({
     }
   },
 
-  onChange: function (event, value) {
+  onChange: function ({value}) {
     fetch("http://localhost:3000/graph_models/templates_by_label?label="+value)
     .then(response => response.json())
     .then(data => this.setState({ autocompleteResults: data }))
   },
 
-  onSelect: function (value, item) {
+  onSelect: function (evt, {suggestionValue}) {
     let templates,
     templateInstancesByInstanceId = {},
     currentTemplateInstanceId;
-    fetch("http://localhost:3000/graph_models/template?label="+value)
+    fetch("http://localhost:3000/graph_models/template?label="+suggestionValue)
     .then(response => response.json())
     .then(data => {
       templates = [data]
@@ -186,18 +186,17 @@ export default React.createClass({
 
     return (
       <div style = { { textAlign: "center" } }>
-        <Autocomplete
-          onChange = { this.onChange }
-          onSelect = { this.onSelect }
-          items = { this.state.autocompleteResults }
-          getItemValue = { (item) => { return item } }
-          renderItem = { (item, isHighlighted) => {
+        <MatUiAutosuggest
+          handleSuggestionsFetchRequested={this.onChange}
+          onSuggestionSelected={this.onSelect}
+          suggestions={this.state.autocompleteResults}
+          getSuggestionValue={(item) => item}
+          renderMenuItem={(suggestion) => {
             return (
-              <div
-                style = { isHighlighted ? styles.highlightedItem : styles.item }>
-                { item }
+              <div>
+                {suggestion}
               </div>
-            )
+            );
           } }
         />
         { hiddenTemplates }
