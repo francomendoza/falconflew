@@ -107,8 +107,29 @@ export default React.createClass({
   },
 
   onGraphInstanceSelect: function (graphInstanceIndex) {
-    return (value, item) => {
-      this.state.templateInstancesByInstanceId[this.state.currentTemplateInstanceId].graph_instances[graphInstanceIndex].id = value
+    return (evt, {suggestionValue}) => {
+      this.setState((prevState) => {
+        let prevTemplateInstancesByInstanceId = Object.assign(
+          {}, prevState.templateInstancesByInstanceId
+        );
+        let template = prevTemplateInstancesByInstanceId[
+          prevState.currentTemplateInstanceId
+        ];
+        let graphInstances = [...template.graph_instances]
+        let graphInstance = graphInstances[graphInstanceIndex];
+        let newGraphInstance = Object.assign({}, graphInstance);
+
+        newGraphInstance.id = suggestionValue;
+        graphInstances[graphInstanceIndex] = newGraphInstance;
+        template.graph_instances = graphInstances;
+        prevTemplateInstancesByInstanceId[
+          prevState.currentTemplateInstanceId
+        ] = template;
+
+        return {
+          templateInstancesByInstanceId: prevTemplateInstancesByInstanceId,
+        };
+      });
     }
   },
 

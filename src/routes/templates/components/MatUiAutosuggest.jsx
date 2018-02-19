@@ -67,6 +67,7 @@ class MatUiAutosuggest extends React.Component {
     return (
       <TextField
         fullWidth
+        label={inputProps.label}
         inputRef={ref}
         InputProps={{
           classes: {
@@ -113,6 +114,7 @@ class MatUiAutosuggest extends React.Component {
         getSuggestionValue={this.props.getSuggestionValue}
         renderSuggestion={this.renderSuggestion}
         inputProps={{
+          ...this.props.inputProps,
           classes,
           placeholder: this.props.placeholder,
           value: this.state.value,
@@ -135,6 +137,7 @@ MatUiAutosuggest.propTypes = {
   handleSuggestionsFetchRequested: PropTypes.func.isRequired,
   onSuggestionSelected: PropTypes.func.isRequired,
   renderMenuItem: PropTypes.func.isRequired,
+  inputProps: PropTypes.object,
   // onChange: PropTypes.func.isRequired,
 };
 

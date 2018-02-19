@@ -1,19 +1,13 @@
 import React from 'react';
-import Autocomplete from '../entities/components/custom-autocomplete';
 import fetch from 'isomorphic-fetch';
-import PropertyFormElement from '../templates/components/property_form_element';
-import GraphInstance from './GraphInstance';
-import GraphTemplate from './GraphTemplate';
+import MatUiAutosuggest from '../templates/components/MatUiAutosuggest';
 
-export default React.createClass({
+export default class GraphInstance extends React.Component {
+  state = {
+    autocompleteResults: []
+  }
 
-  getInitialState: function () {
-    return {
-      autocompleteResults: []
-    }
-  },
-
-  onChange: function (event, value) {
+  onChange = ({value}) => {
     let url;
     if (this.props.instance.type) {
       url = "http://localhost:3000/graphs/search?type=" + this.props.instance.type + "&term=" + value
@@ -23,13 +17,13 @@ export default React.createClass({
     fetch(url)
     .then(response => response.json())
     .then(data => this.setState({ autocompleteResults: data }))
-  },
+  }
 
-  onSelect: function (value, item) {
+  onSelect = (value, item) => {
 
-  },
+  }
 
-  onNewButtonClick: function () {
+  onNewButtonClick = () => {
     if (this.props.instance.type) {
       // render graph chooser
       this.props.onAddNewButtonClickType(this.props.instance.type, this.props.graphInstanceIndex, this.props.parentTemplateInstanceId)
@@ -37,10 +31,9 @@ export default React.createClass({
       // render template
       this.props.onAddNewButtonClick(this.props.instance.label, this.props.graphInstanceIndex, this.props.parentTemplateInstanceId)
     }
+  }
 
-  },
-
-  render: function () {
+  render() {
 
     let styles = {
       highlightedItem: {
@@ -58,17 +51,18 @@ export default React.createClass({
 
     return (
       <div className = "property_element">
-        <label>{ this.props.instance.label || this.props.instance.type }:</label>
-        <Autocomplete
-          onChange = { this.onChange }
-          onSelect = { this.props.onGraphInstanceSelect }
-          items = { this.state.autocompleteResults }
-          getItemValue = { (item) => { return item.elastic_id } }
-          renderItem = { (item, isHighlighted) => {
+        <MatUiAutosuggest
+          handleSuggestionsFetchRequested={this.onChange}
+          onSuggestionSelected={this.props.onGraphInstanceSelect}
+          suggestions={this.state.autocompleteResults}
+          getSuggestionValue={(item) => item.elastic_id}
+          inputProps={{
+            label: this.props.instance.label || this.props.instance.type
+          }}
+          renderMenuItem = { (item) => {
             let properties = item.node_instances[0].properties
             return (
-              <div
-                style = { isHighlighted ? styles.highlightedItem : styles.item }>
+              <div>
                 { Object.keys(properties).map((propertyKey, index) => {
                   return <div key = { index }>{ propertyKey + ": " + properties[propertyKey] }</div>
                 }) }
@@ -84,4 +78,4 @@ export default React.createClass({
       </div>
     )
   }
-})
+}
