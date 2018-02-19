@@ -1,7 +1,7 @@
 import React from 'react';
-import Autocomplete from '../entities/components/custom-autocomplete';
 import fetch from 'isomorphic-fetch';
 import PropertyFormElement from '../templates/components/property_form_element';
+import MatUiAutosuggest from '../templates/components/MatUiAutosuggest';
 
 export default class NodeInstance extends React.Component {
   state = {
@@ -9,14 +9,14 @@ export default class NodeInstance extends React.Component {
     mode: "new" // this will likely be passed down in props? or maybe even initialized?
   }
 
-  onChange = (event, value) => {
+  onChange = ({value}) => {
     fetch("http://localhost:3000/graph_models/templates_by_label?label=" + value)
     .then(response => response.json())
     .then(data => this.setState({ autocompleteResults: data }))
   }
 
-  onSelect = (value, item) => {
-    fetch("http://localhost:3000/graph_models/template?label=" + value)
+  onSelect = (evt, {suggestionValue}) => {
+    fetch("http://localhost:3000/graph_models/template?label=" + suggestionValue)
     .then(response => response.json())
     .then(data => this.setState({ template: data }))
   }
@@ -62,16 +62,15 @@ export default class NodeInstance extends React.Component {
     } else {
       nodeSearch = (
         <div>
-          <Autocomplete
-            onChange = { this.onChange }
-            onSelect = { this.onSelect }
-            items = { this.state.autocompleteResults }
-            getItemValue = { (item) => { return item } }
-            renderItem = { (item, isHighlighted) => {
+          <MatUiAutosuggest
+            handleSuggestionsFetchRequested={this.onChange}
+            onSuggestionSelected={this.onSelect}
+            suggestions={this.state.autocompleteResults}
+            getSuggestionValue={(item) => item}
+            renderMenuItem={(item) => {
               return (
-                <div
-                  style = { isHighlighted ? styles.highlightedItem : styles.item }>
-                  { item }
+                <div>
+                  {item}
                 </div>
               )
             } }

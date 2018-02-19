@@ -1,34 +1,29 @@
 import React from 'react';
 import fetch from 'isomorphic-fetch';
-import PropertyFormElement from '../templates/components/property_form_element';
-import GraphInstance from './GraphInstance';
 import GraphTemplate from './GraphTemplate';
 import GraphChooser from './GraphChooser';
 import clone from 'clone';
 import GraphDisplay from './GraphDisplay';
 import MatUiAutosuggest from '../templates/components/MatUiAutosuggest';
 
-export default React.createClass({
+export default class GraphPage extends React.Component {
+  state = {
+    autocompleteResults: [],
+    currentTemplateInstanceId: null,
+    templateInstancesByInstanceId: {},
+    templates: [],
+    hiddenTemplates: [],
+    graphChooser: null,
+    graph: null
+  }
 
-  getInitialState: function () {
-    return {
-      autocompleteResults: [],
-      currentTemplateInstanceId: null,
-      templateInstancesByInstanceId: {},
-      templates: [],
-      hiddenTemplates: [],
-      graphChooser: null,
-      graph: null
-    }
-  },
-
-  onChange: function ({value}) {
+  onChange = ({value}) => {
     fetch("http://localhost:3000/graph_models/templates_by_label?label="+value)
     .then(response => response.json())
     .then(data => this.setState({ autocompleteResults: data }))
-  },
+  }
 
-  onSelect: function (evt, {suggestionValue}) {
+  onSelect = (evt, {suggestionValue}) => {
     let templates,
     templateInstancesByInstanceId = {},
     currentTemplateInstanceId;
@@ -43,9 +38,14 @@ export default React.createClass({
       templateInstancesByInstanceId[newTemplateInstanceId] = newTemplateInstance;
       this.setState({ templates, templateInstancesByInstanceId, currentTemplateInstanceId })
     })
-  },
+  }
 
-  onAddNewButtonClick: function (graphInstanceLabel, graphInstanceIndex, parentTemplateInstanceId, templateInstanceId) {
+  onAddNewButtonClick = (
+    graphInstanceLabel,
+    graphInstanceIndex,
+    parentTemplateInstanceId,
+    templateInstanceId
+  ) => {
       let templates = this.state.templates,
       templateInstancesByInstanceId = this.state.templateInstancesByInstanceId,
       currentTemplateInstanceId,
@@ -68,13 +68,13 @@ export default React.createClass({
         templateInstancesByInstanceId[parentTemplateInstanceId].graph_instances[graphInstanceIndex]["templateInstanceId"] = newTemplateInstanceId;
         this.setState({ templates, templateInstancesByInstanceId, currentTemplateInstanceId })
       })
-  },
+  }
 
-  onAddNewButtonClickType: function (type, graphInstanceIndex, parentTemplateInstanceId) {
+  onAddNewButtonClickType = (type, graphInstanceIndex, parentTemplateInstanceId) => {
     this.setState({ graphChooser: { type, graphInstanceIndex, parentTemplateInstanceId }, currentTemplateInstanceId: null });
-  },
+  }
 
-  onGraphChooserSelect: function (graphInstanceIndex, parentTemplateInstanceId, currentTemplateInstanceId) {
+  onGraphChooserSelect = (graphInstanceIndex, parentTemplateInstanceId, currentTemplateInstanceId) => {
     return (event) => {
       // check if template is in cache, otherwise request it
       // replace whatever the current instance is with this new instance
@@ -84,17 +84,17 @@ export default React.createClass({
         this.onAddNewButtonClick(event.target.value, graphInstanceIndex, parentTemplateInstanceId)
       }
     }
-  },
+  }
 
-  switchCurrentTemplateInstance: function (hiddenTemplateInstanceId) {
+  switchCurrentTemplateInstance = (hiddenTemplateInstanceId) => {
     return () => {
       let hiddenTemplates = this.state.hiddenTemplates;
       hiddenTemplates.pop();
       this.setState({ currentTemplateInstanceId: hiddenTemplateInstanceId, graphChooser: null, hiddenTemplates })
     }
-  },
+  }
 
-  handlePropertyChange: function (templateInstanceId) {
+  handlePropertyChange = (templateInstanceId) => {
     let templateInstancesByInstanceId = this.state.templateInstancesByInstanceId;
     return (nodeInstanceIndex) => {
       return (nodePropertyIndex) => {
@@ -104,9 +104,9 @@ export default React.createClass({
         }
       }
     }
-  },
+  }
 
-  onGraphInstanceSelect: function (graphInstanceIndex) {
+  onGraphInstanceSelect = (graphInstanceIndex) => {
     return (evt, {suggestionValue}) => {
       this.setState((prevState) => {
         let prevTemplateInstancesByInstanceId = Object.assign(
@@ -131,9 +131,9 @@ export default React.createClass({
         };
       });
     }
-  },
+  }
 
-  create: function () {
+  create = () => {
     fetch('http://localhost:3000/graphs/', {
       headers: {
         'Content-Type': 'application/json'
@@ -149,9 +149,9 @@ export default React.createClass({
       //   this.setState({ currentTemplateInstanceId: this.state.parentTemplateInstanceId, templateInstancesByInstanceId })
       // }
     })
-  },
+  }
 
-  render: function () {
+  render() {
     let styles = {
       highlightedItem: {
         backgroundColor: "lightgray"
@@ -227,4 +227,4 @@ export default React.createClass({
       </div>
     )
   }
-})
+}

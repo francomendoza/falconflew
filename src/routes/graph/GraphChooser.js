@@ -1,26 +1,19 @@
 import React from 'react';
-import PropertyFormElement from '../templates/components/property_form_element';
-import NodeInstance from './NodeInstance';
-import GraphInstance from './GraphInstance';
 
-export default React.createClass({
+export default class GraphChooser extends React.Component {
+  state = {
+    types: []
+  }
 
-  getInitialState: function () {
-    return {
-      types: []
-    }
-  },
-
-  componentWillMount: function () {
+  componentWillMount = () => {
     // if (this.props.graphChooserType) {
       fetch("http://localhost:3000/graph_models/templates_by_type?type=" + this.props.graphChooser.type)
       .then(response => response.json())
       .then(data => this.setState({ types: data }))
     // }
-  },
+  }
 
-  render: function () {
-
+  render() {
     let styles = {
       graphChooser: {
         textAlign: "center"
@@ -54,4 +47,4 @@ export default React.createClass({
       </div>
     )
   }
-})
+}
