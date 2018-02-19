@@ -1,12 +1,12 @@
 import React from 'react';
-import Autocomplete from './custom-autocomplete';
+import MatUiAutosuggest from '../../templates/components/MatUiAutosuggest';
 
-export default class StaticSearchCell extends React.Component {
+export default class StaticSearchHeaderCell extends React.Component {
 
-  matchItemToTerm = (item, value) => {
-    return (
-      item.node.toLowerCase().indexOf(value.toLowerCase()) !== -1
-    )
+  matchItemToTerm = ({value}) => {
+    return this.props.dataSource.filter((suggestion) => {
+      return suggestion.node.toLowerCase().indexOf(value.toLowerCase()) !== -1;
+    });
   }
 
   renderItems = (renderedItems, items) => {
@@ -41,27 +41,17 @@ export default class StaticSearchCell extends React.Component {
     }
 
     return <th>
-      <Autocomplete
-        onSelect = { this.props.onSelect }
-        getItemValue = { (item) => item.node }
-        shouldItemRender={ this.matchItemToTerm }
-        items = { this.props.dataSource }
-        renderItem = { (item, isHighlighted) => {
+      <MatUiAutosuggest
+        onSuggestionSelected={this.props.onSelect}
+        handleSuggestionsFetchRequested={this.matchItemToTerm}
+        getSuggestionValue={(item) => item.node}
+        suggestions={this.props.dataSource}
+        renderMenuItem={(item) => {
           return <div
-            style = { isHighlighted ? styles.highlightedItem : styles.item }
             key = { item.node + item.related_to }>
             { item.node }
           </div>
         } }
-        renderMenu = {(renderedItems, items, value, style) => (
-            <div style={{...styles.menu, ...style, position: "fixed", overflow: "auto"}}>
-              {value === '' ? (
-                <div style={{padding: 6}}>Type name of related nodes</div>
-              ) : renderedItems.length === 0 ? (
-                <div style={{padding: 6}}>No matches for {value}</div>
-              ) : this.renderItems(renderedItems, items)}
-            </div>
-          )}
       />
     </th>
   }

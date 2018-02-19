@@ -52,7 +52,7 @@ var GridPage = React.createClass({
         node: item.label,
         properties
       }
-      let mappedRelatedNodes = item.related.map((related_node) => {
+      let mappedRelatedNodes = item.related_graphs.map((related_node) => {
         return {
           node: related_node,
           related_to: item.label //likely need another specific identifier in case multiple nodes exist
@@ -64,8 +64,8 @@ var GridPage = React.createClass({
     }
   },
 
-  onRelatedNodeSelect: function (value, item) {
-    fetch('http://localhost:3000/node_models/label?value='+value)
+  onRelatedNodeSelect: function (evt, {suggestionValue, suggestion}) {
+    fetch('http://localhost:3000/node_models/label?value='+suggestionValue)
     .then(response => response.json())
     .then(data => {
       let nodeSections = this.state.nodeSections
@@ -88,7 +88,7 @@ var GridPage = React.createClass({
       })
       let headerAutocompleteOptions = this.state.headerAutocompleteOptions.concat(mappedRelatedNodes)
       let relationships = this.state.relationships
-      relationships.push(item)
+      relationships.push(suggestion)
       this.setState({ nodeSections, headerAutocompleteOptions, relationships })
     })
   },
