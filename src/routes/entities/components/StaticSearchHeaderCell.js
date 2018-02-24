@@ -31,15 +31,6 @@ export default class StaticSearchHeaderCell extends React.Component {
   }
 
   render() {
-    let styles = {
-      highlightedItem: {
-        backgroundColor: "lightgray"
-      },
-      item: {
-        backgroundColor: "white"
-      }
-    }
-
     return <th>
       <MatUiAutosuggest
         onSuggestionSelected={this.props.onSelect}

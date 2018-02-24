@@ -52,9 +52,6 @@ class TemplatePage extends React.Component {
     let header_style = {
       height: "40px",
       opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3",
-      // textAlign: "center",
-      // background: "linear-gradient(#002c6b 0%, #3971bd 100%)",
-      // color: "white"
       borderBottom: "#002c6b 4px solid"
     };
 

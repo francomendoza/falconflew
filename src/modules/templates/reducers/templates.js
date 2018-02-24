@@ -82,19 +82,39 @@ export function templateInstanceMap(state = {}, action){
 export function templateInstanceStateMap(state = {}, action){
   switch (action.type){
     // case 'PARSE_TEMPLATES':
-    //   return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', { 'x0': { visible: true, submitted: false//, 
-    //     // related_node_counts: (action.templatesByNodeLabel[action.currentTemplateNodeLabel].related_nodes || []).map((el) => { return 1; }) 
+    //   return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', { 'x0': { visible: true, submitted: false//,
+    //     // related_node_counts: (action.templatesByNodeLabel[action.currentTemplateNodeLabel].related_nodes || []).map((el) => { return 1; })
     //   } }))
     case 'MAP_TEMPLATE_INSTANCES_STATE':
-      return Object.assign({}, state, action.templateInstanceStateMap)
+      return Object.assign({}, state, action.templateInstanceStateMap);
     case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
-      return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, { [action.templateInstanceId]: { visible: false, submitted: false//, 
-        //related_node_counts: (action.templatesByNodeLabel[action.node_label].related_nodes || []).map((el) => { return 1; }) 
-      } }))
+      return Object.assign(
+        {},
+        state,
+        generateTemplateInstanceState(
+          action.templatesByNodeLabel,
+          action.node_label,
+          action.templateInstanceId,
+          {
+            [action.templateInstanceId]: {
+              visible: false,
+              submitted: false,
+            }
+          }
+        )
+      );
     case 'SUBMIT_FORM':
     case 'TOGGLE_FORM_VISIBILITY':
     case 'INCREMENT_RELATED_NODE_COUNT':
-      return Object.assign({}, state, { [action.templateInstanceId]: templateInstanceState(state[action.templateInstanceId], action) });
+      return Object.assign(
+        {},
+        state,
+        {
+          [action.templateInstanceId]: templateInstanceState(
+            state[action.templateInstanceId], action
+          )
+        }
+      );
     case 'CLEAR_TEMPLATES':
       return {}
     default:
@@ -149,7 +169,7 @@ function generateTemplateInstancesByInstanceId(templatesByNodeLabel, currentTemp
       } else {
         bind_source_attribute['observers'] = [{instance_id: instanceId, type: instruction.type, key: instruction.key, index: instruction.index}]
       }
-    } 
+    }
     if(instruction.type == 'node_property'){
         let current_node_property = obj[instanceId].node_properties[instruction.index]
         obj[instanceId].node_properties[instruction.index] = Object.assign({}, current_node_property, instruction.replace_with)
@@ -195,18 +215,26 @@ function generateTemplateInstanceMap(templatesByNodeLabel, currentTemplateNodeLa
   return obj;
 }
 
-function generateTemplateInstanceState(templatesByNodeLabel, currentTemplateNodeLabel, instanceId, obj) {
-  if(templatesByNodeLabel[currentTemplateNodeLabel] && templatesByNodeLabel[currentTemplateNodeLabel].related_nodes){
-    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes.forEach(function(el, index){
+function generateTemplateInstanceState(
+  templatesByNodeLabel,
+  currentTemplateNodeLabel,
+  instanceId,
+  obj
+) {
+  if(templatesByNodeLabel[currentTemplateNodeLabel] &&
+    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes){
+    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes.forEach((el, index) => {
       let thisInstanceId = `${instanceId}${index}`;
-      //if(el.match_type !== 'child' && !el.children_templates){
-        obj[thisInstanceId] = {visible: false, submitted: false//, 
-          //related_node_counts: (templatesByNodeLabel[el.template_label[0]].related_nodes || []).map((el) => { return 1; })
+        obj[thisInstanceId] = {
+          visible: false,
+          submitted: false,
         };
-        generateTemplateInstanceState(templatesByNodeLabel, el.template_label[0], thisInstanceId, obj);
-      //}else{
-      //  obj[thisInstanceId] = null;
-      //}
+        generateTemplateInstanceState(
+          templatesByNodeLabel,
+          el.template_label[0],
+          thisInstanceId,
+          obj
+        );
     });
   }
   return obj;
