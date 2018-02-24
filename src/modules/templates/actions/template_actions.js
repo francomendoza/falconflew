@@ -1,5 +1,6 @@
 import fetch from 'isomorphic-fetch';
 import { routeActions } from 'react-router-redux';
+import firestore from '../../../initializers/firebase';
 
 export function submitForm(templateInstanceId){
   return (dispatch, getState) => {
@@ -53,7 +54,46 @@ export function updateTemplateMap(templateId){
   return { type: "ADD_TEMPLATE_TO_MAP", templateId };
 }
 
-export function setActiveTemplate(templateInstanceId){
+export function editTemplateInstance(newEditingTemplateId){
+  return (dispatch, getState) => {
+    let current_user_id = getState().current_user_id;
+    // delete current template editing from firestore
+    // change editing users state occurs via subscription to firestore
+    let activeTemplateId = getState().activeTemplate;
+    let templateInstance = getState().templateInstanceState[activeTemplateId];
+    let activeTemplateEditingUserIds = templateInstance
+      .editingUserIds
+      .filter((user_id) => user_id !== current_user_id);
+    let activeTemplateFirebaseId = getState()
+      .firebaseDocIdsByTemplateInstanceId[activeTemplateId];
+    // or search for document each time?
+    firestore.collection('EditingUserIdsByTemplateInstanceId')
+      .doc(activeTemplateFirebaseId)
+      .set({
+        editingUserIds: activeTemplateEditingUserIds,
+      }, {merge: true});
+
+    // register new template editing
+    let newEditingTemplate = getState().templateInstanceState[newEditingTemplateId];
+    let newTemplateEditingUserIds = [...newEditingTemplate.editingUserIds, current_user_id];
+    let newEditingTemplateFirebaseId = getState()
+      .firebaseDocIdsByTemplateInstanceId[newEditingTemplateId];
+    // or search for document each time?
+    firestore.collection('EditingUserIdsByTemplateInstanceId')
+      .doc(newEditingTemplateFirebaseId)
+      .set({
+        editingUserIds: newTemplateEditingUserIds,
+      }, {merge: true});
+    // dispatch setactive state
+    dispatch(setActiveTemplate(newEditingTemplateId));
+  };
+}
+
+export function setEditingUsers(templateInstanceId, editingUserIds) {
+  return {type: 'SET_EDITING_USERS', templateInstanceId, editingUserIds};
+}
+
+export function setActiveTemplate(templateInstanceId) {
   return { type: "SET_ACTIVE_TEMPLATE", templateInstanceId }
 }
 
@@ -114,7 +154,11 @@ function generateTemplateInstanceMap(templateInstancesByInstanceId, instanceId, 
 }
 
 function addTemplateInstanceStateMap(templateInstancesByInstanceId){
-  let templateInstanceStateMap = generateTemplateInstanceStateMap(templateInstancesByInstanceId, 'x0', { 'x0': { visible: true, submitted: false } })
+  let templateInstanceStateMap = generateTemplateInstanceStateMap(
+    templateInstancesByInstanceId,
+    'x0',
+    { 'x0': { visible: true, submitted: false, editing_user_ids: [] } }
+  )
   return { type: 'MAP_TEMPLATE_INSTANCES_STATE', templateInstanceStateMap }
 }
 
@@ -185,7 +229,11 @@ export function updateTemplateInstances(templateInstanceId, node_label) {
       .then(response => response.json())
       .then(data => {
         dispatch(addTemplatesByNodeLabel(data));
-        dispatch(changeChildRelatedNodeTemplate(templateInstanceId, node_label, getState().templatesByNodeLabel));
+        dispatch(changeChildRelatedNodeTemplate(
+          templateInstanceId,
+          node_label,
+          getState().templatesByNodeLabel
+        ));
       })
   }
 }

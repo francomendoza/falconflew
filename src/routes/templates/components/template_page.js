@@ -3,7 +3,15 @@ import { connect } from 'react-redux';
 import PropertyFormElement from './property_form_element';
 import Empty from '../../entities/components/empty';
 import RelatedNodeElement from './related_node_element';
-import { submitForm, propertyChanged, toggleFormVisibility, setActiveTemplate, autocompleteEntitiesByLabel, relationshipEntityChanged, incrementRelatedNodeCount } from '../../../modules/templates/actions/template_actions';
+import {
+  submitForm,
+  propertyChanged,
+  toggleFormVisibility,
+  setActiveTemplate,
+  autocompleteEntitiesByLabel,
+  relationshipEntityChanged,
+  incrementRelatedNodeCount
+} from '../../../modules/templates/actions/template_actions';
 import Button from 'material-ui/Button';
 
 class TemplatePage extends React.Component {
@@ -23,7 +31,9 @@ class TemplatePage extends React.Component {
   clickDivHandler = (templateInstanceId) => {
     return (event) => {
       event.stopPropagation();
-      this.props.dispatch(setActiveTemplate(templateInstanceId));
+      if (this.props.activeTemplate !== templateInstanceId) {
+        this.props.dispatch(setActiveTemplate(templateInstanceId));
+      }
     }
   }
 

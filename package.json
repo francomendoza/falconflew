@@ -7,6 +7,7 @@
   },
   "dependencies": {
     "autosuggest-highlight": "^3.1.1",
+    "firebase": "^4.10.1",
     "fixed-data-table": "^0.6.0",
     "history": "^1.11.1",
     "isomorphic-fetch": "^2.1.1",

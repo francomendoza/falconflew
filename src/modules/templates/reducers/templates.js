@@ -3,7 +3,16 @@ import clone from 'clone';
 export function templateInstancesByInstanceId(state = {}, action){
   switch (action.type){
     case 'PARSE_TEMPLATES':
-      return Object.assign({}, state, generateTemplateInstancesByInstanceId(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', {}));
+      return Object.assign(
+        {},
+        state,
+        generateTemplateInstancesByInstanceId(
+          action.templatesByNodeLabel,
+          action.currentTemplateNodeLabel,
+          'x0',
+          {}
+        )
+      );
     case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
       return Object.assign({}, state, generateTemplateInstancesByInstanceId(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, {}, action.instructions));
     case 'UPDATE_PROPERTY_VALUE':
@@ -228,6 +237,7 @@ function generateTemplateInstanceState(
         obj[thisInstanceId] = {
           visible: false,
           submitted: false,
+          user_ids_editing: [],
         };
         generateTemplateInstanceState(
           templatesByNodeLabel,

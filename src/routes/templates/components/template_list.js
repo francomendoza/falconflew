@@ -1,5 +1,8 @@
 import React from 'react';
-import { requestTemplateByName, retrieveTemplates } from '../../../modules/templates/actions/template_actions';
+import {
+  requestTemplateByName,
+  retrieveTemplates
+} from '../../../modules/templates/actions/template_actions';
 import MatUiAutosuggest from './MatUiAutosuggest';
 
 export default class TemplateList extends React.Component {
