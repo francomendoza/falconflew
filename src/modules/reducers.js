@@ -2,9 +2,12 @@ import { combineReducers } from 'redux';
 import { routerStateReducer } from 'redux-router';
 import * as entities from './entities/reducers/entities';
 import * as templates from './templates/reducers/templates';
+import * as auth from './auth/reducers';
 
 const reducers = combineReducers({
   router: routerStateReducer,
+
+  currentUserId: auth.currentUserId,
 
   updateEntities: entities.updateEntities,
   entitiesByLabel: entities.entitiesByLabel,
