@@ -142,7 +142,7 @@ class TemplatePage extends React.Component {
       // outline: "black solid 1px"
     };
 
-    var mega_array = this.recursive('x0', []);
+    var mega_array = this.recursive(this.props.activeTemplate, []);
 
     return <div style = { container_styles } >{ mega_array }</div>
   }

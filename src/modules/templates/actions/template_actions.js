@@ -1,6 +1,8 @@
 import fetch from 'isomorphic-fetch';
 import { routeActions } from 'react-router-redux';
 import firestore from '../../../initializers/firebase';
+import { findFirestoreIdByTemplateInstanceId } from './firestoreDocIdsByTemplateInstanceId';
+import clone from 'clone';
 
 export function submitForm(templateInstanceId){
   return (dispatch, getState) => {
@@ -56,14 +58,14 @@ export function updateTemplateMap(templateId){
 
 export function editTemplateInstance(newEditingTemplateId){
   return (dispatch, getState) => {
-    let current_user_id = getState().current_user_id;
+    let currentUserId = getState().currentUserId;
     // delete current template editing from firestore
     // change editing users state occurs via subscription to firestore
     let activeTemplateId = getState().activeTemplate;
     let templateInstance = getState().templateInstanceState[activeTemplateId];
     let activeTemplateEditingUserIds = templateInstance
       .editingUserIds
-      .filter((user_id) => user_id !== current_user_id);
+      .filter((user_id) => user_id !== currentUserId);
     let activeTemplateFirebaseId = getState()
       .firebaseDocIdsByTemplateInstanceId[activeTemplateId];
     // or search for document each time?
@@ -75,7 +77,7 @@ export function editTemplateInstance(newEditingTemplateId){
 
     // register new template editing
     let newEditingTemplate = getState().templateInstanceState[newEditingTemplateId];
-    let newTemplateEditingUserIds = [...newEditingTemplate.editingUserIds, current_user_id];
+    let newTemplateEditingUserIds = [...newEditingTemplate.editingUserIds, currentUserId];
     let newEditingTemplateFirebaseId = getState()
       .firebaseDocIdsByTemplateInstanceId[newEditingTemplateId];
     // or search for document each time?
@@ -89,10 +91,6 @@ export function editTemplateInstance(newEditingTemplateId){
   };
 }
 
-export function setEditingUsers(templateInstanceId, editingUserIds) {
-  return {type: 'SET_EDITING_USERS', templateInstanceId, editingUserIds};
-}
-
 export function setActiveTemplate(templateInstanceId) {
   return { type: "SET_ACTIVE_TEMPLATE", templateInstanceId }
 }
@@ -101,17 +99,40 @@ export function clearTemplates(){
   return { type: 'CLEAR_TEMPLATES' }
 }
 
-export function retrieveTemplates(currentTemplateNodeLabel){
+export function retrieveTemplates(currentTemplateNodeLabel, parentTemplateInstanceId){
   return (dispatch, getState) => {
     // dispatch() a syncronous action that tells state we are going to fetch data
-    dispatch(clearTemplates())
-    return fetch('http://localhost:3000/templates/'+currentTemplateNodeLabel)
+
+    // this should only run when its coming from search box,
+    // rather than fetching a template from within another template
+    dispatch(clearTemplates());
+
+    return fetch(`http://localhost:3000/templates/template?template_name=${
+      currentTemplateNodeLabel}`)
       .then(response => response.json())
-      .then(data => {
-        dispatch(addTemplatesByNodeLabel(data));
-        dispatch(parseTemplates(getState().templatesByNodeLabel, currentTemplateNodeLabel));
-        dispatch(addTemplateInstanceMap(getState().templateInstancesByInstanceId));
-        dispatch(addTemplateInstanceStateMap(getState().templateInstancesByInstanceId));
+      .then(response => {
+        let template = response.data.template;
+        let templateInstanceId = response.data.templateInstanceId;
+
+        // TODO: check if template is already there?
+        dispatch(addTemplatesByNodeLabel([template]));
+        dispatch(setActiveTemplate(templateInstanceId));
+        // query firestore to get/create document
+        dispatch(findFirestoreIdByTemplateInstanceId(templateInstanceId));
+        dispatch(editTemplateInstance(templateInstanceId));
+        // apply parent's instructions to child
+        dispatch(parseTemplate(
+          template,
+          templateInstanceId,
+          parentTemplateInstanceId
+        ));
+        // payload: templateInstanceId, and parentTemplateInstanceId
+        dispatch(addTemplateInstanceMap(
+          templateInstanceId,
+          parentTemplateInstanceId
+        ));
+        // payload: templateInstanceId to generate state map
+        dispatch(addTemplateInstanceStateMap(templateInstanceId));
       })
       .then(() => dispatch(routeActions.push('/template_form/' + currentTemplateNodeLabel)));
   };
@@ -123,63 +144,72 @@ function addTemplatesByNodeLabel(templates){
   return { type: "ADD_TEMPLATES_BY_NODE_LABEL", templatesByNodeLabel };
 };
 
-function parseTemplates(templatesByNodeLabel, currentTemplateNodeLabel){
-  return { type: "PARSE_TEMPLATES", templatesByNodeLabel, currentTemplateNodeLabel }
+function parseTemplate(template, templateInstanceId, parentTemplateInstanceId) {
+  let clonedTemplate = clone(template);
+  return {type: 'ADD_TEMPLATE', template: clonedTemplate, templateInstanceId};
 }
 
-function addTemplateInstanceMap(templateInstancesByInstanceId){
-  let templateInstanceMap = generateTemplateInstanceMap(templateInstancesByInstanceId, 'x0', {})
-  return { type: 'MAP_TEMPLATE_INSTANCES', templateInstanceMap }
+// deprecated with old way of requesting all templates at once.
+// function parseTemplates(templatesByNodeLabel, currentTemplateNodeLabel){
+//   return { type: "PARSE_TEMPLATES", templatesByNodeLabel, currentTemplateNodeLabel }
+// }
+
+function addTemplateInstanceMap(templateInstanceId, parentTemplateInstanceId) {
+  return {
+    type: 'ADD_TEMPLATE_INSTANCE_MAP',
+    templateInstanceId,
+    parentTemplateInstanceId,
+  };
 }
 
-function generateTemplateInstanceMap(templateInstancesByInstanceId, instanceId, obj) {
-  if(obj[instanceId] !== undefined || obj[instanceId] !== null) {
-    obj[instanceId] = [];
-  }
-
-  let templateInstance = templateInstancesByInstanceId[instanceId]
-
-  if(templateInstance && templateInstance.related_nodes){
-    templateInstance.related_nodes.forEach((el, index) => {
-      // if(el.match_type !== 'child' && !el.children_templates){
-        let thisInstanceId = `${instanceId}${index}`;
-        obj[instanceId].push(thisInstanceId);
-        generateTemplateInstanceMap(templateInstancesByInstanceId, thisInstanceId, obj);
-      // }else{
-        // obj[instanceId].push(null);
-      // }
-    });
-  }
-  return obj;
-}
+// function generateTemplateInstanceMap(templateInstancesByInstanceId, instanceId, obj) {
+//   if(obj[instanceId] !== undefined || obj[instanceId] !== null) {
+//     obj[instanceId] = [];
+//   }
+//
+//   let templateInstance = templateInstancesByInstanceId[instanceId]
+//
+//   if(templateInstance && templateInstance.related_nodes){
+//     templateInstance.related_nodes.forEach((el, index) => {
+//       // if(el.match_type !== 'child' && !el.children_templates){
+//         let thisInstanceId = `${instanceId}${index}`;
+//         obj[instanceId].push(thisInstanceId);
+//         generateTemplateInstanceMap(templateInstancesByInstanceId, thisInstanceId, obj);
+//       // }else{
+//         // obj[instanceId].push(null);
+//       // }
+//     });
+//   }
+//   return obj;
+// }
 
 function addTemplateInstanceStateMap(templateInstancesByInstanceId){
-  let templateInstanceStateMap = generateTemplateInstanceStateMap(
-    templateInstancesByInstanceId,
-    'x0',
-    { 'x0': { visible: true, submitted: false, editing_user_ids: [] } }
-  )
+  let templateInstanceStateMap = {
+    visible: true,
+    submitted: false,
+    editingUserIds: [],
+  };
   return { type: 'MAP_TEMPLATE_INSTANCES_STATE', templateInstanceStateMap }
 }
 
-function generateTemplateInstanceStateMap(templateInstancesByInstanceId, instanceId, obj) {
-  let templateInstance = templateInstancesByInstanceId[instanceId]
-
-  if(templateInstance && templateInstance.related_nodes){
-    templateInstance.related_nodes.forEach((el, index) => {
-      let thisInstanceId = `${instanceId}${index}`;
-      //if(el.match_type !== 'child' && !el.children_templates){
-        obj[thisInstanceId] = {visible: false, submitted: false//,
-          //related_node_counts: (templatesByNodeLabel[el.template_label[0]].related_nodes || []).map((el) => { return 1; })
-        };
-        generateTemplateInstanceStateMap(templateInstancesByInstanceId, thisInstanceId, obj);
-      //}else{
-      //  obj[thisInstanceId] = null;
-      //}
-    });
-  }
-  return obj;
-}
+// function generateTemplateInstanceStateMap(templateInstancesByInstanceId, instanceId, obj) {
+//   let templateInstance = templateInstancesByInstanceId[instanceId]
+//
+//   if(templateInstance && templateInstance.related_nodes){
+//     templateInstance.related_nodes.forEach((el, index) => {
+//       let thisInstanceId = `${instanceId}${index}`;
+//       //if(el.match_type !== 'child' && !el.children_templates){
+//         obj[thisInstanceId] = {visible: false, submitted: false//,
+//           //related_node_counts: (templatesByNodeLabel[el.template_label[0]].related_nodes || []).map((el) => { return 1; })
+//         };
+//         generateTemplateInstanceStateMap(templateInstancesByInstanceId, thisInstanceId, obj);
+//       //}else{
+//       //  obj[thisInstanceId] = null;
+//       //}
+//     });
+//   }
+//   return obj;
+// }
 
 export function requestTemplateByName(name){
   return (dispatch, getState) => {
