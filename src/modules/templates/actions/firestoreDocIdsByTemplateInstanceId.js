@@ -3,39 +3,29 @@ import firestore from '../../../initializers/firebase';
 const collection = firestore.collection('EditingUserIdsByTemplateInstanceId');
 
 export function findFirestoreIdByTemplateInstanceId(templateInstanceId) {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     // TODO: clean up this logic, its nested and groce AF
-    f(templateInstanceId, dispatch);
-  }
-}
+    let querySnapshot = await collection.where('templateInstanceId', '==', templateInstanceId)
+      .get();
 
-async function f(templateInstanceId, dispatch) {
-  let query = await collection.where('templateInstanceId', '==', templateInstanceId)
-    .get();
+    let found = querySnapshot.size > 0;
+    if (found) {
 
-  await processQuery(query, templateInstanceId, dispatch);
-}
+      let docs = querySnapshot.docs.map((doc) => {
+        return processDoc(doc, templateInstanceId, dispatch);
+      });
 
-async function processQuery(querySnapshot, templateInstanceId, dispatch) {
-  let found = querySnapshot.size > 0;
-  if (found) {
-    async function processFoundDoc(docRef) {
-      let doc = await collection.doc(docRef.id).get();
-      processDoc(doc, templateInstanceId, dispatch);
+      return docs;
+    } else {
+      let editingUserIds = [];
+      let newDoc = await collection.add({
+        templateInstanceId,
+        editingUserIds,
+      });
+      return processDoc(newDoc, templateInstanceId, dispatch);
     }
-
-    querySnapshot.forEach(processFoundDoc);
-  } else {
-    let editingUserIds = [];
-    let newDoc = await collection.add({
-      templateInstanceId,
-      editingUserIds,
-    });
-    processDoc(newDoc, templateInstanceId, dispatch);
   }
 }
-
-
 
 function processDoc(doc, templateInstanceId, dispatch) {
   dispatch(addFirestoreIdsByTemplateInstanceIds(

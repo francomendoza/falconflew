@@ -113,7 +113,7 @@ export function retrieveTemplates(currentTemplateNodeLabel, parentTemplateInstan
     return fetch(`http://localhost:3000/templates/template?template_name=${
       currentTemplateNodeLabel}`)
       .then(response => response.json())
-      .then(response => {
+      .then(async (response) => {
         let template = response.data.template;
         let templateInstanceId = response.data.templateInstanceId;
 
@@ -121,7 +121,7 @@ export function retrieveTemplates(currentTemplateNodeLabel, parentTemplateInstan
         dispatch(addTemplatesByNodeLabel([template]));
         dispatch(setActiveTemplate(templateInstanceId));
         // query firestore to get/create document
-        dispatch(findFirestoreIdByTemplateInstanceId(templateInstanceId));
+        await dispatch(findFirestoreIdByTemplateInstanceId(templateInstanceId));
         // apply parent's instructions to child
         dispatch(parseTemplate(
           template,
