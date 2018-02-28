@@ -62,8 +62,8 @@ export function editTemplateInstance(newEditingTemplateId){
     // delete current template editing from firestore
     // change editing users state occurs via subscription to firestore
     let activeTemplateId = getState().activeTemplate;
-    let templateInstance = getState().templateInstanceState[activeTemplateId];
-    let activeTemplateEditingUserIds = templateInstance
+    let templateInstanceState = getState().templateInstanceStateMap[activeTemplateId];
+    let activeTemplateEditingUserIds = templateInstanceState
       .editingUserIds
       .filter((user_id) => user_id !== currentUserId);
     let activeTemplateFirebaseId = getState()
@@ -76,8 +76,11 @@ export function editTemplateInstance(newEditingTemplateId){
       }, {merge: true});
 
     // register new template editing
-    let newEditingTemplate = getState().templateInstanceState[newEditingTemplateId];
-    let newTemplateEditingUserIds = [...newEditingTemplate.editingUserIds, currentUserId];
+    let newEditingTemplateState = getState().templateInstanceStateMap[newEditingTemplateId];
+    let newTemplateEditingUserIds = [
+      ...newEditingTemplateState.editingUserIds,
+      currentUserId
+    ];
     let newEditingTemplateFirebaseId = getState()
       .firebaseDocIdsByTemplateInstanceId[newEditingTemplateId];
     // or search for document each time?
@@ -119,7 +122,6 @@ export function retrieveTemplates(currentTemplateNodeLabel, parentTemplateInstan
         dispatch(setActiveTemplate(templateInstanceId));
         // query firestore to get/create document
         dispatch(findFirestoreIdByTemplateInstanceId(templateInstanceId));
-        dispatch(editTemplateInstance(templateInstanceId));
         // apply parent's instructions to child
         dispatch(parseTemplate(
           template,
@@ -133,6 +135,8 @@ export function retrieveTemplates(currentTemplateNodeLabel, parentTemplateInstan
         ));
         // payload: templateInstanceId to generate state map
         dispatch(addTemplateInstanceStateMap(templateInstanceId));
+
+        dispatch(editTemplateInstance(templateInstanceId));
       })
       .then(() => dispatch(routeActions.push('/template_form/' + currentTemplateNodeLabel)));
   };
@@ -183,13 +187,17 @@ function addTemplateInstanceMap(templateInstanceId, parentTemplateInstanceId) {
 //   return obj;
 // }
 
-function addTemplateInstanceStateMap(templateInstancesByInstanceId){
+function addTemplateInstanceStateMap(templateInstanceId){
   let templateInstanceStateMap = {
     visible: true,
     submitted: false,
     editingUserIds: [],
   };
-  return { type: 'MAP_TEMPLATE_INSTANCES_STATE', templateInstanceStateMap }
+  return {
+    type: 'MAP_TEMPLATE_INSTANCES_STATE',
+    templateInstanceId,
+    templateInstanceStateMap
+  };
 }
 
 // function generateTemplateInstanceStateMap(templateInstancesByInstanceId, instanceId, obj) {

@@ -124,7 +124,9 @@ export function templateInstanceStateMap(state = {}, action){
       return Object.assign(
         {},
         state,
-        action.templateInstanceStateMap
+        {
+          [action.templateInstanceId]: action.templateInstanceStateMap,
+        }
       );
     case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
       return Object.assign(

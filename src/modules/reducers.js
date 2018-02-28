@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import { routerStateReducer } from 'redux-router';
 import * as entities from './entities/reducers/entities';
 import * as templates from './templates/reducers/templates';
+import * as firestore from './templates/reducers/firestore';
 import * as auth from './auth/reducers';
 
 const reducers = combineReducers({
@@ -22,7 +23,8 @@ const reducers = combineReducers({
   templateInstanceMap: templates.templateInstanceMap,
   activeTemplate: templates.activeTemplate,
   autocompleteItems: templates.autocompleteItems,
-  templatesByNodeLabel: templates.templatesByNodeLabel
+  templatesByNodeLabel: templates.templatesByNodeLabel,
+  firebaseDocIdsByTemplateInstanceId: firestore.firebaseDocIdsByTemplateInstanceId,
 })
 
 export default reducers;
