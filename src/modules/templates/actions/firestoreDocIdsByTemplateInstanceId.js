@@ -18,10 +18,11 @@ export function findFirestoreIdByTemplateInstanceId(templateInstanceId) {
       return docs;
     } else {
       let editingUserIds = [];
-      let newDoc = await collection.add({
+      let newDocRef = await collection.add({
         templateInstanceId,
         editingUserIds,
       });
+      let newDoc = await newDocRef.get();
       return processDoc(newDoc, templateInstanceId, dispatch);
     }
   }
@@ -36,7 +37,7 @@ function processDoc(doc, templateInstanceId, dispatch) {
   dispatch(setEditingUsers(templateInstanceId, doc.data().editingUserIds));
   // 2. add listener that update redux state anytime editors change
   doc.ref.onSnapshot((actualDoc) => {
-    dispatch(setEditingUsers(templateInstanceId, doc.data().editingUserIds));
+    dispatch(setEditingUsers(templateInstanceId, actualDoc.data().editingUserIds));
   });
 }
 
