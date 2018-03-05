@@ -83,8 +83,6 @@ function node_properties(state = [], action){
 
 export function templateInstanceMap(state = {}, action){
   switch (action.type){
-    // case 'PARSE_TEMPLATES':
-    //   return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', {}));
     case 'ADD_TEMPLATE_INSTANCE_MAP':
       let newTemplateMap = {
         [action.templateInstanceId]: [],
@@ -92,8 +90,9 @@ export function templateInstanceMap(state = {}, action){
 
       if (action.parentTemplateInstanceId) {
         let newParentMap = [
-          ...state[action.parentTemplateInstanceId],
-          action.templateInstanceId
+          ...state[action.parentTemplateInstanceId].slice(0, action.indexOnParent),
+          action.templateInstanceId,
+          ...state[action.parentTemplateInstanceId].slice(0, action.indexOnParent + 1)
         ];
         newTemplateMap = Object.assign(newTemplateMap, {
           [action.parentTemplateInstanceId]: newParentMap,

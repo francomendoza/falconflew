@@ -1,6 +1,6 @@
 import React from 'react';
 import { routeActions } from 'react-router-redux';
-import { retrieveTemplates } from '../../../modules/templates/actions/template_actions';
+import { fetchNewTemplate } from '../../../modules/templates/actions/template_actions';
 import { showEntity } from '../../../modules/entities/actions/entity_actions';
 import Paper from 'material-ui/Paper';
 
@@ -10,7 +10,7 @@ export default class EntityCard extends React.Component {
     return (e) => {
       e.preventDefault();
       //this.props.dispatch(routeActions.push(`/template_form/${label}`))
-      this.props.dispatch(retrieveTemplates(label));
+      this.props.dispatch(fetchNewTemplate(label));
     }
   }
 

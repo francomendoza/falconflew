@@ -1,7 +1,7 @@
 import React from 'react';
 import {
   requestTemplateByName,
-  retrieveTemplates
+  fetchNewTemplate
 } from '../../../modules/templates/actions/template_actions';
 import MatUiAutosuggest from './MatUiAutosuggest';
 
@@ -11,7 +11,7 @@ export default class TemplateList extends React.Component {
   }
 
   onSelect = (evt, {suggestionValue}) => {
-    this.props.dispatch(retrieveTemplates(suggestionValue));
+    this.props.dispatch(fetchNewTemplate(suggestionValue));
   }
 
   render() {

@@ -6,7 +6,6 @@ import RelatedNodeElement from './related_node_element';
 import {
   submitForm,
   propertyChanged,
-  toggleFormVisibility,
   setActiveTemplate,
   autocompleteEntitiesByLabel,
   relationshipEntityChanged,
@@ -34,12 +33,6 @@ class TemplatePage extends React.Component {
       if (this.props.activeTemplate !== templateInstanceId) {
         this.props.dispatch(setActiveTemplate(templateInstanceId));
       }
-    }
-  }
-
-  toggleTemplateFormVisibility = (templateInstanceId) => {
-    return () => {
-      this.props.dispatch(toggleFormVisibility(templateInstanceId));
     }
   }
 
@@ -98,20 +91,24 @@ class TemplatePage extends React.Component {
     });
 
     (templateInstance.related_nodes || []).forEach((related_node, index) => {
-      if(related_node.visible) {
+      let nextTemplateInstanceId = this.props.templateInstanceMap[
+        templateInstanceId
+      ][index];
+
+      if (related_node.visible) {
         var related_node_element = <RelatedNodeElement
           key = { (related_node._id ? related_node._id['$oid'] : index) + templateInstanceId }
           related_node = { related_node }
-          templateInstanceId = { templateInstanceId + index }
-          toggleShow = { this.toggleTemplateFormVisibility(templateInstanceId + index) }
-          dispatch = { this.props.dispatch }
+          templateInstanceId={nextTemplateInstanceId}
+          parentTemplateInstanceId={templateInstanceId}
+          index={index}
+          dispatch={this.props.dispatch}
           entitiesByLabel = { this.props.entitiesByLabel }
           handleRelationshipChange = { this.handleRelationshipChange(templateInstanceId, index) }
           clickDivHandler = { this.clickDivHandler(templateInstanceId) }
           style = { relationshipContainerStyles }/>
         array.push(related_node_element);
       }
-      var nextTemplateInstanceId = this.props.templateInstanceMap[templateInstanceId][index];
       var nextTemplate = <Empty/>
 
       if(nextTemplateInstanceId && this.props.templateInstanceStateMap[nextTemplateInstanceId].visible){
@@ -142,7 +139,7 @@ class TemplatePage extends React.Component {
       // outline: "black solid 1px"
     };
 
-    var mega_array = this.recursive(this.props.activeTemplate, []);
+    var mega_array = this.recursive(this.props.params.currentTemplateInstanceId, []);
 
     return <div style = { container_styles } >{ mega_array }</div>
   }

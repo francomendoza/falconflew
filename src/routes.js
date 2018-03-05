@@ -14,7 +14,7 @@ let enter = function(){
 export default (store) => {
   return (
     <Route path = '/' component = { App }>
-      <Route path = 'template_form/:currentTemplateId' component = { TemplatePage } />
+      <Route path = 'template_form/:currentTemplateInstanceId' component = { TemplatePage } />
       <Route path = 'template' component = { TemplateContainer } />
       <Route path = 'entities' component = { EntityPage } />
       <Route path = 'grid' component = { GridPage } onEnter = { enter(store) }/>

@@ -1,5 +1,11 @@
 import React from 'react';
-import { autocompleteEntitiesByLabel, updateTemplateInstances } from '../../../modules/templates/actions/template_actions';
+import PropTypes from 'prop-types';
+import {
+  autocompleteEntitiesByLabel,
+  updateTemplateInstances,
+  toggleFormVisibility,
+  fetchAndShowTemplate,
+} from '../../../modules/templates/actions/template_actions';
 import EntityCard from '../../entities/components/entity_card';
 import Button from 'material-ui/Button';
 import Select from 'material-ui/Select';
@@ -35,6 +41,20 @@ export default class RelatedNodeElement extends React.Component {
 
   onSelectChange = (event) => {
     this.props.dispatch(updateTemplateInstances(this.props.templateInstanceId, event.target.value));
+  }
+
+  toggleShow = () => {
+    if (this.props.templateInstanceId) {
+      // display
+      this.props.dispatch(toggleFormVisibility(this.props.templateInstanceId));
+    } else {
+      // fetch and display
+      this.props.dispatch(fetchAndShowTemplate(
+        this.props.related_node.template_label[0],
+        this.props.parentTemplateInstanceId,
+        this.props.index
+      ));
+    }
   }
 
   render() {
@@ -103,11 +123,15 @@ export default class RelatedNodeElement extends React.Component {
           { selected_entities }
           { select_template }
           <Button
-            onClick = { this.props.toggleShow }
+            onClick={this.toggleShow}
             variant='raised'
           >Create New</Button>
         </div>
       </div>
     );
   }
+}
+
+RelatedNodeElement.propTypes = {
+  parentTemplateInstanceId: PropTypes.number.isRequired,
 }
