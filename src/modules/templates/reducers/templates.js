@@ -115,10 +115,6 @@ export function templateInstanceMap(state = {}, action){
 
 export function templateInstanceStateMap(state = {}, action){
   switch (action.type){
-    // case 'PARSE_TEMPLATES':
-    //   return Object.assign({}, state, generateTemplateInstanceState(action.templatesByNodeLabel, action.currentTemplateNodeLabel, 'x0', { 'x0': { visible: true, submitted: false//,
-    //     // related_node_counts: (action.templatesByNodeLabel[action.currentTemplateNodeLabel].related_nodes || []).map((el) => { return 1; })
-    //   } }))
     case 'MAP_TEMPLATE_INSTANCES_STATE':
       return Object.assign(
         {},
@@ -143,6 +139,7 @@ export function templateInstanceStateMap(state = {}, action){
           }
         )
       );
+    case 'SET_EDITING_USERS':
     case 'SUBMIT_FORM':
     case 'TOGGLE_FORM_VISIBILITY':
     case 'INCREMENT_RELATED_NODE_COUNT':
@@ -164,12 +161,17 @@ export function templateInstanceStateMap(state = {}, action){
 
 function templateInstanceState(state = {}, action){
   switch (action.type){
+    case 'SET_EDITING_USERS':
+      return Object.assign(
+        {},
+        state,
+        {
+          editingUserIds: action.editingUserIds,
+        }
+      );
     case 'SUBMIT_FORM':
     case 'TOGGLE_FORM_VISIBILITY':
       return Object.assign({}, state, { visible: !state.visible });
-    // case 'INCREMENT_RELATED_NODE_COUNT':
-    //   let related_node_counts = state.related_node_counts
-    //   return Object.assign({}, state, { related_node_counts: [...related_node_counts.slice(0, action.index), related_node_counts[action.index] + 1, ...related_node_counts.slice(action.index + 1)] })
     default:
       return state;
   }
@@ -197,9 +199,6 @@ function generateTemplateInstancesByInstanceId(
   obj,
   instructions = []
 ) {
-  // let parent = obj['x0']
-      // parent.related_nodes[0].related_nodes[0].entity_id => obj['x00'].related_nodes[0].entity_id
-    //obj['x00'].related_nodes[0]['observers'] = [{'x201', related_node[0].entity_id}]
     //much mutate, so wow
   obj[instanceId] = clone(templatesByNodeLabel[currentTemplateNodeLabel]);
 

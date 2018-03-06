@@ -1,15 +1,12 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropertyFormElement from './property_form_element';
-import Empty from '../../entities/components/empty';
 import RelatedNodeElement from './related_node_element';
 import {
   submitForm,
   propertyChanged,
   setActiveTemplate,
-  autocompleteEntitiesByLabel,
   relationshipEntityChanged,
-  incrementRelatedNodeCount
 } from '../../../modules/templates/actions/template_actions';
 import Button from 'material-ui/Button';
 
@@ -41,12 +38,6 @@ class TemplatePage extends React.Component {
       this.props.dispatch(relationshipEntityChanged(templateInstanceId, relatedNodeIndex, value, entityIdIndex));
     }
   }
-
-  // incrementRelatedNode = (templateInstanceId, index) => {
-  //   return () => {
-  //     this.props.dispatch(incrementRelatedNodeCount(templateInstanceId, index));
-  //   }
-  // }
 
   recursive = (templateInstanceId, array) => {
 
@@ -109,10 +100,10 @@ class TemplatePage extends React.Component {
           style = { relationshipContainerStyles }/>
         array.push(related_node_element);
       }
-      var nextTemplate = <Empty/>
 
-      if(nextTemplateInstanceId && this.props.templateInstanceStateMap[nextTemplateInstanceId].visible){
-        nextTemplate = this.recursive(nextTemplateInstanceId, array);
+      if (nextTemplateInstanceId &&
+        this.props.templateInstanceStateMap[nextTemplateInstanceId].visible) {
+        this.recursive(nextTemplateInstanceId, array);
       }
     });
 
@@ -139,7 +130,12 @@ class TemplatePage extends React.Component {
       // outline: "black solid 1px"
     };
 
-    var mega_array = this.recursive(this.props.params.currentTemplateInstanceId, []);
+    let currentTemplateInstanceId = parseInt(
+      this.props.params.currentTemplateInstanceId,
+      10
+    )
+
+    var mega_array = this.recursive(currentTemplateInstanceId, []);
 
     return <div style = { container_styles } >{ mega_array }</div>
   }
