@@ -19,7 +19,10 @@ export function submitForm(templateInstanceId){
       dispatch(addEntitiesByLabel([data], data.node_label[0]));
       if(templateInstanceId !== 'x0') {
         let parentTemplateId = templateInstanceId.substring(0, templateInstanceId.length - 1);
-        let relatedNodeIndex = parseInt(templateInstanceId.substring(templateInstanceId.length - 1));
+        let relatedNodeIndex = parseInt(
+          templateInstanceId.substring(templateInstanceId.length - 1),
+          10
+        );
         let entityIdIndex = (getState().templateInstancesByInstanceId[parentTemplateId].related_nodes[relatedNodeIndex].entity_id || []).length
         dispatch(relationshipEntityChanged(parentTemplateId, relatedNodeIndex, data.entity_id, entityIdIndex));
       }
@@ -140,7 +143,8 @@ export function fetchAndShowTemplate(
         dispatch(parseTemplate(
           template,
           templateInstanceId,
-          parentTemplateInstanceId
+          getState().templateInstancesByInstanceId[parentTemplateInstanceId],
+          indexOnParent
         ));
         // payload: templateInstanceId to generate state map
         dispatch(addTemplateInstanceStateMap(templateInstanceId));
@@ -163,9 +167,79 @@ function addTemplatesByNodeLabel(templates){
   return { type: "ADD_TEMPLATES_BY_NODE_LABEL", templatesByNodeLabel };
 };
 
-function parseTemplate(template, templateInstanceId, parentTemplateInstanceId) {
+function parseTemplate(
+  template,
+  templateInstanceId,
+  parentTemplateInstance,
+  indexOnParent
+) {
   let clonedTemplate = clone(template);
+
+  if (parentTemplateInstance) {
+    let instructions = parentTemplateInstance.related_nodes[indexOnParent].instructions
+    if (instructions) {
+      clonedTemplate = applyInstructions(clonedTemplate, instructions);
+    }
+  }
   return {type: 'ADD_TEMPLATE', template: clonedTemplate, templateInstanceId};
+}
+
+function applyInstructions(template, instructions) {
+  let obj = template;
+  instructions.forEach((instruction) => {
+    //TODO: THIS ONLY WORKS FOR BINDING TO THINGS THAT ALREADY EXIST IN OBJ
+    // if(instruction.binding){
+    //   let bind_source = parseBoundValue(instruction.bind_to);
+    //   // attribute is either .node_properties[observable_index] or .related_nodes[observable_index]
+    //   let bind_source_attribute = eval(`obj${bind_source}`)
+    //   if(bind_source_attribute['observers']){
+    //     bind_source_attribute['observers'].push({
+    //       instance_id: instanceId,
+    //       key: instruction.key,
+    //       index: instruction.index
+    //     })
+    //   } else {
+    //     bind_source_attribute['observers'] = [{
+    //       instance_id: instanceId,
+    //       type: instruction.type,
+    //       key: instruction.key,
+    //       index: instruction.index
+    //     }]
+    //   }
+    // }
+    if(instruction.type == 'node_property'){
+      let current_node_property = template.node_properties[instruction.index]
+      template.node_properties[instruction.index] = Object.assign(
+        {},
+        current_node_property,
+        instruction.replace_with
+      )
+    } else if (instruction.type == 'related_node'){
+      let current_related_node = template.related_nodes[instruction.index] || {}
+      template.related_nodes[instruction.index] = Object.assign(
+        {},
+        current_related_node,
+        instruction.replace_with
+      )
+    }
+  });
+
+  return template;
+}
+
+function parseBoundValue(binding_string) {
+  //parent.related_nodes[0].related_nodes[0].entity_id => obj['x00'].related_nodes[0].entity_id
+  let segments = binding_string.split('.')
+  let ref_string = 'x0'
+  segments.slice(0, -1).forEach((segment) =>{
+    if(segment.includes('related_nodes')){
+      ref_string += segment.match(/\d+/)[0]
+    } else {
+      console.log('i pooped my pants');
+    }
+  });
+
+  return `['${ref_string}'].${segments.slice(-1)}`
 }
 
 function addTemplateInstanceMap(
