@@ -65,18 +65,19 @@ export function editTemplateInstance(newEditingTemplateId){
     // delete current template editing from firestore
     // change editing users state occurs via subscription to firestore
     let activeTemplateId = getState().activeTemplate;
-    let templateInstanceState = getState().templateInstanceStateMap[activeTemplateId];
-    let activeTemplateEditingUserIds = templateInstanceState
+    if (activeTemplateId) {
+      let templateInstanceState = getState().templateInstanceStateMap[activeTemplateId];
+      let activeTemplateEditingUserIds = templateInstanceState
       .editingUserIds
       .filter((user_id) => user_id !== currentUserId);
-    let activeTemplateFirebaseId = getState()
+      let activeTemplateFirebaseId = getState()
       .firebaseDocIdsByTemplateInstanceId[activeTemplateId];
-    // or search for document each time?
-    firestore.collection('EditingUserIdsByTemplateInstanceId')
+      firestore.collection('EditingUserIdsByTemplateInstanceId')
       .doc(activeTemplateFirebaseId)
       .set({
         editingUserIds: activeTemplateEditingUserIds,
       }, {merge: true});
+    }
 
     // register new template editing
     let newEditingTemplateState = getState().templateInstanceStateMap[newEditingTemplateId];
@@ -154,8 +155,8 @@ export function fetchAndShowTemplate(
           parentTemplateInstanceId,
           indexOnParent
         ));
-        dispatch(setActiveTemplate(templateInstanceId));
         dispatch(editTemplateInstance(templateInstanceId));
+        dispatch(setActiveTemplate(templateInstanceId));
         return templateInstanceId;
       })
   };

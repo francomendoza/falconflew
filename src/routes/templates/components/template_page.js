@@ -9,6 +9,8 @@ import {
   relationshipEntityChanged,
 } from '../../../modules/templates/actions/template_actions';
 import Button from 'material-ui/Button';
+import Avatar from 'material-ui/Avatar';
+import PersonPinIcon from 'material-ui-icons/PersonPin';
 
 class TemplatePage extends React.Component {
 
@@ -66,8 +68,19 @@ class TemplatePage extends React.Component {
       borderBottom: '4px solid rgb(0, 44, 107)',
     };
 
-    array.push(<div style = { header_style }
-      key = { templateInstanceId + 'header' }><h3 style = { { padding: "10px", margin: "0", float: "left" } }>New { templateInstance.node_label[0] }</h3></div>
+    array.push(
+      <div
+        style={header_style}
+        key={templateInstanceId + 'header'}
+      >
+        <h3
+          style={{padding: "10px", margin: "0", float: "left"}}
+        >New {templateInstance.node_label[0]}
+        </h3>
+        <Avatar>
+          <PersonPinIcon />
+        </Avatar>
+      </div>
     );
 
     templateInstance.node_properties.forEach((node_property, index) => {

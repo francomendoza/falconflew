@@ -13,6 +13,7 @@
     "isomorphic-fetch": "^2.1.1",
     "lodash": "^3.10.1",
     "material-ui": "1.0.0-beta.32",
+    "material-ui-icons": "^1.0.0-beta.36",
     "node-sass-chokidar": "0.0.3",
     "react": "^15.0.0",
     "react-autocomplete": "^1.8.0",
