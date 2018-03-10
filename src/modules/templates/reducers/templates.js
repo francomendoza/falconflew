@@ -83,7 +83,7 @@ function node_properties(state = [], action){
 
 export function templateInstanceMap(state = {}, action){
   switch (action.type){
-    case 'ADD_TEMPLATE_INSTANCE_MAP':
+    case 'ADD_TEMPLATE':
       let newTemplateMap = {
         [action.templateInstanceId]: [],
       };
@@ -115,7 +115,7 @@ export function templateInstanceMap(state = {}, action){
 
 export function templateInstanceStateMap(state = {}, action){
   switch (action.type){
-    case 'MAP_TEMPLATE_INSTANCES_STATE':
+    case 'ADD_TEMPLATE':
       return Object.assign(
         {},
         state,

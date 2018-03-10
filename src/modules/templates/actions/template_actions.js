@@ -106,58 +106,65 @@ export function clearTemplates(){
   return { type: 'CLEAR_TEMPLATES' }
 }
 
-export function fetchNewTemplate(
-  currentTemplateNodeLabel,
-  parentTemplateInstanceId
-) {
+export function fetchNewTemplate(currentTemplateNodeLabel) {
   return async (dispatch, getState) => {
     // this should only run when its coming from search box,
     // rather than fetching a template from within another template
     dispatch(clearTemplates());
-    let templateInstanceId = await dispatch(fetchAndShowTemplate(
-      currentTemplateNodeLabel,
-      parentTemplateInstanceId
+    let templateInstanceId = await dispatch(generateTemplateInstance(
+      currentTemplateNodeLabel
     ));
     dispatch(routeActions.push(`/template_form/${templateInstanceId}`));
   }
 }
 
+export function generateTemplateInstance(currentTemplateNodeLabel) {
+  return (dispatch) => {
+    return fetch(`http://localhost:3000/templates/instance`, {
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        method: "post",
+        body: JSON.stringify({
+          templateName: currentTemplateNodeLabel
+        })
+      })
+      .then(response => response.json())
+      .then((response) => {
+        return response.data.templateInstanceId;
+      });
+  };
+}
+
 export function fetchAndShowTemplate(
-  currentTemplateNodeLabel,
+  templateInstanceId,
   parentTemplateInstanceId,
   indexOnParent
 ) {
   return async (dispatch, getState) => {
     // dispatch() a syncronous action that tells state we are going to fetch data
-    return fetch(`http://localhost:3000/templates/template?template_name=${
-      currentTemplateNodeLabel}`)
+    return fetch(`http://localhost:3000/templates/instance?id=${
+      templateInstanceId}`)
       .then(response => response.json())
       .then(async (response) => {
-        let template = response.data.template;
-        let templateInstanceId = response.data.templateInstanceId;
+        let template = response.data.templateInstance;
 
         // TODO: check if template is already there?
         dispatch(addTemplatesByNodeLabel([template]));
         // query firestore to get/create document
         await dispatch(findFirestoreIdByTemplateInstanceId(templateInstanceId));
-        // apply parent's instructions to child
+        // apply parent's instructions to child, and add to maps
+        // all must occur in same action to render properly
+        let parentTemplateInstance = getState()
+          .templateInstancesByInstanceId[parentTemplateInstanceId];
         dispatch(parseTemplate(
           template,
           templateInstanceId,
-          getState().templateInstancesByInstanceId[parentTemplateInstanceId],
-          indexOnParent
-        ));
-        // payload: templateInstanceId to generate state map
-        dispatch(addTemplateInstanceStateMap(templateInstanceId));
-        // payload: templateInstanceId, and parentTemplateInstanceId
-        dispatch(addTemplateInstanceMap(
-          templateInstanceId,
+          parentTemplateInstance,
           parentTemplateInstanceId,
           indexOnParent
         ));
         dispatch(editTemplateInstance(templateInstanceId));
-        dispatch(setActiveTemplate(templateInstanceId));
-        return templateInstanceId;
       })
   };
 };
@@ -172,6 +179,7 @@ function parseTemplate(
   template,
   templateInstanceId,
   parentTemplateInstance,
+  parentTemplateInstanceId,
   indexOnParent
 ) {
   let clonedTemplate = clone(template);
@@ -182,7 +190,22 @@ function parseTemplate(
       clonedTemplate = applyInstructions(clonedTemplate, instructions);
     }
   }
-  return {type: 'ADD_TEMPLATE', template: clonedTemplate, templateInstanceId};
+
+  let templateInstanceStateMap = {
+    visible: true,
+    submitted: false,
+    editingUserIds: [],
+  };
+
+
+  return {
+    type: 'ADD_TEMPLATE',
+    template: clonedTemplate,
+    templateInstanceId,
+    templateInstanceStateMap,
+    parentTemplateInstanceId,
+    indexOnParent,
+  };
 }
 
 function applyInstructions(template, instructions) {
@@ -243,31 +266,31 @@ function parseBoundValue(binding_string) {
   return `['${ref_string}'].${segments.slice(-1)}`
 }
 
-function addTemplateInstanceMap(
-  templateInstanceId,
-  parentTemplateInstanceId,
-  indexOnParent
-) {
-  return {
-    type: 'ADD_TEMPLATE_INSTANCE_MAP',
-    templateInstanceId,
-    parentTemplateInstanceId,
-    indexOnParent,
-  };
-}
+// function addTemplateInstanceMap(
+//   templateInstanceId,
+//   parentTemplateInstanceId,
+//   indexOnParent
+// ) {
+//   return {
+//     type: 'ADD_TEMPLATE_INSTANCE_MAP',
+//     templateInstanceId,
+//     parentTemplateInstanceId,
+//     indexOnParent,
+//   };
+// }
 
-function addTemplateInstanceStateMap(templateInstanceId){
-  let templateInstanceStateMap = {
-    visible: true,
-    submitted: false,
-    editingUserIds: [],
-  };
-  return {
-    type: 'MAP_TEMPLATE_INSTANCES_STATE',
-    templateInstanceId,
-    templateInstanceStateMap
-  };
-}
+// function addTemplateInstanceStateMap(templateInstanceId){
+//   let templateInstanceStateMap = {
+//     visible: true,
+//     submitted: false,
+//     editingUserIds: [],
+//   };
+//   return {
+//     type: 'MAP_TEMPLATE_INSTANCES_STATE',
+//     templateInstanceId,
+//     templateInstanceStateMap
+//   };
+// }
 
 export function requestTemplateByName(name){
   return (dispatch, getState) => {
