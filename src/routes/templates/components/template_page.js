@@ -54,7 +54,9 @@ class TemplatePage extends React.Component {
       let header_style = {
         height: "40px",
         opacity: this.props.activeTemplate === templateInstanceId ? "1" : "0.3",
-        borderBottom: "#002c6b 4px solid"
+        borderBottom: "#002c6b 4px solid",
+        display: 'flex',
+        justifyContent: 'space-between',
       };
 
       let propertyContainerStyles = {
@@ -80,11 +82,11 @@ class TemplatePage extends React.Component {
           key={templateInstanceId + 'header'}
         >
           <h3
-            style={{padding: "10px", margin: "0", float: "left"}}
+            style={{padding: "10px", margin: "0"}}
           >New {templateInstance.node_label[0]}
           </h3>
           <ActiveUsers
-            userIds={this
+            userIds={[1,2,3] || this
               .props
               .templateInstanceStateMap[templateInstanceId]
               .editingUserIds}

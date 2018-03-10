@@ -5,12 +5,12 @@ import PersonPinIcon from 'material-ui-icons/PersonPin';
 export default class ActiveUsers extends React.Component {
   render() {
     return (
-      <div>
+      <div style={{display: 'flex', alignItems: 'center'}}>
         {this.props.userIds.map((userId) => {
           return (
             <Avatar
               key={userId}
-              style={{height: 20, width: 20}}
+              style={{margin: '5px'}}
             >
               <PersonPinIcon />
             </Avatar>
