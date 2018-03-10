@@ -5,6 +5,7 @@ import {
   updateTemplateInstances,
   toggleFormVisibility,
   fetchAndShowTemplate,
+  generateTemplateInstance,
 } from '../../../modules/templates/actions/template_actions';
 import EntityCard from '../../entities/components/entity_card';
 import Button from 'material-ui/Button';
@@ -43,14 +44,17 @@ export default class RelatedNodeElement extends React.Component {
     this.props.dispatch(updateTemplateInstances(this.props.templateInstanceId, event.target.value));
   }
 
-  toggleShow = () => {
+  toggleShow = async () => {
     if (this.props.templateInstanceId) {
       // display
       this.props.dispatch(toggleFormVisibility(this.props.templateInstanceId));
     } else {
       // fetch and display
+      let templateInstanceId = await this.props.dispatch(generateTemplateInstance(
+        this.props.related_node.template_label[0]
+      ));
       this.props.dispatch(fetchAndShowTemplate(
-        this.props.related_node.template_label[0],
+        templateInstanceId,
         this.props.parentTemplateInstanceId,
         this.props.index
       ));
