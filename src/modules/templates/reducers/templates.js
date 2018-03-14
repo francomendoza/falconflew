@@ -10,19 +10,6 @@ export function templateInstancesByInstanceId(state = {}, action){
           [action.templateInstanceId]: action.template,
         },
       );
-    case 'PARSE_TEMPLATES':
-      return Object.assign(
-        {},
-        state,
-        generateTemplateInstancesByInstanceId(
-          action.templatesByNodeLabel,
-          action.currentTemplateNodeLabel,
-          'x0',
-          {}
-        )
-      );
-    case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
-      return Object.assign({}, state, generateTemplateInstancesByInstanceId(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, {}, action.instructions));
     case 'UPDATE_PROPERTY_VALUE':
     case 'UPDATE_RELATIONSHIP_VALUE':
       return Object.assign({}, state, { [action.templateInstanceId]: templateInstance(state[action.templateInstanceId], action) });
@@ -104,8 +91,6 @@ export function templateInstanceMap(state = {}, action){
         state,
         newTemplateMap,
       );
-    case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
-      return Object.assign({}, state, generateTemplateInstanceMap(action.templatesByNodeLabel, action.node_label, action.templateInstanceId, {}));
     case 'CLEAR_TEMPLATES':
       return {}
     default:
@@ -122,22 +107,6 @@ export function templateInstanceStateMap(state = {}, action){
         {
           [action.templateInstanceId]: action.templateInstanceStateMap,
         }
-      );
-    case 'CHANGE_CHILD_RELATED_NODE_TEMPLATE':
-      return Object.assign(
-        {},
-        state,
-        generateTemplateInstanceState(
-          action.templatesByNodeLabel,
-          action.node_label,
-          action.templateInstanceId,
-          {
-            [action.templateInstanceId]: {
-              visible: false,
-              submitted: false,
-            }
-          }
-        )
       );
     case 'SET_EDITING_USERS':
     case 'SUBMIT_FORM':
@@ -175,88 +144,6 @@ function templateInstanceState(state = {}, action){
     default:
       return state;
   }
-}
-
-function generateTemplateInstancesByInstanceId(
-  templatesByNodeLabel,
-  currentTemplateNodeLabel,
-  instanceId,
-  obj,
-  instructions = []
-) {
-    //much mutate, so wow
-  obj[instanceId] = clone(templatesByNodeLabel[currentTemplateNodeLabel]);
-  //why do we check if the template exists?
-  if(obj[instanceId] && obj[instanceId].related_nodes){
-    obj[instanceId].related_nodes.forEach(function(related_node, index){
-      let thisInstanceId = `${instanceId}${index}`;
-      if(related_node.match_type !== 'child' && !related_node.children_templates){
-        if(related_node.instructions){
-          generateTemplateInstancesByInstanceId(
-            templatesByNodeLabel,
-            related_node.template_label[0],
-            thisInstanceId,
-            obj,
-            related_node.instructions
-          );
-        } else {
-          generateTemplateInstancesByInstanceId(
-            templatesByNodeLabel,
-            related_node.template_label[0],
-            thisInstanceId,
-            obj
-          );
-        }
-      }else {
-        obj[thisInstanceId] = null;
-      }
-    });
-  }
-  return obj;
-}
-
-function generateTemplateInstanceMap(templatesByNodeLabel, currentTemplateNodeLabel, instanceId, obj) {
-  if(obj[instanceId] !== undefined || obj[instanceId] !== null) {
-    obj[instanceId] = [];
-  }
-  if(templatesByNodeLabel[currentTemplateNodeLabel] && templatesByNodeLabel[currentTemplateNodeLabel].related_nodes){
-    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes.forEach(function(el, index){
-      // if(el.match_type !== 'child' && !el.children_templates){
-        let thisInstanceId = `${instanceId}${index}`;
-        obj[instanceId].push(thisInstanceId);
-        generateTemplateInstanceMap(templatesByNodeLabel, el.template_label[0], thisInstanceId, obj);
-      // }else{
-        // obj[instanceId].push(null);
-      // }
-    });
-  }
-  return obj;
-}
-
-function generateTemplateInstanceState(
-  templatesByNodeLabel,
-  currentTemplateNodeLabel,
-  instanceId,
-  obj
-) {
-  if(templatesByNodeLabel[currentTemplateNodeLabel] &&
-    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes){
-    templatesByNodeLabel[currentTemplateNodeLabel].related_nodes.forEach((el, index) => {
-      let thisInstanceId = `${instanceId}${index}`;
-        obj[thisInstanceId] = {
-          visible: false,
-          submitted: false,
-          user_ids_editing: [],
-        };
-        generateTemplateInstanceState(
-          templatesByNodeLabel,
-          el.template_label[0],
-          thisInstanceId,
-          obj
-        );
-    });
-  }
-  return obj;
 }
 
 export function templatesByNodeLabel(state = {}, action) {

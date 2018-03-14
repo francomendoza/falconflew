@@ -86,7 +86,7 @@ class TemplatePage extends React.Component {
           >New {templateInstance.node_label[0]}
           </h3>
           <ActiveUsers
-            userIds={[1,2,3] || this
+            userIds={this
               .props
               .templateInstanceStateMap[templateInstanceId]
               .editingUserIds}
