@@ -35,6 +35,12 @@ class SignIn extends React.Component {
     this.setState({password: evt.target.value});
   }
 
+  onPasswordKeyPress = (evt) => {
+    if (evt.key === 'Enter') {
+      this.signIn();
+    }
+  }
+
   signIn = () => {
     let user = this.users.find((user) => {
       return this.state.username === user.username;
@@ -64,6 +70,7 @@ class SignIn extends React.Component {
           type='password'
           onChange={this.onPasswordChange}
           margin='normal'
+          onKeyPress={this.onPasswordKeyPress}
         />
         <Button
           variant='raised'
