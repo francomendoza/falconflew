@@ -4,7 +4,7 @@ import { connect } from 'react-redux';
 import Button from 'material-ui/Button';
 import TextField from 'material-ui/TextField';
 import {
-  signIn,
+  signInAndRedirect,
 } from '../../modules/auth/actions';
 
 class SignIn extends React.Component {
@@ -40,7 +40,7 @@ class SignIn extends React.Component {
       return this.state.username === user.username;
     })
 
-    this.props.dispatch(signIn(user.id));
+    this.props.dispatch(signInAndRedirect(user.id));
   }
 
   render() {
