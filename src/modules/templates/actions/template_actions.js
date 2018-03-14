@@ -151,8 +151,6 @@ export function fetchAndShowTemplate(
 
         // TODO: check if template is already there?
         dispatch(addTemplatesByNodeLabel([template]));
-        // query firestore to get/create document
-        await dispatch(findFirestoreIdByTemplateInstanceId(templateInstanceId));
         // apply parent's instructions to child, and add to maps
         // all must occur in same action to render properly
         let parentTemplateInstance = getState()
@@ -164,6 +162,8 @@ export function fetchAndShowTemplate(
           parentTemplateInstanceId,
           indexOnParent
         ));
+        // query firestore to get/create document
+        await dispatch(findFirestoreIdByTemplateInstanceId(templateInstanceId));
         dispatch(editTemplateInstance(templateInstanceId));
       })
   };
