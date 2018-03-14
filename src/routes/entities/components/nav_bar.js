@@ -47,6 +47,12 @@ export default class NavBar extends React.Component {
               <Link to = { '/notebook' } style={styles.link}>Notebook</Link>
             </Typography>
           </Button>
+          <Button
+          >
+            <Typography>
+              <Link to='/sign_in' style={styles.link}>Sign In</Link>
+            </Typography>
+          </Button>
         </Toolbar>
       </AppBar>
     )
